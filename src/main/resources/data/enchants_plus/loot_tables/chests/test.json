@@ -1,0 +1,29 @@
+{
+	"type": "minecraft:chest",
+	"pools": 
+  	[
+		{
+	      	"rolls": 
+	      	{
+	        	"min": 10.0,
+	        	"max": 12.0,
+	        	"type": "minecraft:uniform"
+	    	},
+			"entries":
+			[
+				{
+	        		"type": "minecraft:item",
+	          		"functions": 
+	          		[
+	            		{
+	              			"function": "minecraft:enchant_with_levels",
+	              			"levels": 30,
+	              			"treasure": true
+	            		}
+	         	 	],
+	          		"name": "minecraft:book"
+	        	}
+	     	]
+	     }
+	]
+}

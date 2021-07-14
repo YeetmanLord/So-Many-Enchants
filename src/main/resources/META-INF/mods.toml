@@ -1,0 +1,51 @@
+
+modLoader="javafml" #mandatory
+
+
+loaderVersion="[36,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+
+
+license="All rights reserved"
+
+
+[[mods]] #mandatory
+
+modId="enchants_plus" #mandatory
+
+version="0.0.1" #mandatory
+
+displayName="Enchantments +" #mandatory
+
+
+logoFile="icon.png" #optional
+
+
+credits="Forge for creating the resources to code this mod" #optional
+
+authors="YeetManLord" #optional
+
+description='''
+Adds a wide variety of new enchantments to 
+the game.
+
+'''
+
+[[dependencies.enchants_plus]] #optional
+    # the modid of the dependency
+    modId="forge" #mandatory
+    # Does this dependency have to exist - if not, ordering below must be specified
+    mandatory=true #mandatory
+    # The version range of the dependency
+    versionRange="[36,)" #mandatory
+    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+    ordering="NONE"
+    # Side this dependency is applied on - BOTH, CLIENT or SERVER
+    side="BOTH"
+
+
+[[dependencies.enchants_plus]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5,1.17)"
+    ordering="NONE"
+    side="BOTH"
