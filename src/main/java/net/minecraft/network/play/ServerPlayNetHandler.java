@@ -1237,7 +1237,8 @@ private boolean func_241162_a_(Entity p_241162_1_) {
       this.player.markPlayerActive();
       this.player.setSneaking(packetIn.isSneaking());
       if (entity != null) {
-         double d0 = 36.0D;
+    	  //thingy
+         double d0 = 49.0D;
          if (this.player.getDistanceSq(entity) < d0) {
             Hand hand = packetIn.getHand();
             ItemStack itemstack = hand != null ? this.player.getHeldItem(hand).copy() : ItemStack.EMPTY;
