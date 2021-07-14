@@ -55,6 +55,7 @@ public class ExtraReach
 		PlayerEntity player = mc.player;
 		if(click.isAttack() && !click.isCanceled())
 		{
+			//Handles raytracing
 			double reachDist = player.getAttribute(AttributeInit.ATTACK_DISTANCE.get()).getValue();
 			Vector3d startVector = player.getEyePosition(1.0F);
 			Vector3d lookVector = player.getLook(1.0F);
@@ -63,21 +64,17 @@ public class ExtraReach
 			EntityRayTraceResult entityRayTrace = ProjectileHelper.rayTraceEntities(player, startVector, endVector, axisalignedbb, (p_215312_0_) -> {
 	               return !p_215312_0_.isSpectator() && p_215312_0_.canBeCollidedWith();
 	            }, reachDist * reachDist);
-			if(entityRayTrace != null && !player.isCreative())
+			
+			if(entityRayTrace != null && !player.isSpectator())
 			{
+				//Gets entity
 				Entity tracedEntity = entityRayTrace.getEntity();
 				if(player.getDistance(tracedEntity) > 4.0D && player.getDistance(tracedEntity) <= reachDist)
 				{
+					//Attacks the entity
 					attackEntityAsPlayer(player, tracedEntity);
 				}
-			} else if(entityRayTrace != null && player.isCreative())
-			{
-				Entity tracedEntity = entityRayTrace.getEntity();
-				if(player.getDistance(tracedEntity) > 4.0D && player.getDistance(tracedEntity) <= reachDist)
-				{
-					attackEntityAsPlayer(player, tracedEntity);
-				}
-			} else if(entityRayTrace == null)
+			} else if(entityRayTrace == null || player.isSpectator())
 			{
 				
 			} else
@@ -92,6 +89,7 @@ public class ExtraReach
 	
 	private static void attackEntityAsPlayer(PlayerEntity player,@Nullable Entity targetEntity)
 	{
+		//Gets damage
 		float f = (float) player.getAttributeManager().getAttributeValue(Attributes.ATTACK_DAMAGE);
 		if(player.getHeldItemMainhand() != ItemStack.EMPTY)
 		{
@@ -118,6 +116,8 @@ public class ExtraReach
 				}
 			}
 		}
+		
+		//Strength
 		if(player.getActivePotionEffect(Effects.STRENGTH) != null) 
 		{
 			float strength = 3 + (player.getActivePotionEffect(Effects.STRENGTH).getAmplifier() * 3);
@@ -137,6 +137,7 @@ public class ExtraReach
 	               f1 = EnchantmentHelper.getModifierForCreature(player.getHeldItemMainhand(), CreatureAttribute.UNDEFINED);
 	        }
 			
+			//applies attack cooldown
 			float f2 = player.getCooledAttackStrength(0.5F);
             f = f * (0.2F + f2 * f2 * 0.8F);
             f1 = f1 * f2;
@@ -146,7 +147,8 @@ public class ExtraReach
             {
                 boolean flag = f2 > 0.9F;
                 boolean flag1 = false;
-                int i = 3;
+                //applies knockback enchant
+                int i = 0;
                 i = i + EnchantmentHelper.getKnockbackModifier(player);
                 if (player.isSprinting() && flag) 
                 {
@@ -155,6 +157,7 @@ public class ExtraReach
                    flag1 = true;
                 }
                 
+                //applies critical
                 boolean flag2 = flag && player.fallDistance > 0.0F && !player.isOnGround() && !player.isOnLadder() && !player.isInWater() && !player.isPotionActive(Effects.BLINDNESS) && !player.isPassenger() && targetEntity instanceof LivingEntity;
                 flag2 = flag2 && !player.isSprinting();
                 net.minecraftforge.event.entity.player.CriticalHitEvent hitResult = net.minecraftforge.common.ForgeHooks.getCriticalHit(player, targetEntity, flag2, flag2 ? 1.5F : 1.0F);
@@ -164,6 +167,7 @@ public class ExtraReach
                    f *= hitResult.getDamageModifier();
                 }
                 
+                //tests for sword to apply sweeping edge
                 f = f + f1;
                 boolean flag3 = false;
                 double d0 = (double)(player.distanceWalkedModified - player.prevDistanceWalkedModified);
@@ -176,6 +180,7 @@ public class ExtraReach
                    }
                 }
                 
+                //applies fire aspect
                 float f4 = 0.0F;
                 boolean flag4 = false;
                 int j = EnchantmentHelper.getFireAspectModifier(player);
@@ -190,8 +195,11 @@ public class ExtraReach
                 }
                 
                 Vector3d vector3d = targetEntity.getMotion();
+                //calls damage function
                 boolean flag5 = attackEntityFrom(DamageSource.causePlayerDamage(player), f, targetEntity, player);
+                //if the entity is damaged run this
                 if (flag5) {
+                	//if knockback enchant is on the weapon
                    if (i > 0) {
                       if (targetEntity instanceof LivingEntity) {
                          applyKnockback((float)i * 0.5F, (double)MathHelper.sin(player.rotationYaw * ((float)Math.PI / 180F)), (double)(-MathHelper.cos(player.rotationYaw * ((float)Math.PI / 180F))),(LivingEntity)targetEntity);
@@ -201,6 +209,7 @@ public class ExtraReach
                       player.setMotion(player.getMotion().mul(0.6D, 1.0D, 0.6D));
                       player.setSprinting(false);
                    }
+                   //if sword in hand has sweeping
                    if (flag3) {
                       float f3 = 1.0F + EnchantmentHelper.getSweepingDamageRatio(player) * f;
 
@@ -215,18 +224,21 @@ public class ExtraReach
                       player.world.playSound(player, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, player.getSoundCategory(), 1.0F, 1.0F);
                       player.spawnSweepParticles();
                    }
-
+                   
+                   //knockback player
                    if (targetEntity instanceof ServerPlayerEntity && targetEntity.velocityChanged) {
                       ((ServerPlayerEntity)targetEntity).connection.sendPacket(new SEntityVelocityPacket(targetEntity));
                       targetEntity.velocityChanged = false;
                       targetEntity.setMotion(vector3d);
                    }
-
+                   
+                   //crit sound
                    if (flag2) {
                       player.world.playSound(player, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_PLAYER_ATTACK_CRIT, player.getSoundCategory(), 1.0F, 1.0F);
                       player.onCriticalHit(targetEntity);
                    }
-
+                   
+                   //additional sounds
                    if (!flag2 && !flag3) {
                       if (flag) {
                          player.world.playSound(player, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_PLAYER_ATTACK_STRONG, player.getSoundCategory(), 1.0F, 1.0F);
@@ -234,23 +246,27 @@ public class ExtraReach
                          player.world.playSound(player, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_PLAYER_ATTACK_WEAK, player.getSoundCategory(), 1.0F, 1.0F);
                       }
                    }
-
+                   
+                   //crits with enchanted weapons
                    if (f1 > 0.0F) {
                       player.onEnchantmentCritical(targetEntity);
                    }
-
+                   
+                   //thorns
                    player.setLastAttackedEntity(targetEntity);
                    if (targetEntity instanceof LivingEntity) {
                       EnchantmentHelper.applyThornEnchantments((LivingEntity)targetEntity, player);
                    }
-
+                   
+                   //slowness from bane of arthropods
                    EnchantmentHelper.applyArthropodEnchantments(player, targetEntity);
                    ItemStack itemstack1 = player.getHeldItemMainhand();
                    Entity entity = targetEntity;
                    if (targetEntity instanceof net.minecraftforge.entity.PartEntity) {
                       entity = ((net.minecraftforge.entity.PartEntity<?>) targetEntity).getParent();
                    }
-
+                   
+                   //destroys item
                    if (!player.world.isRemote && !itemstack1.isEmpty() && entity instanceof LivingEntity) {
                       ItemStack copy = itemstack1.copy();
                       itemstack1.hitEntity((LivingEntity)entity, player);
@@ -259,20 +275,25 @@ public class ExtraReach
                          player.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
                       }
                    }
-
+                   
+                   
                    if (targetEntity instanceof LivingEntity) {
-                      float f5 = f4 - ((LivingEntity)targetEntity).getHealth();
+                	  //changes stats
+                	  float f5 = f4 - ((LivingEntity)targetEntity).getHealth();
                       player.addStat(Stats.DAMAGE_DEALT, Math.round(f5 * 10.0F));
+                      //apply fire aspect
                       if (j > 0) {
                          targetEntity.setFire(j * 4);
                       }
-
+                      
+                      //particles
                       if (player.world instanceof ServerWorld && f5 > 2.0F) {
                          int k = (int)((double)f5 * 0.5D);
                          ((ServerWorld)player.world).spawnParticle(ParticleTypes.DAMAGE_INDICATOR, targetEntity.getPosX(), targetEntity.getPosYHeight(0.5D), targetEntity.getPosZ(), k, 0.1D, 0.0D, 0.1D, 0.2D);
                       }
                    }
-
+                   
+                   //Affect hunger
                    player.addExhaustion(0.1F);
                 }
                 
@@ -282,16 +303,20 @@ public class ExtraReach
 	
 	public static boolean attackEntityFrom(DamageSource source, float amount, Entity entityThingy, PlayerEntity player) 
 	{
+		//Invulnerable
 		if (entityThingy.isInvulnerableTo(source)) {
 	         return false;
+	       //Remote world
 	      } else if (!entityThingy.world.isRemote) {
 	         return false;
 	      } else if (entityThingy instanceof LivingEntity)
 	    	  {
 	    	  	LivingEntity living = (LivingEntity) entityThingy;
+	    	  	//if entity is already dead
 	    	  	if (living.getShouldBeDead())
 	    	  	{
 	    	  		return false;
+	    	  		//has fire resistance
 	    	  	} else if (source.isFireDamage() && living.isPotionActive(Effects.FIRE_RESISTANCE)) 
 	    	  	{
 	    	  		return false;
@@ -303,6 +328,7 @@ public class ExtraReach
 	    	         living.setIdleTime(0);
 	    	         float f = amount;
 	    	         Random rand = new Random();
+	    	         //damages item if hit by falling block
 	    	         if ((source == DamageSource.ANVIL || source == DamageSource.FALLING_BLOCK) && !living.getItemStackFromSlot(EquipmentSlotType.HEAD).isEmpty()) {
 	    	            living.getItemStackFromSlot(EquipmentSlotType.HEAD).damageItem((int)(amount * 4.0F + rand.nextFloat() * amount * 2.0F), living, (p_233653_0_) -> {
 	    	               p_233653_0_.sendBreakAnimation(EquipmentSlotType.HEAD);
@@ -312,6 +338,7 @@ public class ExtraReach
 
 	    	         boolean flag = false;
 	    	         float f1 = 0.0F;
+	    	         //Shield calculations
 	    	         if (amount > 0.0F && living.canBlockDamageSource(source, living)) {
 	    	            living.damageShield(amount, living);
 	    	            f1 = amount;
@@ -325,7 +352,8 @@ public class ExtraReach
 
 	    	            flag = true;
 	    	         }
-
+	    	         
+	    	         //Invulnerability frames + hit animation
 	    	         living.limbSwingAmount = 1.5F;
 	    	         boolean flag1 = true;
 	    	         if ((float)living.hurtResistantTime > 10.0F) {
@@ -343,6 +371,7 @@ public class ExtraReach
 	    	         } else {
 	    	            living.setLastDamage(amount);
 	    	            living.hurtResistantTime = 20;
+	    	            //damages entity
 	    	            damageEntity(source, amount, living);
 	    	            living.maxHurtTime = 10;
 	    	            living.hurtTime = living.maxHurtTime;
@@ -352,14 +381,16 @@ public class ExtraReach
 	    	            	playSound(soundevent, living.getSoundVolume(living), living.getSoundPitch(living), living, player);
 	    	            }
 	    	         }
-
+	    	         
+	    	         //angers mobs + data
 	    	         living.attackedAtYaw = 0.0F;
 	    	         if (player != null) {
 	    	               living.setRevengeTarget(player, living);
 	    	               living.setRecentlyHit(100);
 	    	               living.setAttackingPlayer(player);
 	    	            }
-
+	    	         
+	    	         //entity states
 	    	         if (flag1) {
 	    	            if (flag) {
 	    	               living.world.setEntityState(living, (byte)29);
@@ -398,18 +429,19 @@ public class ExtraReach
 	    	               living.attackedAtYaw = (float)((int)(Math.random() * 2.0D) * 180);
 	    	            }
 	    	         }
-
+	    	         
+	    	         //if the entity is dead
 	    	         if (living.getShouldBeDead()) {
 	    	            if (!living.checkTotemDeathProtectionPublic(source)) {
 	    	               SoundEvent soundevent = living.getDeathSound(living);
 	    	               if (flag1 && soundevent != null) {
 	    	                  playSound(soundevent, living.getSoundVolume(living), living.getSoundPitch(living), living, player);
 	    	               }
-	    	               Main.LOGGER.info(living);
 	    	               living.onDeath(source, living);
 	    	            }
 	    	         } else if (flag1) {
-	    	            living.playHurtSoundPublic(source);
+	    	        	 //hurt sound
+	    	            living.playHurtSound(source, living);
 	    	         }
 
 	    	         boolean flag2 = !flag || amount > 0.0F;
@@ -417,7 +449,7 @@ public class ExtraReach
 	    	            living.setLastDamageSource(source);
 	    	            living.setLastDamageStamp(living.world.getGameTime());
 	    	         }
-
+	    	         //attack a player
 	    	         if (living instanceof ServerPlayerEntity) {
 	    	            CriteriaTriggers.ENTITY_HURT_PLAYER.trigger((ServerPlayerEntity)living, source, f, amount, flag);
 	    	            if (f1 > 0.0F && f1 < 3.4028235E37F) {
@@ -431,11 +463,15 @@ public class ExtraReach
 
 	    	         return flag2;
 	    	  	}
-	      } else {
+	      } else if(!(entityThingy instanceof LivingEntity)) {
 	    	  return true;
+	      } else
+	      {
+	    	  return false;
 	      }
 	}
 	
+	//applies damage
 	protected static void damageEntity(DamageSource damageSrc, float damageAmount, LivingEntity living) 
 	{
 	      if (!living.isInvulnerableTo(damageSrc)) {
@@ -451,18 +487,18 @@ public class ExtraReach
 	         if (f > 0.0F && f < 3.4028235E37F && damageSrc.getTrueSource() instanceof ServerPlayerEntity) {
 	            ((ServerPlayerEntity)damageSrc.getTrueSource()).addStat(Stats.DAMAGE_DEALT_ABSORBED, Math.round(f * 10.0F));
 	         }
-
+	         
 	         f2 = net.minecraftforge.common.ForgeHooks.onLivingDamage(living, damageSrc, f2);
 	         if (f2 != 0.0F) {
 	            float f1 = living.getHealth();
 	            living.getCombatTracker().trackDamage(damageSrc, f1, f2);
-	            living.setHealth(f1 - f2); // Forge: moved to fix MC-121048
+	            living.setHealth(f1 - f2);
 	            living.setAbsorptionAmount(living.getAbsorptionAmount() - f2);
 	         }
 	      }
 	}
 	
-	
+	//plays sound
 	private static void playSound(SoundEvent soundIn, float volume, float pitch, Entity entity, PlayerEntity player) {
 	      if (!entity.isSilent()) {
 	    	  entity.world.playSound(player, entity.getPosX(), entity.getPosY(), entity.getPosZ(), soundIn, entity.getSoundCategory(), volume, pitch);
@@ -470,6 +506,7 @@ public class ExtraReach
 
 	}
 	
+	//applies knockback
 	public static void applyKnockback(float strength, double ratioX, double ratioZ, LivingEntity living) {
 	      net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(living, strength, ratioX, ratioZ);
 	      if(event.isCanceled()) return;

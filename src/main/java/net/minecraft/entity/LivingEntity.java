@@ -1256,12 +1256,9 @@ public abstract class LivingEntity extends Entity {
 
    }
    
-   public void playHurtSoundPublic(DamageSource source)
+   public void playHurtSound(DamageSource source, LivingEntity living)
    {
-	   SoundEvent soundevent = this.getHurtSound(source);
-	      if (soundevent != null) {
-	         this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
-	      }
+	   living.playHurtSound(source);
    }
 
    /**
