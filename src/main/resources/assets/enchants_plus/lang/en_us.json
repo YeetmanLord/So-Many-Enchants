@@ -1,3 +1,8 @@
 {
-	"enchantment.enchants_plus.health_boost": "Health Boost"
+	"enchantment.enchants_plus.health_boost": "Health Boost",
+	"enchantment.enchants_plus.flight": "Flight",
+	"enchantment.enchants_plus.attack_reach": "Attack Reach",
+	"enchantment.enchants_plus.block_reach": "Block Reach",
+	
+	"attribute.name.player.attack_distance": "Attack Reach"
 }

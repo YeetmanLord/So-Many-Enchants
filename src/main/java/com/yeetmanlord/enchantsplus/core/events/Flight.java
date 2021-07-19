@@ -42,6 +42,13 @@ public class Flight
 							{
 								exhaustion = 0;
 								player.addExhaustion(1.0f);
+								if(!player.isCreative())
+								{
+									boots.damageItem(2, player, (p_213833_1_) -> {
+							               p_213833_1_.sendBreakAnimation(player.getActiveHand());
+							               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, player.getActiveItemStack(), player.getActiveHand());
+							          });
+								}
 							}
 						}
 					} else if(lvl == 2 && player.getFoodStats().getFoodLevel() > 4)
@@ -54,6 +61,13 @@ public class Flight
 							{
 								exhaustion = 0;
 								player.addExhaustion(1.0f);
+								if(!player.isCreative())
+								{
+									boots.damageItem(2, player, (p_213833_1_) -> {
+							               p_213833_1_.sendBreakAnimation(player.getActiveHand());
+							               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, player.getActiveItemStack(), player.getActiveHand());
+							          });
+								}
 							}
 						}
 					} else if(lvl == 3 && player.getFoodStats().getFoodLevel() > 4)
@@ -66,6 +80,13 @@ public class Flight
 							{
 								exhaustion = 0;
 								player.addExhaustion(1.0f);
+								if(!player.isCreative())
+								{
+									boots.damageItem(2, player, (p_213833_1_) -> {
+							               p_213833_1_.sendBreakAnimation(player.getActiveHand());
+							               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, player.getActiveItemStack(), player.getActiveHand());
+							          });
+								}
 							}
 						}
 					} else if(lvl > 3 && player.getFoodStats().getFoodLevel() > 4)
@@ -78,6 +99,13 @@ public class Flight
 							{
 								exhaustion = 0;
 								player.addExhaustion(1.0f);
+								if(!player.isCreative())
+								{
+									boots.damageItem(2, player, (p_213833_1_) -> {
+							               p_213833_1_.sendBreakAnimation(player.getActiveHand());
+							               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, player.getActiveItemStack(), player.getActiveHand());
+							          });
+								}
 							}
 						}
 					} else
