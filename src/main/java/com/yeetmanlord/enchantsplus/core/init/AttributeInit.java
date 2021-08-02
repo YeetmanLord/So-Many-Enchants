@@ -13,4 +13,5 @@ public class AttributeInit
 	public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.ATTRIBUTES, Main.MOD_ID);
 	
 	public static final RegistryObject<Attribute> ATTACK_DISTANCE = ATTRIBUTES.register("player.attack_distance", () -> new RangedAttribute("attribute.name.player.attack_distance", 3.0D, 3.0D, 1024.0D).setShouldWatch(true));
+	
 }

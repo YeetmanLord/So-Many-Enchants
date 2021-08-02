@@ -44,7 +44,7 @@ public class Flight
 								player.addExhaustion(1.0f);
 								if(!player.isCreative())
 								{
-									boots.damageItem(2, player, (p_213833_1_) -> {
+									boots.damageItem(1, player, (p_213833_1_) -> {
 							               p_213833_1_.sendBreakAnimation(player.getActiveHand());
 							               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, player.getActiveItemStack(), player.getActiveHand());
 							          });
@@ -63,7 +63,7 @@ public class Flight
 								player.addExhaustion(1.0f);
 								if(!player.isCreative())
 								{
-									boots.damageItem(2, player, (p_213833_1_) -> {
+									boots.damageItem(1, player, (p_213833_1_) -> {
 							               p_213833_1_.sendBreakAnimation(player.getActiveHand());
 							               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, player.getActiveItemStack(), player.getActiveHand());
 							          });
@@ -76,13 +76,13 @@ public class Flight
 						if(player.abilities.isFlying)
 						{
 							exhaustion = exhaustion + 1;
-							if(exhaustion >= 1)
+							if(exhaustion >= 1000)
 							{
 								exhaustion = 0;
 								player.addExhaustion(1.0f);
 								if(!player.isCreative())
 								{
-									boots.damageItem(2, player, (p_213833_1_) -> {
+									boots.damageItem(1, player, (p_213833_1_) -> {
 							               p_213833_1_.sendBreakAnimation(player.getActiveHand());
 							               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, player.getActiveItemStack(), player.getActiveHand());
 							          });
@@ -101,7 +101,7 @@ public class Flight
 								player.addExhaustion(1.0f);
 								if(!player.isCreative())
 								{
-									boots.damageItem(2, player, (p_213833_1_) -> {
+									boots.damageItem(1, player, (p_213833_1_) -> {
 							               p_213833_1_.sendBreakAnimation(player.getActiveHand());
 							               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, player.getActiveItemStack(), player.getActiveHand());
 							          });

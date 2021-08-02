@@ -3,6 +3,10 @@
 	"enchantment.enchants_plus.flight": "Flight",
 	"enchantment.enchants_plus.attack_reach": "Attack Reach",
 	"enchantment.enchants_plus.block_reach": "Block Reach",
+	"enchantment.enchants_plus.freezing_attack": "Frostbite",
+	"enchantment.enchants_plus.replanting": "Replanting",
+	"enchantment.enchants_plus.temper": "Tempered Armor",
+	"enchantment.enchants_plus.reinforcement": "Reinforced Armor",
 	
 	"attribute.name.player.attack_distance": "Attack Reach"
 }

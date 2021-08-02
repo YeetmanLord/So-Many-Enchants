@@ -46,6 +46,6 @@ the game.
 [[dependencies.enchants_plus]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.5,1.17)"
+    versionRange="[1.16.5]"
     ordering="NONE"
     side="BOTH"

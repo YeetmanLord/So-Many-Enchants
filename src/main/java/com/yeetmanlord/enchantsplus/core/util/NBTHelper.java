@@ -28,9 +28,9 @@ public class NBTHelper
 		CompoundNBT displayList = tag.getCompound("display");
 		ListNBT loreList = displayList.getList("Lore", 8);
 		StringNBT extraValNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) (Math.round((extraVal + at.getDefaultValue()) * 10) / 10)) + " " + name + "\"}");
-		if(extraVal + at.getDefaultValue() != (int) Math.round((extraVal + at.getDefaultValue()) * 10) / 10)
+		if(extraVal + at.getDefaultValue() != ((int) Math.round((extraVal + at.getDefaultValue()) * 10) / 10))
 		{
-			extraValNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) (Math.round((extraVal + at.getDefaultValue()) * 10) / 10)) + " " + name + "\"}");
+			extraValNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(extraVal + at.getDefaultValue() + " " + name + "\"}"));
 		} else
 		{
 			 extraValNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((int) (Math.round((extraVal + at.getDefaultValue()) * 10) / 10)) + " " + name + "\"}");
@@ -51,7 +51,7 @@ public class NBTHelper
 		displayList.put("Lore", loreList);
 	}
 	
-	public static void removeCustomAttributeLore(ItemStack stack, double extraVal, double extraAtVal, String name)
+	public static void removeCustomAttributeLore(ItemStack stack, String name)
 	{
 		CompoundNBT tag = stack.getTag();
 		if(tag.contains("display", 10))
@@ -68,8 +68,8 @@ public class NBTHelper
 						lore.remove(x);
 					}
 				}
-			} else return;
-		} else return;
+			}
+		}
 		return;
 	}
 	
@@ -93,17 +93,17 @@ public class NBTHelper
 				StringNBT extra = StringNBT.valueOf("{\"text\": \"§7When in Main Hand\"}");
 				StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
 				StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
-				if(Math.round((attackDamage + 1) * 10) / 10 != (attackDamage + 1))
+				if((Math.round((attackDamage + 1) * 10) / 10) != (attackDamage + 1))
 				{
-					attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
+					attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float)Math.round((attackDamage + 1) * 10)) / 10) + " Attack Damage\"}");
 				} else
 				{
 					attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
 				}
 				
-				if((Math.round(atSpeed + attackSpeed) * 10) / 10 != atSpeed + attackSpeed || stack.getItem() instanceof PickaxeItem)
+				if(((Math.round(atSpeed + attackSpeed) * 10) / 10) != atSpeed + attackSpeed || stack.getItem() instanceof PickaxeItem)
 				{
-					attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
+					attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((atSpeed + attackSpeed) * 10)) / 10) + " Attack Speed\"}");
 				} else
 				{
 					attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
@@ -152,9 +152,9 @@ public class NBTHelper
 			StringNBT extra = StringNBT.valueOf("{\"text\": \"§7When in Main Hand\"}");
 			StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
 			StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
-			if(Math.round((attackDamage + 1) * 10) / 10 != (attackDamage + 1))
+			if((Math.round((attackDamage + 1) * 10) / 10) != (attackDamage + 1))
 			{
-				attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
+				attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((attackDamage + 1) * 10)) / 10) + " Attack Damage\"}");
 			} else
 			{
 				attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
@@ -162,7 +162,7 @@ public class NBTHelper
 			
 			if((Math.round(atSpeed + attackSpeed) * 10) / 10 != atSpeed + attackSpeed || stack.getItem() instanceof PickaxeItem)
 			{
-				attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
+				attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((atSpeed + attackSpeed) * 10)) / 10) + " Attack Speed\"}");
 			} else
 			{
 				attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
@@ -211,11 +211,11 @@ public class NBTHelper
 		StringNBT space = StringNBT.valueOf("{\"text\": \"\"}");
 		StringNBT extra = StringNBT.valueOf("{\"text\": \"§7When in Main Hand\"}");
 		
-		StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
-		StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
-		if(Math.round((attackDamage + 1) * 10) / 10 != (attackDamage + 1))
+		StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((attackDamage + 1) * 10)) / 10) + " Attack Damage\"}");
+		StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((atSpeed + attackSpeed) * 10)) / 10) + " Attack Speed\"}");
+		if((Math.round((attackDamage + 1) * 10) / 10) != (attackDamage + 1))
 		{
-			attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
+			attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((attackDamage + 1) * 10)) / 10) + " Attack Damage\"}");
 		} else
 		{
 			attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
@@ -223,7 +223,7 @@ public class NBTHelper
 		
 		if((Math.round(atSpeed + attackSpeed) * 10) / 10 != atSpeed + attackSpeed || stack.getItem() instanceof PickaxeItem)
 		{
-			attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
+			attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((atSpeed + attackSpeed) * 10)) / 10) + " Attack Speed\"}");
 		} else
 		{
 			attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
@@ -351,6 +351,13 @@ public class NBTHelper
 						Main.LOGGER.info("re");
 						lore.remove(x);
 						StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((player.getBaseAttributeValue(Attributes.ATTACK_SPEED) + attackSpeed) * 10) / 10) + " Attack Speed\"}");
+						if((Math.round(player.getBaseAttributeValue(Attributes.ATTACK_SPEED) + attackSpeed) * 10) / 10 != player.getBaseAttributeValue(Attributes.ATTACK_SPEED) + attackSpeed || stack.getItem() instanceof PickaxeItem)
+						{
+							attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((player.getBaseAttributeValue(Attributes.ATTACK_SPEED) + attackSpeed) * 10)) / 10) + " Attack Speed\"}");
+						} else
+						{
+							attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((player.getBaseAttributeValue(Attributes.ATTACK_SPEED) + attackSpeed) * 10) / 10) + " Attack Speed\"}");
+						}
 						
 						lore.add(x, attackSpeedNBT);
 					}

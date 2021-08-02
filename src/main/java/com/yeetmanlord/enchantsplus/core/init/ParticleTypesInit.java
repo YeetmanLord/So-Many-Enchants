@@ -8,12 +8,11 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class ModParticleTypes 
+public class ParticleTypesInit 
 {
-
 	public static final DeferredRegister<ParticleType<?>> 
 	PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, Main.MOD_ID);
 	
-	public static final RegistryObject<ParticleType<?>> FREEZE_PARTICLE = PARTICLES.register("freeze", () -> new BasicParticleType(false));
+	public static final RegistryObject<BasicParticleType> FREEZE_PARTICLE = PARTICLES.register("freeze", () -> new BasicParticleType(false));
 
 }

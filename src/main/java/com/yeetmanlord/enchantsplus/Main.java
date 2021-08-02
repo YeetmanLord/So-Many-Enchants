@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.yeetmanlord.enchantsplus.core.init.AttributeInit;
 import com.yeetmanlord.enchantsplus.core.init.EnchantmentInit;
+import com.yeetmanlord.enchantsplus.core.init.ParticleTypesInit;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -30,6 +31,7 @@ public class Main
     		modEventBus.addListener(this::setup);
     		
     		modEventBus.addListener(this::doClientStuff);
+    		ParticleTypesInit.PARTICLES.register(modEventBus);
     		EnchantmentInit.ENCHANTMENTS.register(modEventBus);
     		AttributeInit.ATTRIBUTES.register(modEventBus);
     		

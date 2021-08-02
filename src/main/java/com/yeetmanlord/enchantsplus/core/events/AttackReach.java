@@ -29,7 +29,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
 public class AttackReach
 {
-	private static double level = 0;
 	private static boolean enchanted = false;
 	@SubscribeEvent
 	public static void attackReach(final PlayerTickEvent event) 
@@ -63,7 +62,7 @@ public class AttackReach
 								attribute.putDouble("amount", 1024.0D);
 								return;
 							}
-							if(atName.matches("enchants_plus:player.attack_distance") && name.matches("Attack Reach Distance"))
+							if(atName.matches("enchants_plus:player.attack_distance") && name.matches("Mainhand modifier"))
 							{
 								return;
 							} else if(!attributeFound)
@@ -71,7 +70,7 @@ public class AttackReach
 								attributeFound = false;
 							}
 						}
-						itemInHand.addAttributeModifier(AttributeInit.ATTACK_DISTANCE.get(), new AttributeModifier(new UUID(123, 321), "Attack Reach Distance", (double)lvl * 1.5D, Operation.ADDITION), EquipmentSlotType.MAINHAND);
+						itemInHand.addAttributeModifier(AttributeInit.ATTACK_DISTANCE.get(), new AttributeModifier(new UUID(123, 321), "Mainhand modifier", (double)lvl * 1.5D, Operation.ADDITION), EquipmentSlotType.MAINHAND);
 						addModifiers(itemInHand, player, lvl);
 						itemInHand.getTooltip(player, ITooltipFlag.TooltipFlags.ADVANCED);
 						CompoundNBT nbt = itemInHand.getTag();
@@ -100,7 +99,7 @@ public class AttackReach
 					return;
 				}
 				
-				if(atName.matches("enchants_plus:player.attack_distance") && name.matches("Attack Reach Distance"))
+				if(atName.matches("enchants_plus:player.attack_distance") && name.matches("Mainhand modifier"))
 				{
 					if(itemInHand.isEnchanted())
 					{
@@ -120,8 +119,7 @@ public class AttackReach
 									
 								} else if(y >= enchants.size() - 1)
 								{
-									Main.LOGGER.info("joe biden");
-									NBTHelper.removeCustomAttributeLore(player.getHeldItemMainhand(), level * 1.5, player.getBaseAttributeValue(AttributeInit.ATTACK_DISTANCE.get()), "Attack Reach Distance");
+									NBTHelper.removeCustomAttributeLore(player.getHeldItemMainhand(), "Attack Reach Distance");
 									attributes.remove(x);
 									return;
 								}
@@ -135,7 +133,7 @@ public class AttackReach
 					}
 					else
 					{
-						NBTHelper.removeCustomAttributeLore(player.getHeldItemMainhand(), level * 1.5, player.getBaseAttributeValue(AttributeInit.ATTACK_DISTANCE.get()), "Attack Reach Distance");
+						NBTHelper.removeCustomAttributeLore(player.getHeldItemMainhand(), "Attack Reach Distance");
 						attributeFound = false;
 						attributes.remove(x);
 						enchanted = false;
@@ -163,14 +161,14 @@ public class AttackReach
 		Attribute reachDistBase = AttributeInit.ATTACK_DISTANCE.get();
 		if(item instanceof SwordItem)
 		{
-			stack.addAttributeModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", NBTHelper.getAttackDamage(item), Operation.ADDITION), EquipmentSlotType.MAINHAND);
-			stack.addAttributeModifier(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", NBTHelper.getAttackSpeed(item), Operation.ADDITION), EquipmentSlotType.MAINHAND);
+			stack.addAttributeModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Mainhand modifier", NBTHelper.getAttackDamage(item), Operation.ADDITION), EquipmentSlotType.MAINHAND);
+			stack.addAttributeModifier(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Mainhand modifier", NBTHelper.getAttackSpeed(item), Operation.ADDITION), EquipmentSlotType.MAINHAND);
 			NBTHelper.renderCustomAttributeLore(player, reachLvl * 1.5, reachDistBase, "Attack Reach Distance");
 			return;
 		} else if(!(item instanceof HoeItem))
 		{
-			stack.addAttributeModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", NBTHelper.getAttackDamage(item), Operation.ADDITION), EquipmentSlotType.MAINHAND);
-			stack.addAttributeModifier(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", NBTHelper.getAttackSpeed(item), Operation.ADDITION), EquipmentSlotType.MAINHAND);
+			stack.addAttributeModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Mainhand modifier", NBTHelper.getAttackDamage(item), Operation.ADDITION), EquipmentSlotType.MAINHAND);
+			stack.addAttributeModifier(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Mainhand modifier", NBTHelper.getAttackSpeed(item), Operation.ADDITION), EquipmentSlotType.MAINHAND);
 			NBTHelper.renderCustomAttributeLore(player, reachLvl * 1.5, reachDistBase, "Attack Reach Distance");
 		} else if(item instanceof HoeItem)
 		{
