@@ -1,4 +1,4 @@
-package com.yeetmanlord.enchantsplus.common.enchantments;
+package com.yeetmanlord.enchantsplus.common.enchantments.armor;
 
 import com.yeetmanlord.enchantsplus.core.init.EnchantmentInit;
 
@@ -21,25 +21,15 @@ public class ArmorTemperEnchant extends Enchantment
 		return EnchantmentType.ARMOR.canEnchantItem(stack.getItem());
 	}
 	
-	@Override
-	public boolean canVillagerTrade() 
+	public int getMinEnchantability(int enchantmentLevel) 
 	{
-		return true;
-	}
-	
-	@Override
-	public boolean isAllowedOnBooks()
-	{
-		return true;
-	}
-	
-	public int getMinEnchantability(int enchantmentLevel) {
 		return 25;
-	   }
+	}
 
-	   public int getMaxEnchantability(int enchantmentLevel) {
-	      return super.getMinEnchantability(enchantmentLevel) + 100;
-	   }
+	public int getMaxEnchantability(int enchantmentLevel) 
+	{
+		return super.getMinEnchantability(enchantmentLevel) + 100;
+	}
 	   
 	 @Override
 	public int getMaxLevel() 
@@ -47,15 +37,10 @@ public class ArmorTemperEnchant extends Enchantment
 		return 1;
 	}
 	 
-	 @Override
-	public boolean canGenerateInLoot() {
-		return false;
+	@Override
+	protected boolean canApplyTogether(Enchantment ench) 
+	{
+		return super.canApplyTogether(ench) && ench != EnchantmentInit.REINFORCEMENT.get() && ench != EnchantmentInit.HEAVY.get();
 	}
-	 
-	 @Override
-		protected boolean canApplyTogether(Enchantment ench) 
-		{
-			return super.canApplyTogether(ench) && ench != EnchantmentInit.REINFORCEMENT.get();
-		}
 
 }

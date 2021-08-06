@@ -1,4 +1,6 @@
-package com.yeetmanlord.enchantsplus.common.enchantments;
+package com.yeetmanlord.enchantsplus.common.enchantments.weapons;
+
+import com.yeetmanlord.enchantsplus.core.init.EnchantmentInit;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
@@ -58,6 +60,6 @@ public class FreezingEnchant extends Enchantment {
 	 @Override
 	protected boolean canApplyTogether(Enchantment ench) 
 	{
-		return super.canApplyTogether(ench) && ench != Enchantments.SWEEPING;
+		return super.canApplyTogether(ench) && ench != Enchantments.SWEEPING && ench != EnchantmentInit.CRITICAL.get();
 	}
 }

@@ -1,4 +1,4 @@
-package com.yeetmanlord.enchantsplus.common.enchantments;
+package com.yeetmanlord.enchantsplus.common.enchantments.armor;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
@@ -11,7 +11,7 @@ public class FlightEnchantment extends Enchantment
 	{
 		super(rarityIn, EnchantmentType.ARMOR_FEET, slots);
 	}
-	
+	/*
 	@Override
 	public boolean canVillagerTrade()
 	{
@@ -21,10 +21,17 @@ public class FlightEnchantment extends Enchantment
 	@Override
 	public boolean isTreasureEnchantment() 
 	{
-		return true;
+		//return true;
+		return false; //temp
 		
 	}
 	
+	@Override
+	public boolean canApplyAtEnchantingTable(ItemStack stack)
+	{
+		return false;
+	}
+	*/
 	public boolean canApplyTogether(Enchantment ench)
 	{
 	      return super.canApplyTogether(ench) && ench != Enchantments.SOUL_SPEED;
@@ -32,12 +39,12 @@ public class FlightEnchantment extends Enchantment
 	
 	public int getMinEnchantability(int enchantmentLevel) 
 	{
-		return 15 + (enchantmentLevel - 1) * 9;
+		return enchantmentLevel * 10;
 	}
-	
+
 	public int getMaxEnchantability(int enchantmentLevel) 
 	{
-		return super.getMinEnchantability(enchantmentLevel) + 50;
+		return this.getMinEnchantability(enchantmentLevel) + 15;
 	}
 	
 	@Override
@@ -45,7 +52,7 @@ public class FlightEnchantment extends Enchantment
 	{
 		return 3;
 	}
-	
+	/*
 	@Override
 	public boolean canGenerateInLoot() 
 	{
@@ -56,5 +63,5 @@ public class FlightEnchantment extends Enchantment
 	public boolean isAllowedOnBooks()
 	{
 		return true;
-	}
+	} */
 }

@@ -1,4 +1,4 @@
-package com.yeetmanlord.enchantsplus.common.enchantments;
+package com.yeetmanlord.enchantsplus.common.enchantments.tools;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;

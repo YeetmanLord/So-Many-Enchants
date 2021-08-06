@@ -12,9 +12,9 @@ license="All rights reserved"
 
 modId="enchants_plus" #mandatory
 
-version="0.0.1" #mandatory
+version="0.0.2" #mandatory
 
-displayName="Enchantments +" #mandatory
+displayName="Enchantments+" #mandatory
 
 
 logoFile="icon.png" #optional
@@ -27,7 +27,6 @@ authors="YeetManLord" #optional
 description='''
 Adds a wide variety of new enchantments to 
 the game.
-
 '''
 
 [[dependencies.enchants_plus]] #optional

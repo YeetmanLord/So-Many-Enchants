@@ -7,6 +7,10 @@
 	"enchantment.enchants_plus.replanting": "Replanting",
 	"enchantment.enchants_plus.temper": "Tempered Armor",
 	"enchantment.enchants_plus.reinforcement": "Reinforced Armor",
+	"enchantment.enchants_plus.critical": "Critical Hit",
+	"enchantment.enchants_plus.heavy": "Heavy Armor",
+	"enchantment.enchants_plus.cat_vision": "Cat Vision",
+	"enchantment.enchants_plus.double_break": "Double Break",
 	
 	"attribute.name.player.attack_distance": "Attack Reach"
 }

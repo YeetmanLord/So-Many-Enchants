@@ -3,6 +3,7 @@ package com.yeetmanlord.enchantsplus.core.util;
 import com.yeetmanlord.enchantsplus.core.init.EnchantmentInit;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -18,20 +19,44 @@ public class ModEnchantmentHelper
 	      return getMaxEnchantmentLevel(EnchantmentInit.FREEZING.get(), player);
 	}
 	
+	public static int getSharpnessLevel(LivingEntity player) {
+	      return getMaxEnchantmentLevel(Enchantments.SHARPNESS, player);
+	}
+	
 	public static int getReplantEnchant(LivingEntity player)
 	{
 		return getMaxEnchantmentLevel(EnchantmentInit.REPLANTING.get(), player);
 	}
 	
 	
-	public static int getReinforcementValue(LivingEntity player, int armorSlot)
+	public static int getReinforcementLevel(LivingEntity player, int armorSlot)
 	{
 		return getMaxEnchantmentLevelArmor(EnchantmentInit.REINFORCEMENT.get(), player, armorSlot);
 	}
 	
-	public static int getTemperValue(LivingEntity player, int armorSlot)
+	public static int getTemperLevel(LivingEntity player, int armorSlot)
 	{
 		return getMaxEnchantmentLevelArmor(EnchantmentInit.TEMPER.get(), player, armorSlot);
+	}
+	
+	public static int getHeavyArmorLevel(LivingEntity player, int armorSlot)
+	{
+		return getMaxEnchantmentLevelArmor(EnchantmentInit.HEAVY.get(), player, armorSlot);
+	}
+	
+	public static int getCriticalLevel(LivingEntity player)
+	{
+		return getMaxEnchantmentLevel(EnchantmentInit.CRITICAL.get(), player);
+	}
+	
+	public static int getDoubleBreakLevel(LivingEntity player)
+	{
+		return getMaxEnchantmentLevel(EnchantmentInit.DOUBLE_BREAK.get(), player);
+	}
+	
+	public static boolean hasCatVision(LivingEntity player)
+	{
+		return getMaxEnchantmentLevelArmor(EnchantmentInit.CAT_VISION.get(), player, 3) > 0;
 	}
 	
 	public static int getMaxEnchantmentLevel(Enchantment enchantmentIn, LivingEntity entityIn) 

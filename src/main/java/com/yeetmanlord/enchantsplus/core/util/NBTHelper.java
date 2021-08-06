@@ -85,20 +85,21 @@ public class NBTHelper
 				ListNBT loreList = displayList.getList("Lore", 8);
 				
 				double attackDamage = NBTHelper.getAttackDamage(stack.getItem());
+				double sharpnessDamage = NBTHelper.getSharpnessDamage(player);
 				double attackSpeed = NBTHelper.getAttackSpeed(stack.getItem());
 				
 				double atSpeed = player.getBaseAttributeValue(Attributes.ATTACK_SPEED);
 				
 				StringNBT space = StringNBT.valueOf("{\"text\": \"\"}");
 				StringNBT extra = StringNBT.valueOf("{\"text\": \"§7When in Main Hand\"}");
-				StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
+				StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((attackDamage + 1 + sharpnessDamage) * 10) / 10) + " Attack Damage\"}");
 				StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
-				if((Math.round((attackDamage + 1) * 10) / 10) != (attackDamage + 1))
+				if((Math.round((attackDamage + 1 + sharpnessDamage) * 10) / 10) != (attackDamage + 1 + sharpnessDamage))
 				{
-					attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float)Math.round((attackDamage + 1) * 10)) / 10) + " Attack Damage\"}");
+					attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float)Math.round((attackDamage + 1 + sharpnessDamage) * 10)) / 10) + " Attack Damage\"}");
 				} else
 				{
-					attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
+					attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((attackDamage + 1 + sharpnessDamage) * 10) / 10) + " Attack Damage\"}");
 				}
 				
 				if(((Math.round(atSpeed + attackSpeed) * 10) / 10) != atSpeed + attackSpeed || stack.getItem() instanceof PickaxeItem)
@@ -144,20 +145,21 @@ public class NBTHelper
 			ListNBT loreList = displayList.getList("Lore", 8);
 			
 			double attackDamage = NBTHelper.getAttackDamage(stack.getItem());
+			double sharpnessDamage = NBTHelper.getSharpnessDamage(player);
 			double attackSpeed = NBTHelper.getAttackSpeed(stack.getItem());
 			
 			double atSpeed = player.getBaseAttributeValue(Attributes.ATTACK_SPEED);
 			
 			StringNBT space = StringNBT.valueOf("{\"text\": \"\"}");
 			StringNBT extra = StringNBT.valueOf("{\"text\": \"§7When in Main Hand\"}");
-			StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
+			StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((attackDamage + 1 + sharpnessDamage) * 10) / 10) + " Attack Damage\"}");
 			StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf((float) Math.round((atSpeed + attackSpeed) * 10) / 10) + " Attack Speed\"}");
-			if((Math.round((attackDamage + 1) * 10) / 10) != (attackDamage + 1))
+			if((Math.round((attackDamage + 1 + sharpnessDamage) * 10) / 10) != (attackDamage + 1 + sharpnessDamage))
 			{
-				attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((attackDamage + 1) * 10)) / 10) + " Attack Damage\"}");
+				attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((attackDamage + 1 + sharpnessDamage) * 10)) / 10) + " Attack Damage\"}");
 			} else
 			{
-				attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
+				attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((attackDamage + 1 + sharpnessDamage) * 10) / 10) + " Attack Damage\"}");
 			}
 			
 			if((Math.round(atSpeed + attackSpeed) * 10) / 10 != atSpeed + attackSpeed || stack.getItem() instanceof PickaxeItem)
@@ -204,6 +206,7 @@ public class NBTHelper
 		ListNBT loreList = new ListNBT();
 		
 		double attackDamage = NBTHelper.getAttackDamage(stack.getItem());
+		double sharpnessDamage = NBTHelper.getSharpnessDamage(player);
 		double attackSpeed = NBTHelper.getAttackSpeed(stack.getItem());
 		
 		double atSpeed = player.getBaseAttributeValue(Attributes.ATTACK_SPEED);
@@ -211,14 +214,14 @@ public class NBTHelper
 		StringNBT space = StringNBT.valueOf("{\"text\": \"\"}");
 		StringNBT extra = StringNBT.valueOf("{\"text\": \"§7When in Main Hand\"}");
 		
-		StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((attackDamage + 1) * 10)) / 10) + " Attack Damage\"}");
+		StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((attackDamage + 1 + sharpnessDamage) * 10)) / 10) + " Attack Damage\"}");
 		StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((atSpeed + attackSpeed) * 10)) / 10) + " Attack Speed\"}");
-		if((Math.round((attackDamage + 1) * 10) / 10) != (attackDamage + 1))
+		if((Math.round((attackDamage + 1 + sharpnessDamage) * 10) / 10) != (attackDamage + 1 + sharpnessDamage))
 		{
-			attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((attackDamage + 1) * 10)) / 10) + " Attack Damage\"}");
+			attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(((float) Math.round((attackDamage + 1 + sharpnessDamage) * 10)) / 10) + " Attack Damage\"}");
 		} else
 		{
-			attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((attackDamage + 1) * 10) / 10) + " Attack Damage\"}");
+			attackDamageNBT = StringNBT.valueOf("{\"text\": \" §2" + String.valueOf(Math.round((attackDamage + 1 + sharpnessDamage) * 10) / 10) + " Attack Damage\"}");
 		}
 		
 		if((Math.round(atSpeed + attackSpeed) * 10) / 10 != atSpeed + attackSpeed || stack.getItem() instanceof PickaxeItem)
@@ -327,6 +330,16 @@ public class NBTHelper
 		{
 			return attackSpeed;
 		}
+	}
+	
+	public static double getSharpnessDamage(PlayerEntity player)
+	{
+		int sharpnessLvl = ModEnchantmentHelper.getSharpnessLevel(player);
+		if(sharpnessLvl > 0) 
+		{
+			return (sharpnessLvl * 0.5D) + 0.5D;
+		}
+		return 0;
 	}
 	
 	public static void updateAttributeLore(ItemStack stack, PlayerEntity player)

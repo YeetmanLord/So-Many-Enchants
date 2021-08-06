@@ -1,4 +1,4 @@
-package com.yeetmanlord.enchantsplus.common.enchantments;
+package com.yeetmanlord.enchantsplus.common.enchantments.tools;
 
 import com.yeetmanlord.enchantsplus.core.init.EnchantmentInit;
 

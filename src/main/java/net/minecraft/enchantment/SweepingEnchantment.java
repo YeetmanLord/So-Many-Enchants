@@ -1,5 +1,7 @@
 package net.minecraft.enchantment;
 
+import com.yeetmanlord.enchantsplus.core.init.EnchantmentInit;
+
 import net.minecraft.inventory.EquipmentSlotType;
 
 public class SweepingEnchantment extends Enchantment {
@@ -27,5 +29,11 @@ public class SweepingEnchantment extends Enchantment {
 
    public static float getSweepingDamageRatio(int level) {
       return 1.0F - 1.0F / (float)(level + 1);
+   }
+   
+   @Override
+	protected boolean canApplyTogether(Enchantment ench) 
+   {
+	   return super.canApplyTogether(ench) && ench != EnchantmentInit.CRITICAL.get() && ench != EnchantmentInit.FREEZING.get();
    }
 }
