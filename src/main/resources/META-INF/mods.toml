@@ -5,17 +5,20 @@ modLoader="javafml" #mandatory
 loaderVersion="[36,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
 
 
-license="All rights reserved"
+license="MIT License"
 
 
 [[mods]] #mandatory
 
 modId="enchants_plus" #mandatory
 
-version="0.0.2" #mandatory
+version="§4§lAlpha §6${file.jarVersion}" #mandatory
 
 displayName="Enchantments+" #mandatory
 
+issueTrackerURL="https://github.com/YeetmanLord/Enchants-/issues"
+
+displayURL="https://www.curseforge.com/minecraft/mc-mods/enchants"
 
 logoFile="icon.png" #optional
 
