@@ -149,11 +149,11 @@ public class ProtectionEnchantment extends Enchantment
 	   }
 
 	   public static enum Type {
-	      ALL("all", 1, 6),
-	      FIRE("fire", 10, 5),
-	      FALL("fall", 5, 6),
-	      EXPLOSION("explosion", 5, 4),
-	      PROJECTILE("projectile", 3, 5);
+		   ALL("all", 1, 11),
+		   FIRE("fire", 10, 8),
+		   FALL("fall", 5, 6),
+		   EXPLOSION("explosion", 5, 8),
+		   PROJECTILE("projectile", 3, 6);
 
 	      @SuppressWarnings("unused")
 		private final String typeName;

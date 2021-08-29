@@ -1,0 +1,19 @@
+{
+	"enchantment.so_many_enchants.health_boost": "Health Boost",
+	"enchantment.so_many_enchants.flight": "Flight",
+	"enchantment.so_many_enchants.attack_reach": "Attack Reach",
+	"enchantment.so_many_enchants.block_reach": "Block Reach",
+	"enchantment.so_many_enchants.freezing_attack": "Frostbite",
+	"enchantment.so_many_enchants.replanting": "Replanting",
+	"enchantment.so_many_enchants.temper": "Tempered Armor",
+	"enchantment.so_many_enchants.reinforcement": "Reinforced Armor",
+	"enchantment.so_many_enchants.critical": "Critical Hit",
+	"enchantment.so_many_enchants.heavy": "Heavy Armor",
+	"enchantment.so_many_enchants.cat_vision": "Cat Vision",
+	"enchantment.so_many_enchants.double_break": "Double Break",
+	"enchantment.so_many_enchants.step_assist": "Step Assist",
+	
+	"entity.minecraft.villager.so_many_enchants.enchanter": "Enchanter",
+	
+	"attribute.name.player.attack_distance": "Attack Reach"
+}

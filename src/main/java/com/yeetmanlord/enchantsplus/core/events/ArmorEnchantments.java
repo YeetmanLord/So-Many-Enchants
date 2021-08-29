@@ -1278,4 +1278,18 @@ public class ArmorEnchantments {
 		}
 		return 0;
 	}
+	
+	@SubscribeEvent
+	public static void stepAssist(final PlayerTickEvent event)
+	{
+		PlayerEntity player = event.player;
+		if(ModEnchantmentHelper.getStepAssistLevel(player) > 0)
+		{
+			player.stepHeight = 0.6F + ModEnchantmentHelper.getStepAssistLevel(player) * 0.5F;
+		}
+		else
+		{
+			player.stepHeight = 0.6F;
+		}
+	}
 }

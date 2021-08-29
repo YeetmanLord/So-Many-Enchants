@@ -11,11 +11,11 @@ public class QuickChargeEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 12 + (enchantmentLevel - 1) * 7;
+      return 12 + (enchantmentLevel - 1) * 20;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return getMinEnchantability(enchantmentLevel) + 20;
+      return getMinEnchantability(enchantmentLevel) + 50;
    }
 
    /**

@@ -14,8 +14,8 @@ public class DamageEnchantment extends Enchantment {
    @SuppressWarnings("unused")
 private static final String[] DAMAGE_NAMES = new String[]{"all", "undead", "arthropods"};
    private static final int[] MIN_COST = new int[]{1, 5, 5};
-   private static final int[] LEVEL_COST = new int[]{6, 4, 4};
-   private static final int[] LEVEL_COST_SPAN = new int[]{10, 10, 10};
+   private static final int[] LEVEL_COST = new int[]{11, 8, 8};
+   private static final int[] LEVEL_COST_SPAN = new int[]{20, 20, 20};
    public final int damageType;
 
    public DamageEnchantment(Enchantment.Rarity rarityIn, int damageTypeIn, EquipmentSlotType... slots) {

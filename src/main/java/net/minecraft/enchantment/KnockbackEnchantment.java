@@ -11,11 +11,11 @@ public class KnockbackEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 5 + 5 * (enchantmentLevel - 1);
+      return 5 + 20 * (enchantmentLevel - 1);
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return super.getMinEnchantability(enchantmentLevel) + 30;
+      return super.getMinEnchantability(enchantmentLevel) + 50;
    }
 
    /**

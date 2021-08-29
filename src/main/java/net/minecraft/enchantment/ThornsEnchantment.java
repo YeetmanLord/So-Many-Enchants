@@ -18,18 +18,13 @@ public class ThornsEnchantment extends Enchantment {
    /**
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
-   public int getMinEnchantability(int enchantmentLevel) {
-      if(enchantmentLevel <= 5)
-      {
-    	  return 5 + 8 * (enchantmentLevel - 1);
-      } else
-      {
-    	  return 10 + 12 * (enchantmentLevel - 1);
-      }
+   public int getMinEnchantability(int enchantmentLevel) 
+   {
+	   return 10 + 20 * (enchantmentLevel - 1);
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return super.getMinEnchantability(enchantmentLevel) + 20;
+	   return super.getMinEnchantability(enchantmentLevel) + 50;
    }
 
    /**

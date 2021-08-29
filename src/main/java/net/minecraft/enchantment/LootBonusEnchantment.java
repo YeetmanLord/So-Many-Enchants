@@ -11,11 +11,11 @@ public class LootBonusEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 15 + (enchantmentLevel - 1) * 5;
+      return 15 + (enchantmentLevel - 1) * 9;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return super.getMinEnchantability(enchantmentLevel) + 30;
+      return super.getMinEnchantability(enchantmentLevel) + 50;
    }
 
    /**

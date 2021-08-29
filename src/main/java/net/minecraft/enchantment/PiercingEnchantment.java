@@ -11,11 +11,11 @@ public class PiercingEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 1 + (enchantmentLevel - 1) * 7;
+      return 1 + (enchantmentLevel - 1) * 10;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return getMinEnchantability(enchantmentLevel) + 20;
+      return getMinEnchantability(enchantmentLevel) + 50;
    }
 
    /**

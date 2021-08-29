@@ -19,8 +19,7 @@ public class AttackReach extends Enchantment
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack) 
 	{
-		//return false;
-		return EnchantmentType.WEAPON.canEnchantItem(stack.getItem()); //temp
+		return false;
 	}
 	
 	@Override
@@ -53,10 +52,10 @@ public class AttackReach extends Enchantment
 		return super.canApplyTogether(ench) && ench != EnchantmentInit.BLOCK_REACH.get();
 	}
 	
-	/*
+	
 	@Override
 	public boolean canVillagerTrade() 
 	{
 		return false;
-	} */
+	} 
 }

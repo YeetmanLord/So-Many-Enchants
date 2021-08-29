@@ -19,6 +19,10 @@ public class ModEnchantmentHelper
 	      return getMaxEnchantmentLevel(EnchantmentInit.FREEZING.get(), player);
 	}
 	
+	public static int getStepAssistLevel(LivingEntity player) {
+		return getMaxEnchantmentLevelArmor(EnchantmentInit.STEP_ASSIST.get(), player, 0);
+	}
+	
 	public static int getSharpnessLevel(LivingEntity player) {
 	      return getMaxEnchantmentLevel(Enchantments.SHARPNESS, player);
 	}

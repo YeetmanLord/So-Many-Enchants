@@ -10,13 +10,13 @@ license="MIT License"
 
 [[mods]] #mandatory
 
-modId="enchants_plus" #mandatory
+modId="so_many_enchants" #mandatory
 
-version="§4§lAlpha §6${file.jarVersion}" #mandatory
+version="§4§lBETA §6${file.jarVersion}" #mandatory
 
-displayName="Enchantments+" #mandatory
+displayName="So Many Enchants!!!" #mandatory
 
-issueTrackerURL="https://github.com/YeetmanLord/Enchants-/issues"
+issueTrackerURL="https://github.com/YeetmanLord/So-Many-Enchants/issues"
 
 displayURL="https://www.curseforge.com/minecraft/mc-mods/enchants"
 
@@ -32,7 +32,7 @@ Adds a wide variety of new enchantments to
 the game.
 '''
 
-[[dependencies.enchants_plus]] #optional
+[[dependencies.so_many_enchants]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
@@ -45,7 +45,7 @@ the game.
     side="BOTH"
 
 
-[[dependencies.enchants_plus]]
+[[dependencies.so_many_enchants]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.16.5]"

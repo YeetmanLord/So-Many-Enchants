@@ -14,11 +14,11 @@ public class EfficiencyEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 1 + 7 * (enchantmentLevel - 1);
+      return 1 + 10 * (enchantmentLevel - 1);
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return super.getMinEnchantability(enchantmentLevel) + 30;
+      return super.getMinEnchantability(enchantmentLevel) + 50;
    }
 
    /**

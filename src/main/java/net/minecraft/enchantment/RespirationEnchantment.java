@@ -11,11 +11,11 @@ public class RespirationEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 8 * enchantmentLevel;
+      return 10 * enchantmentLevel;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return this.getMinEnchantability(enchantmentLevel) + 25;
+      return this.getMinEnchantability(enchantmentLevel) + 30;
    }
 
    /**

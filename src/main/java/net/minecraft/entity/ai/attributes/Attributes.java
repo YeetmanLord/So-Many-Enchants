@@ -19,6 +19,6 @@ public class Attributes
    public static final Attribute HORSE_JUMP_STRENGTH = register("horse.jump_strength", (new RangedAttribute("attribute.name.horse.jump_strength", 0.7D, 0.0D, 2.0D)).setShouldWatch(true));
 
    private static Attribute register(String id, Attribute attribute) {
-      return Registry.register(Registry.ATTRIBUTE, id, attribute);
+	   return Registry.register(Registry.ATTRIBUTE, id, attribute);
    }
 }

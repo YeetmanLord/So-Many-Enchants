@@ -20,8 +20,7 @@ public class CriticalEnchant extends Enchantment
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack) 
 	{
-		//return false;
-		return EnchantmentType.WEAPON.canEnchantItem(stack.getItem()); //temp
+		return false;
 	}
 	
 	@Override
@@ -54,10 +53,10 @@ public class CriticalEnchant extends Enchantment
 		return super.canApplyTogether(ench) && ench != Enchantments.SWEEPING && ench != EnchantmentInit.FREEZING.get();
 	}
 	
-	/*
+	
 	@Override
 	public boolean canVillagerTrade() 
 	{
 		return false;
-	} */
+	}
 }

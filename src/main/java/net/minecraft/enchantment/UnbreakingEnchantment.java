@@ -14,11 +14,11 @@ public class UnbreakingEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 5 + (enchantmentLevel - 1) * 5;
+      return 5 + (enchantmentLevel - 1) * 8;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return super.getMinEnchantability(enchantmentLevel) + 30;
+      return super.getMinEnchantability(enchantmentLevel) + 50;
    }
 
    /**

@@ -11,11 +11,11 @@ public class PunchEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 12 + (enchantmentLevel - 1) * 10;
+      return 12 + (enchantmentLevel - 1) * 20;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return this.getMinEnchantability(enchantmentLevel) + 15;
+      return this.getMinEnchantability(enchantmentLevel) + 25;
    }
 
    /**

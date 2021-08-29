@@ -11,11 +11,11 @@ public class LoyaltyEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 5 + enchantmentLevel * 5;
+      return 5 + enchantmentLevel * 7;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return 75;
+      return 50;
    }
 
    /**

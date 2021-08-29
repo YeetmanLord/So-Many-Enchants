@@ -4,6 +4,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 
 public class FlightEnchantment extends Enchantment 
 {
@@ -11,7 +12,7 @@ public class FlightEnchantment extends Enchantment
 	{
 		super(rarityIn, EnchantmentType.ARMOR_FEET, slots);
 	}
-	/*
+	
 	@Override
 	public boolean canVillagerTrade()
 	{
@@ -21,8 +22,7 @@ public class FlightEnchantment extends Enchantment
 	@Override
 	public boolean isTreasureEnchantment() 
 	{
-		//return true;
-		return false; //temp
+		return true;
 		
 	}
 	
@@ -31,7 +31,8 @@ public class FlightEnchantment extends Enchantment
 	{
 		return false;
 	}
-	*/
+	
+	
 	public boolean canApplyTogether(Enchantment ench)
 	{
 	      return super.canApplyTogether(ench) && ench != Enchantments.SOUL_SPEED;
@@ -52,7 +53,7 @@ public class FlightEnchantment extends Enchantment
 	{
 		return 3;
 	}
-	/*
+	
 	@Override
 	public boolean canGenerateInLoot() 
 	{
@@ -63,5 +64,5 @@ public class FlightEnchantment extends Enchantment
 	public boolean isAllowedOnBooks()
 	{
 		return true;
-	} */
+	}
 }

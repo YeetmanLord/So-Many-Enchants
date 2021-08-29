@@ -7,6 +7,7 @@ import com.yeetmanlord.enchantsplus.common.enchantments.armor.ArmorTemperEnchant
 import com.yeetmanlord.enchantsplus.common.enchantments.armor.CatVisionEnchant;
 import com.yeetmanlord.enchantsplus.common.enchantments.armor.FlightEnchantment;
 import com.yeetmanlord.enchantsplus.common.enchantments.armor.HealthBoostEnchant;
+import com.yeetmanlord.enchantsplus.common.enchantments.armor.StepAssistEnchant;
 import com.yeetmanlord.enchantsplus.common.enchantments.tools.BlockReach;
 import com.yeetmanlord.enchantsplus.common.enchantments.tools.DoubleBreak;
 import com.yeetmanlord.enchantsplus.common.enchantments.tools.ReplantingEnchant;
@@ -48,13 +49,15 @@ public class EnchantmentInit
 	
 	public static final RegistryObject<Enchantment> FREEZING = ENCHANTMENTS.register("freezing_attack", () -> new FreezingEnchant(Rarity.UNCOMMON, EquipmentSlotType.MAINHAND));
 	
+	public static final RegistryObject<Enchantment> STEP_ASSIST = ENCHANTMENTS.register("step_assist", () -> new StepAssistEnchant(Rarity.RARE, ARMOR_SLOTS));
+	
 	
 	
 	
 	
 	//Cannot enchant at table
 	public static final RegistryObject<Enchantment> FLIGHT =
-			ENCHANTMENTS.register("flight", () -> new FlightEnchantment(Rarity.VERY_RARE, ARMOR_SLOTS));
+			ENCHANTMENTS.register("flight", () -> new FlightEnchantment(Rarity.VERY_RARE, EquipmentSlotType.FEET));
 	
 	
 	public static final RegistryObject<Enchantment> ATTACK_REACH = ENCHANTMENTS.register("attack_reach", () -> new AttackReach(Rarity.VERY_RARE, EquipmentSlotType.MAINHAND));

@@ -13,7 +13,7 @@ public class SoulSpeedEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return enchantmentLevel * 8;
+      return enchantmentLevel * 10;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
