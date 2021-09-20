@@ -13,6 +13,10 @@
 	"enchantment.so_many_enchants.double_break": "Double Break",
 	"enchantment.so_many_enchants.step_assist": "Step Assist",
 	
+	"container.enchanted_hopper": "Enchanted Item Hopper",
+	
+	"block.so_many_enchants.enchanted_hopper": "Enchanted Hopper",
+	
 	"entity.minecraft.villager.so_many_enchants.enchanter": "Enchanter",
 	
 	"attribute.name.player.attack_distance": "Attack Reach"

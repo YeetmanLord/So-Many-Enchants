@@ -1,6 +1,6 @@
 package net.minecraft.enchantment;
 
-import com.yeetmanlord.enchantsplus.core.init.EnchantmentInit;
+import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.inventory.EquipmentSlotType;
 
