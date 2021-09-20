@@ -1,7 +1,7 @@
 # So Many Enchants
 Adds many enchants to minecraft
 
-This is licensed under a MIT license
+This is licensed under an MIT license
 
 
 
