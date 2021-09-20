@@ -19,5 +19,11 @@
 	
 	"entity.minecraft.villager.so_many_enchants.enchanter": "Enchanter",
 	
-	"attribute.name.player.attack_distance": "Attack Reach"
+	"attribute.name.player.attack_distance": "Attack Reach",
+	
+	"so_many_enchants.screen.config": "So Many Enchants | Settings",
+	"so_many_enchants.screen.config.damage_enchantments": "So Many Enchants | Damage Enchantmets",
+	"so_many_enchants.screen.config.section.damage_enchantments": "Damage Enchantmets",
+	"so_many_enchants.screen.config.max_level": "Max Level",
+	"so_many_enchants.screen.config.enabled.vanilla.many": "Changes to these enchantments"
 }

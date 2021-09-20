@@ -51,8 +51,8 @@ public class ConfigMenu extends Screen {
                 (this.width - BUTTON_WIDTH) / 2,
                 this.height - (BUTTON_HEIGHT * 25) - 10,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
-                new TranslationTextComponent("so_many_enchants.screen.config.damage_enchantments"),
-                button -> this.minecraft.displayGuiScreen(new SharpnessMenu())
+                new TranslationTextComponent("so_many_enchants.screen.config.section.damage_enchantments"),
+                button -> this.minecraft.displayGuiScreen(new DamageEnchantsMenu())
         ));
         
         this.children.add(this.optionsRowList);

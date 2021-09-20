@@ -18,7 +18,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.loading.FMLPaths;
 
-public class SharpnessMenu extends Screen {
+public class DamageEnchantsMenu extends Screen {
 	
 	/* Thank You So Much
 	 Leo3148 For Giving A Tutorial For
@@ -46,7 +46,7 @@ public class SharpnessMenu extends Screen {
     
     private OptionsRowList optionsRowList;
     
-	public SharpnessMenu()
+	public DamageEnchantsMenu()
 	{
 		super(new TranslationTextComponent("so_many_enchants.screen.config.damage_enchantments"));
 	}
@@ -76,7 +76,7 @@ public class SharpnessMenu extends Screen {
                 + ": "
                 + (int) option.get(gs))));
         
-        this.optionsRowList.addOption(new BooleanOption("so_many_enchants.screen.config.enabled", get -> (boolean) configType.isEnabled.get(), (set, val) -> configType.isEnabled.set(val.booleanValue())));
+        this.optionsRowList.addOption(new BooleanOption("so_many_enchants.screen.config.enabled.vanilla.many", get -> (boolean) configType.isEnabled.get(), (set, val) -> configType.isEnabled.set(val.booleanValue())));
         
         this.children.add(this.optionsRowList);
         
