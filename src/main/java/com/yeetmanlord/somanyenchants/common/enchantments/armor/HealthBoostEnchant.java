@@ -1,5 +1,7 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.armor;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -42,7 +44,11 @@ public class HealthBoostEnchant extends Enchantment
 	 @Override
 	public int getMaxLevel() 
 	{
-		 return 5;
+		 if(Config.h.isEnabled.get() == false)
+		 {
+			 return 0;
+		 }
+		 else return Config.h.maxLevel.get();
 	}
 	 
 	 @Override

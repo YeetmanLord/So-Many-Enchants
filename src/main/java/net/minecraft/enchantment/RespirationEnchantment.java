@@ -1,5 +1,7 @@
 package net.minecraft.enchantment;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.inventory.EquipmentSlotType;
 
 public class RespirationEnchantment extends Enchantment {
@@ -11,17 +13,21 @@ public class RespirationEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 10 * enchantmentLevel;
+      return 8 * enchantmentLevel;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return this.getMinEnchantability(enchantmentLevel) + 30;
+      return this.getMinEnchantability(enchantmentLevel) + 25;
    }
 
    /**
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-      return 5;
+	   if(Config.r.isEnabled.get() == false)
+		 {
+			 return 3;
+		 }
+		 else return Config.r.maxLevel.get();
    }
 }

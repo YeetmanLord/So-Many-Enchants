@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.core.config.Config;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -51,13 +52,19 @@ public class VillagerProfessionInit {
 	
 	public static void fillTradeData()
 	{
-		VillagerTrades.ITrade[] level1 = new VillagerTrades.ITrade[] {new EnchantedBookForEmeraldsTrade(5), new ExperienceBottleTrade(), new VillagerTrades.ItemsForEmeraldsTrade(Items.BOOKSHELF, new Random().nextInt(3) + 9, 3, 5), new EnchantedBookForEmeraldsTrade(5)};
-		VillagerTrades.ITrade[] level2 = new VillagerTrades.ITrade[] {new EnchantedBookForEmeraldsTrade(10), new EnchantedBookForEmeraldsTrade(10), new VillagerTrades.ItemsForEmeraldsTrade(Blocks.ENCHANTING_TABLE, 16, 1, 1, 10)};
-		VillagerTrades.ITrade[] level3 = new VillagerTrades.ITrade[] {new EnchantedBookForEmeraldsTrade(15), new EnchantedBookForEmeraldsTrade(15)};
-		VillagerTrades.ITrade[] level4 = new VillagerTrades.ITrade[] {new EnchantedBookForEmeraldsTrade(20), new EnchantedBookForEmeraldsTrade(20)};
-		VillagerTrades.ITrade[] level5 = new VillagerTrades.ITrade[] {new EnchantedBookForEmeraldsTrade(25), new EnchantedBookForEmeraldsTrade(25), new VillagerTrades.ItemsForEmeraldsAndItemsTrade(Items.GOLD_BLOCK, new Random().nextInt(8) + 16, Items.ENCHANTED_GOLDEN_APPLE, 64, 1, 24)};
+		if(Config.v.isEnabled.get() == false)
+		{
+			return;
+		} else 
+		{
+			VillagerTrades.ITrade[] level1 = new VillagerTrades.ITrade[] {new EnchantedBookForEmeraldsTrade(5), new ExperienceBottleTrade(), new VillagerTrades.ItemsForEmeraldsTrade(Items.BOOKSHELF, new Random().nextInt(3) + 9, 3, 5), new EnchantedBookForEmeraldsTrade(5)};
+			VillagerTrades.ITrade[] level2 = new VillagerTrades.ITrade[] {new EnchantedBookForEmeraldsTrade(10), new EnchantedBookForEmeraldsTrade(10), new VillagerTrades.ItemsForEmeraldsTrade(Blocks.ENCHANTING_TABLE, 16, 1, 1, 10)};
+			VillagerTrades.ITrade[] level3 = new VillagerTrades.ITrade[] {new EnchantedBookForEmeraldsTrade(15), new EnchantedBookForEmeraldsTrade(15)};
+			VillagerTrades.ITrade[] level4 = new VillagerTrades.ITrade[] {new EnchantedBookForEmeraldsTrade(20), new EnchantedBookForEmeraldsTrade(20)};
+			VillagerTrades.ITrade[] level5 = new VillagerTrades.ITrade[] {new EnchantedBookForEmeraldsTrade(25), new EnchantedBookForEmeraldsTrade(25), new VillagerTrades.ItemsForEmeraldsAndItemsTrade(Items.GOLD_BLOCK, new Random().nextInt(8) + 16, Items.ENCHANTED_GOLDEN_APPLE, 64, 1, 24)};
 		
-		VillagerTrades.VILLAGER_DEFAULT_TRADES.put(VillagerProfessionInit.ENCHANTER.get(), gatAsIntMap(ImmutableMap.of(1, level1, 2, level2, 3, level3, 4, level4, 5, level5)));
+			VillagerTrades.VILLAGER_DEFAULT_TRADES.put(VillagerProfessionInit.ENCHANTER.get(), gatAsIntMap(ImmutableMap.of(1, level1, 2, level2, 3, level3, 4, level4, 5, level5)));
+		}
 	}
 	
 	public static class EnchantedBookForEmeraldsTrade implements VillagerTrades.ITrade {
@@ -74,6 +81,9 @@ public class VillagerProfessionInit {
 	         if(enchantment.getMaxLevel() > 5) 
 	         {
 	        	 i = MathHelper.nextInt(rand, enchantment.getMinLevel() + 5, enchantment.getMaxLevel());
+	         } else if(enchantment.getMaxLevel() == 0)
+	         {
+	        	 return getOffer(trader, rand);
 	         }
 	         ItemStack itemstack = EnchantedBookItem.getEnchantedItemStack(new EnchantmentData(enchantment, i));
 	         int j = 0;

@@ -3,6 +3,7 @@ package com.yeetmanlord.somanyenchants.core.events;
 import java.util.UUID;
 
 import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.util.AttributeHelper;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
@@ -33,10 +34,10 @@ public class ArmorEnchantments {
 		if(living instanceof PlayerEntity)
 		{
 			PlayerEntity player = (PlayerEntity)living;
-			ItemStack head = player.inventory.armorItemInSlot(3);
-			ItemStack chest = player.inventory.armorItemInSlot(2);
-			ItemStack legs = player.inventory.armorItemInSlot(1);
-			ItemStack feet = player.inventory.armorItemInSlot(0);
+			ItemStack head = player.inventory.armorInventory.get(3);
+			ItemStack chest = player.inventory.armorInventory.get(2);
+			ItemStack legs = player.inventory.armorInventory.get(1);
+			ItemStack feet = player.inventory.armorInventory.get(0);
 			UUID HeadSlot = new UUID(1234, 4321);
 			UUID ChestSlot = new UUID(4321, 1234);
 			UUID LegSlot = new UUID(-1234, -4321);
@@ -224,10 +225,10 @@ public class ArmorEnchantments {
 		if(living instanceof PlayerEntity)
 		{
 			PlayerEntity player = (PlayerEntity)living;
-			ItemStack head = player.inventory.armorItemInSlot(3);
-			ItemStack chest = player.inventory.armorItemInSlot(2);
-			ItemStack legs = player.inventory.armorItemInSlot(1);
-			ItemStack feet = player.inventory.armorItemInSlot(0);
+			ItemStack head = player.inventory.armorInventory.get(3);
+			ItemStack chest = player.inventory.armorInventory.get(2);
+			ItemStack legs = player.inventory.armorInventory.get(1);
+			ItemStack feet = player.inventory.armorInventory.get(0);
 			UUID HeadSlot = new UUID(1234, 4321);
 			UUID ChestSlot = new UUID(4321, 1234);
 			UUID LegSlot = new UUID(-1234, -4321);
@@ -412,8 +413,8 @@ public class ArmorEnchantments {
 	public static void flyingEnchant(final PlayerTickEvent event)
 	{
 		PlayerEntity player = event.player;
-		ItemStack boots = player.inventory.armorItemInSlot(0);
-		if(!boots.isEmpty())
+		ItemStack boots = player.inventory.armorInventory.get(0);
+		if(!boots.isEmpty() && Config.fl.isEnabled.get() == true)
 		{
 			ListNBT enchantments = boots.getEnchantmentTagList();
 			for(int x = 0; x < enchantments.size(); x ++)
@@ -422,7 +423,7 @@ public class ArmorEnchantments {
 				String id = tag.getString("id");
 				short lvl = tag.getShort("lvl");
 				
-				if(id.matches("enchants_plus:flight") && !player.abilities.isCreativeMode && !player.isSpectator())
+				if(id.matches("so_many_enchants:flight") && !player.abilities.isCreativeMode && !player.isSpectator())
 				{
 					if(lvl <= 1 && player.getFoodStats().getFoodLevel() > 4) 
 					{
@@ -506,12 +507,12 @@ public class ArmorEnchantments {
 						player.abilities.allowFlying = false;
 						player.abilities.isFlying = false;
 					}
-				}  else if(id.matches("enchants_plus:flight") && (player.abilities.isCreativeMode || player.isSpectator()))
+				}  else if(id.matches("so_many_enchants:flight") && (player.abilities.isCreativeMode || player.isSpectator()))
 				{
 					player.abilities.allowFlying = true;
 				}
 			}
-		} else if(!player.abilities.isCreativeMode && !player.isSpectator())
+		} else if(!player.abilities.isCreativeMode && !player.isSpectator() && Config.fl.isEnabled.get() == true)
 		{
 			player.abilities.allowFlying = false;
 			player.abilities.isFlying = false;
@@ -528,19 +529,19 @@ public class ArmorEnchantments {
 		LivingEntity entity = event.getEntityLiving();
 			if (entity instanceof PlayerEntity) {
 				PlayerEntity player = (PlayerEntity) entity;
-				if(player.inventory.armorItemInSlot(3).isEnchanted())
+				if(player.inventory.armorInventory.get(3).isEnchanted())
 				{
 					EquipmentSlotType slot = EquipmentSlotType.HEAD;
-					ListNBT tagList = player.inventory.armorItemInSlot(3).getEnchantmentTagList();
+					ListNBT tagList = player.inventory.armorInventory.get(3).getEnchantmentTagList();
 					for(int x = 0; x < tagList.size(); x++)
 					{
 							CompoundNBT idTag = tagList.getCompound(x);
-							boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorItemInSlot(3)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorItemInSlot(3))
-									|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorItemInSlot(3));
-							if(idTag.getString("id").matches("enchants_plus:health_boost") && !enchant)
+							boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorInventory.get(3)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorInventory.get(3))
+									|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorInventory.get(3));
+							if(idTag.getString("id").matches("so_many_enchants:health_boost") && !enchant)
 								{
 									short enchantLvl = idTag.getShort("lvl");
-									ItemStack armor = player.inventory.armorItemInSlot(3);
+									ItemStack armor = player.inventory.armorInventory.get(3);
 									 if(enchantLvl >= 1 && enchantLvl <= 16) {
 										 armor.addAttributeModifier(Attributes.MAX_HEALTH, new AttributeModifier(new UUID(2^64, 2^64), "Armor Modifier", 1d * enchantLvl, AttributeModifier.Operation.ADDITION), slot);
 										 if(armor.getItem() instanceof ArmorItem && !flag)
@@ -588,7 +589,7 @@ public class ArmorEnchantments {
 								}
 							} else if(enchant == false)
 							{
-									ListNBT atList = player.inventory.armorItemInSlot(3).getTag().getList("AttributeModifiers", 10);
+									ListNBT atList = player.inventory.armorInventory.get(3).getTag().getList("AttributeModifiers", 10);
 									for(int z = 0; z < atList.size(); z++)
 									{
 											CompoundNBT atTag = atList.getCompound(z);
@@ -596,7 +597,7 @@ public class ArmorEnchantments {
 											String s = atTag.getString("AttributeName");
 											if(s.matches("minecraft.generic.max_health") && n.matches("Armor Modifier"))
 											{
-												ItemStack armor = player.inventory.armorItemInSlot(3);
+												ItemStack armor = player.inventory.armorInventory.get(3);
 												atList.remove(z);
 												if(armor.getItem() instanceof ArmorItem && !flag)
 												{
@@ -623,21 +624,21 @@ public class ArmorEnchantments {
 							}	else {
 
 								EquipmentSlotType slot = EquipmentSlotType.HEAD;
-								if(player.inventory.armorItemInSlot(3).hasTag()) {
+								if(player.inventory.armorInventory.get(3).hasTag()) {
 								
-									if(player.inventory.armorItemInSlot(3).getTag().contains("AttributeModifiers", 10))
+									if(player.inventory.armorInventory.get(3).getTag().contains("AttributeModifiers", 10))
 									{
-										ListNBT tagList = player.inventory.armorItemInSlot(3).getTag().getList("AttributeModifiers", 10);
+										ListNBT tagList = player.inventory.armorInventory.get(3).getTag().getList("AttributeModifiers", 10);
 										for(int x = 0; x < tagList.size(); x++)
 										{
 											CompoundNBT idTag = tagList.getCompound(x);
-											boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorItemInSlot(3)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorItemInSlot(3))
-													|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorItemInSlot(3));
+											boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorInventory.get(3)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorInventory.get(3))
+													|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorInventory.get(3));
 											String n = idTag.getString("Name");
 											String s = idTag.getString("AttributeName");
 											if(s.matches("minecraft.generic.max_health") && n.matches("Armor Modifier"))
 											{
-												ItemStack armor = player.inventory.armorItemInSlot(3);
+												ItemStack armor = player.inventory.armorInventory.get(3);
 												tagList.remove(x);
 												if(armor.getItem() instanceof ArmorItem && !flag)
 												{
@@ -667,19 +668,19 @@ public class ArmorEnchantments {
 					
 				}
 			
-				if(player.inventory.armorItemInSlot(2).isEnchanted())
+				if(player.inventory.armorInventory.get(2).isEnchanted())
 				{
 					EquipmentSlotType slot = EquipmentSlotType.CHEST;
-					ListNBT tagList = player.inventory.armorItemInSlot(2).getEnchantmentTagList();
+					ListNBT tagList = player.inventory.armorInventory.get(2).getEnchantmentTagList();
 					for(int x = 0; x < tagList.size(); x++)
 					{
 							CompoundNBT idTag = tagList.getCompound(x);
-							boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorItemInSlot(2)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorItemInSlot(2))
-									|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorItemInSlot(2));
-							if(idTag.getString("id").matches("enchants_plus:health_boost") && !enchantChest)
+							boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorInventory.get(2)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorInventory.get(2))
+									|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorInventory.get(2));
+							if(idTag.getString("id").matches("so_many_enchants:health_boost") && !enchantChest)
 								{
 									short enchantLvl = idTag.getShort("lvl");
-									ItemStack armor = player.inventory.armorItemInSlot(2);
+									ItemStack armor = player.inventory.armorInventory.get(2);
 									 if(enchantLvl >= 1 && enchantLvl <= 16) {
 										 armor.addAttributeModifier(Attributes.MAX_HEALTH, new AttributeModifier(new UUID(1, 2^64), "Armor Modifier", 1d * enchantLvl, AttributeModifier.Operation.ADDITION), slot);
 										 if(armor.getItem() instanceof ArmorItem && !flag)
@@ -727,7 +728,7 @@ public class ArmorEnchantments {
 								}
 							} else if(enchantChest == false)
 							{
-									ListNBT atList = player.inventory.armorItemInSlot(2).getTag().getList("AttributeModifiers", 10);
+									ListNBT atList = player.inventory.armorInventory.get(2).getTag().getList("AttributeModifiers", 10);
 									for(int z = 0; z < atList.size(); z++)
 									{
 											CompoundNBT atTag = atList.getCompound(z);
@@ -735,7 +736,7 @@ public class ArmorEnchantments {
 											String s = idTag.getString("AttributeName");
 											if(s.matches("minecraft.generic.max_health") && n.matches("Armor Modifier"))
 											{
-												ItemStack armor = player.inventory.armorItemInSlot(2);
+												ItemStack armor = player.inventory.armorInventory.get(2);
 												atList.remove(z);
 												if(armor.getItem() instanceof ArmorItem && !flag)
 												{
@@ -760,22 +761,22 @@ public class ArmorEnchantments {
 									}
 								}
 							} else {
-								if(player.inventory.armorItemInSlot(2).hasTag()) {
+								if(player.inventory.armorInventory.get(2).hasTag()) {
 								
-									if(player.inventory.armorItemInSlot(2).getTag().contains("AttributeModifiers", 10))
+									if(player.inventory.armorInventory.get(2).getTag().contains("AttributeModifiers", 10))
 									{
-										ListNBT tagList = player.inventory.armorItemInSlot(2).getTag().getList("AttributeModifiers", 10);
+										ListNBT tagList = player.inventory.armorInventory.get(2).getTag().getList("AttributeModifiers", 10);
 										for(int x = 0; x < tagList.size(); x++)
 										{
 											EquipmentSlotType slot = EquipmentSlotType.CHEST;
 											CompoundNBT idTag = tagList.getCompound(x);
-											boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorItemInSlot(1)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorItemInSlot(1))
-													|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorItemInSlot(1));
+											boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorInventory.get(1)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorInventory.get(1))
+													|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorInventory.get(1));
 											String n = idTag.getString("Name");
 											String s = idTag.getString("AttributeName");
 											if(s.matches("minecraft.generic.max_health") && n.matches("Armor Modifier"))
 											{
-												ItemStack armor = player.inventory.armorItemInSlot(2);
+												ItemStack armor = player.inventory.armorInventory.get(2);
 												tagList.remove(x);
 												if(armor.getItem() instanceof ArmorItem && !flag)
 												{
@@ -803,19 +804,19 @@ public class ArmorEnchantments {
 								}
 								enchantChest = false;
 				}
-				if(player.inventory.armorItemInSlot(1).isEnchanted())
+				if(player.inventory.armorInventory.get(1).isEnchanted())
 				{
 					EquipmentSlotType slot = EquipmentSlotType.LEGS;
-					ListNBT tagList = player.inventory.armorItemInSlot(1).getEnchantmentTagList();
+					ListNBT tagList = player.inventory.armorInventory.get(1).getEnchantmentTagList();
 					for(int x = 0; x < tagList.size(); x++)
 					{
 							CompoundNBT idTag = tagList.getCompound(x);
-							boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorItemInSlot(1)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorItemInSlot(1))
-									|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorItemInSlot(1));
-								if(idTag.getString("id").matches("enchants_plus:health_boost") && !enchantLegs)
+							boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorInventory.get(1)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorInventory.get(1))
+									|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorInventory.get(1));
+								if(idTag.getString("id").matches("so_many_enchants:health_boost") && !enchantLegs)
 								{
 									short enchantLvl = idTag.getShort("lvl");
-									ItemStack armor = player.inventory.armorItemInSlot(1);
+									ItemStack armor = player.inventory.armorInventory.get(1);
 									 if(enchantLvl >= 1 && enchantLvl <= 16) {
 										 armor.addAttributeModifier(Attributes.MAX_HEALTH, new AttributeModifier(new UUID(2, 2^64), "Armor Modifier", 1d * enchantLvl, AttributeModifier.Operation.ADDITION), slot);
 										 if(armor.getItem() instanceof ArmorItem && !flag)
@@ -863,7 +864,7 @@ public class ArmorEnchantments {
 								}
 							} else if(enchantLegs == false)
 							{
-									ListNBT atList = player.inventory.armorItemInSlot(1).getTag().getList("AttributeModifiers", 10);
+									ListNBT atList = player.inventory.armorInventory.get(1).getTag().getList("AttributeModifiers", 10);
 									for(int z = 0; z < atList.size(); z++)
 									{
 											CompoundNBT atTag = atList.getCompound(z);
@@ -871,7 +872,7 @@ public class ArmorEnchantments {
 											String s = idTag.getString("AttributeName");
 											if(s.matches("minecraft.generic.max_health") && n.matches("Armor Modifier"))
 											{
-												ItemStack armor = player.inventory.armorItemInSlot(1);
+												ItemStack armor = player.inventory.armorInventory.get(1);
 												atList.remove(z);
 												if(armor.getItem() instanceof ArmorItem && !flag)
 												{
@@ -898,21 +899,21 @@ public class ArmorEnchantments {
 							} else 
 							{
 								EquipmentSlotType slot = EquipmentSlotType.LEGS;
-								if(player.inventory.armorItemInSlot(1).hasTag()) {
+								if(player.inventory.armorInventory.get(1).hasTag()) {
 								
-									if(player.inventory.armorItemInSlot(1).getTag().contains("AttributeModifiers", 10))
+									if(player.inventory.armorInventory.get(1).getTag().contains("AttributeModifiers", 10))
 									{
-										ListNBT tagList = player.inventory.armorItemInSlot(0).getTag().getList("AttributeModifiers", 10);
+										ListNBT tagList = player.inventory.armorInventory.get(0).getTag().getList("AttributeModifiers", 10);
 										for(int x = 0; x < tagList.size(); x++)
 										{
-											boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorItemInSlot(1)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorItemInSlot(1))
-													|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorItemInSlot(1));
+											boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorInventory.get(1)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorInventory.get(1))
+													|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorInventory.get(1));
 											CompoundNBT idTag = tagList.getCompound(x);
 											String n = idTag.getString("Name");
 											String s = idTag.getString("AttributeName");
 											if(s.matches("minecraft.generic.max_health") && n.matches("Armor Modifier"))
 											{
-												ItemStack armor = player.inventory.armorItemInSlot(1);
+												ItemStack armor = player.inventory.armorInventory.get(1);
 												tagList.remove(x);
 												if(armor.getItem() instanceof ArmorItem && !flag)
 												{
@@ -940,20 +941,20 @@ public class ArmorEnchantments {
 								}
 								enchantLegs = false;
 							}
-							if(player.inventory.armorItemInSlot(0).isEnchanted())
+							if(player.inventory.armorInventory.get(0).isEnchanted())
 							{
 								EquipmentSlotType slot = EquipmentSlotType.FEET;
-								ListNBT tagList = player.inventory.armorItemInSlot(0).getEnchantmentTagList();
+								ListNBT tagList = player.inventory.armorInventory.get(0).getEnchantmentTagList();
 								for(int x = 0; x < tagList.size(); x++)
 								{
 										CompoundNBT idTag = tagList.getCompound(x);
-										boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorItemInSlot(0)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorItemInSlot(0))
-												|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorItemInSlot(0));
+										boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorInventory.get(0)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorInventory.get(0))
+												|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorInventory.get(0));
 											
-											if(idTag.getString("id").matches("enchants_plus:health_boost") && !enchantFeet)
+											if(idTag.getString("id").matches("so_many_enchants:health_boost") && !enchantFeet)
 											{
 												short enchantLvl = idTag.getShort("lvl");
-												ItemStack armor = player.inventory.armorItemInSlot(0);
+												ItemStack armor = player.inventory.armorInventory.get(0);
 												 if(enchantLvl >= 1 && enchantLvl <= 16) {
 													 
 													 armor.addAttributeModifier(Attributes.MAX_HEALTH, new AttributeModifier(new UUID(-(2^61), 2^64), "Armor Modifier", 1d * enchantLvl, AttributeModifier.Operation.ADDITION), slot);
@@ -1002,13 +1003,13 @@ public class ArmorEnchantments {
 											}
 										} else if(enchantFeet == false)
 										{
-												ListNBT atList = player.inventory.armorItemInSlot(0).getTag().getList("AttributeModifiers", 10);
+												ListNBT atList = player.inventory.armorInventory.get(0).getTag().getList("AttributeModifiers", 10);
 												for(int z = 0; z < atList.size(); z++)
 												{
 														CompoundNBT atTag = atList.getCompound(z);
 														if(atTag.getString("AttributeName").matches("minecraft:generic.max_health"))
 														{
-															ItemStack armor = player.inventory.armorItemInSlot(0);
+															ItemStack armor = player.inventory.armorInventory.get(0);
 															atList.remove(z);
 															 if(armor.getItem() instanceof ArmorItem && !flag)
 																{
@@ -1035,20 +1036,20 @@ public class ArmorEnchantments {
 										} else 
 										{
 											EquipmentSlotType slot = EquipmentSlotType.FEET;
-											if(player.inventory.armorItemInSlot(0).hasTag()) {
-												if(player.inventory.armorItemInSlot(0).getTag().getList("AttributeModifiers", 10) != null)
+											if(player.inventory.armorInventory.get(0).hasTag()) {
+												if(player.inventory.armorInventory.get(0).getTag().getList("AttributeModifiers", 10) != null)
 												{
-													ListNBT tagList = player.inventory.armorItemInSlot(0).getTag().getList("AttributeModifiers", 10);
+													ListNBT tagList = player.inventory.armorInventory.get(0).getTag().getList("AttributeModifiers", 10);
 													for(int x = 0; x < tagList.size(); x++)
 													{
 														CompoundNBT idTag = tagList.getCompound(x);
-														boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorItemInSlot(0)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorItemInSlot(0))
-																|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorItemInSlot(0));
+														boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", player.inventory.armorInventory.get(0)) || AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", player.inventory.armorInventory.get(0))
+																|| AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", player.inventory.armorInventory.get(0));
 														String n = idTag.getString("Name");
 														String s = idTag.getString("AttributeName");
 														if(s.matches("minecraft.generic.max_health") && n.matches("Armor Modifier"))
 														{
-															ItemStack armor = player.inventory.armorItemInSlot(0);
+															ItemStack armor = player.inventory.armorInventory.get(0);
 															tagList.remove(x);
 															 if(armor.getItem() instanceof ArmorItem && !flag)
 																{
@@ -1097,10 +1098,10 @@ public class ArmorEnchantments {
 		if(living instanceof PlayerEntity)
 		{
 			PlayerEntity player = (PlayerEntity)living;
-			ItemStack head = player.inventory.armorItemInSlot(3);
-			ItemStack chest = player.inventory.armorItemInSlot(2);
-			ItemStack legs = player.inventory.armorItemInSlot(1);
-			ItemStack feet = player.inventory.armorItemInSlot(0);
+			ItemStack head = player.inventory.armorInventory.get(3);
+			ItemStack chest = player.inventory.armorInventory.get(2);
+			ItemStack legs = player.inventory.armorInventory.get(1);
+			ItemStack feet = player.inventory.armorInventory.get(0);
 			UUID HeadSlot = new UUID(1234, 4321);
 			UUID ChestSlot = new UUID(4321, 1234);
 			UUID LegSlot = new UUID(-1234, -4321);

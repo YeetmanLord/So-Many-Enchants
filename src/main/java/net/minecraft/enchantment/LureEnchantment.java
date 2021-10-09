@@ -1,5 +1,7 @@
 package net.minecraft.enchantment;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.inventory.EquipmentSlotType;
 
 public class LureEnchantment extends Enchantment {
@@ -11,17 +13,21 @@ public class LureEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 15 + (enchantmentLevel - 1) * 9;
+      return 15 + (enchantmentLevel - 1) * 6;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return super.getMinEnchantability(enchantmentLevel) + 50;
+      return super.getMinEnchantability(enchantmentLevel) + 30;
    }
 
    /**
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-      return 5;
+	   if(Config.l.isEnabled.get() == false)
+		 {
+			 return 3;
+		 }
+		 else return Config.l.maxLevel.get();
    }
 }

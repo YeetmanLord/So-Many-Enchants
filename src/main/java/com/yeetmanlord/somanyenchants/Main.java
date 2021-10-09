@@ -1,8 +1,12 @@
 package com.yeetmanlord.somanyenchants;
 
+import java.io.File;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.WritingMode;
 import com.yeetmanlord.somanyenchants.client.ConfigMenu;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.AttributeInit;
@@ -12,9 +16,12 @@ import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 import com.yeetmanlord.somanyenchants.core.init.ParticleTypesInit;
 import com.yeetmanlord.somanyenchants.core.init.TileEntityTypeInit;
 import com.yeetmanlord.somanyenchants.core.init.VillagerProfessionInit;
+import com.yeetmanlord.somanyenchants.core.network.NetworkHandler;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -33,13 +40,12 @@ public class Main
     public static final String MOD_ID = "so_many_enchants";
     public static Main instance;
     
+    
     public Main() {
     	Config.hasInit = false;
     	instance=this;
     	
     	final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-    	
-    		
     	
     		modEventBus.addListener(this::setup);
     		
@@ -55,13 +61,31 @@ public class Main
     		AttributeInit.ATTRIBUTES.register(modEventBus);
     		
     		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.config);
+    		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SyncedServerConfig);
     		
-    		Config.loadConfig(Config.config, FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString());
     		
-    		ModLoadingContext.get().registerExtensionPoint(
-                    ExtensionPoint.CONFIGGUIFACTORY,
-                    () -> (mc, screen) -> new ConfigMenu()
-            );
+    		
+    		
+    		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> new DistExecutor.SafeRunnable() {
+
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 5789682203789505777L;
+
+				@Override
+				public void run() {
+					final CommentedFileConfig file = CommentedFileConfig.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString())).sync().autosave().writingMode(WritingMode.REPLACE).build();
+			    	file.load();
+			    	Config.SyncedServerConfig.setConfig(file);
+					
+					ModLoadingContext.get().registerExtensionPoint(
+			                ExtensionPoint.CONFIGGUIFACTORY,
+			                () -> (mc, screen) -> new ConfigMenu()
+			        );
+					
+				}
+			});
     	
     	MinecraftForge.EVENT_BUS.register(this);
     }
@@ -71,14 +95,13 @@ public class Main
     {
         LOGGER.info("PREINIT IS FUNCTIONING");
 		VillagerProfessionInit.fillTradeData();
+		NetworkHandler.init();
         
 //        event.enqueueWork(() ->
 //        {
 //        	
 //        });
     }
-    
-    
 
     private void doClientStuff(final FMLClientSetupEvent event) 
     {

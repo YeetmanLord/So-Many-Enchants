@@ -4,15 +4,14 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class EnchantmentConfig 
 {
-	public static ForgeConfigSpec.IntValue maxLevel;
-	public static ForgeConfigSpec.BooleanValue isEnabled;
+	public ForgeConfigSpec.IntValue maxLevel;
+	public ForgeConfigSpec.BooleanValue isEnabled;
 	
-	public static int absoluteMax;
-	
-	@SuppressWarnings("static-access")
+	public int absoluteMax;
+
 	public EnchantmentConfig(int absMax)
 	{
-		this.absoluteMax = absMax;
+		absoluteMax = absMax;
 		init(Config.builder);
 	}
 	

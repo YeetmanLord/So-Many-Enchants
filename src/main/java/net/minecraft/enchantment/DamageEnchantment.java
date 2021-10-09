@@ -1,5 +1,7 @@
 package net.minecraft.enchantment;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -14,8 +16,8 @@ public class DamageEnchantment extends Enchantment {
    @SuppressWarnings("unused")
 private static final String[] DAMAGE_NAMES = new String[]{"all", "undead", "arthropods"};
    private static final int[] MIN_COST = new int[]{1, 5, 5};
-   private static final int[] LEVEL_COST = new int[]{11, 8, 8};
-   private static final int[] LEVEL_COST_SPAN = new int[]{20, 20, 20};
+   private static final int[] LEVEL_COST = new int[]{6, 4, 4};
+   private static final int[] LEVEL_COST_SPAN = new int[]{10, 10, 10};
    public final int damageType;
 
    public DamageEnchantment(Enchantment.Rarity rarityIn, int damageTypeIn, EquipmentSlotType... slots) {
@@ -38,7 +40,11 @@ private static final String[] DAMAGE_NAMES = new String[]{"all", "undead", "arth
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-      return 10;
+	   if(Config.de.isEnabled.get() == false)
+		 {
+			 return 5;
+		 }
+		 else return Config.de.maxLevel.get();
    }
 
    /**

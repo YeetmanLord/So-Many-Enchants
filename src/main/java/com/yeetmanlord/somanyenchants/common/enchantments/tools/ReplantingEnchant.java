@@ -1,5 +1,7 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.tools;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -38,6 +40,10 @@ public class ReplantingEnchant extends Enchantment
 	   
 	public int getMaxLevel() 
 	{
-		return 1;
+		if(Config.re.isEnabled.get() == false)
+		 {
+			 return 0;
+		 }
+		 else return Config.re.maxLevel.get();
 	}
 }

@@ -1,10 +1,5 @@
 package com.yeetmanlord.somanyenchants.core.config;
 
-import java.io.File;
-
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
-import com.yeetmanlord.somanyenchants.Main;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.AttackReach;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.BlockReach;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.CatVision;
@@ -49,6 +44,9 @@ public class Config
 	
 	public static final ForgeConfigSpec config;
 	
+	public static final ForgeConfigSpec SyncedServerConfig;
+	
+	
 	public static DamageEnchantments de;
 	public static Efficiency e;
 	public static FireAspect fa;
@@ -68,6 +66,7 @@ public class Config
 	public static Sweeping s;
 	public static Thorns t;
 	public static Unbreaking u;
+	public static VillagerConfig v;
 	
 	public static AttackReach a;
 	public static BlockReach b;
@@ -86,11 +85,9 @@ public class Config
 	
 	static
 	{
-		Main.LOGGER.info("joe");
 		
 		if(!hasInit)
 		{
-			Main.LOGGER.info("bonk");
 			de = new DamageEnchantments(10);
 			e = new Efficiency(10);
 			fa = new FireAspect(10);
@@ -110,6 +107,7 @@ public class Config
 			s = new Sweeping(10);
 			t = new Thorns(10);
 			u = new Unbreaking(10);
+			v = new VillagerConfig();
 			
 			a = new AttackReach(3);
 			b = new BlockReach(5);
@@ -127,21 +125,12 @@ public class Config
 			te = new Temper(10);
 			Config.hasInit = true;
 		}
+
 		
 		config = builder.build();
-	}
-	
-	
-	
-	
-	public static void loadConfig(ForgeConfigSpec config, String path)
-	{
-		Main.LOGGER.info("Loading config. " + path);
-		final CommentedFileConfig file = CommentedFileConfig.builder(new File(path)).sync().autosave().writingMode(WritingMode.REPLACE).build();
-		Main.LOGGER.info("Built config");
-		file.load();
-		Main.LOGGER.info(file);
-		config.setConfig(file);
+		
+		SyncedServerConfig = builder.build();
+		
 	}
 	
 }

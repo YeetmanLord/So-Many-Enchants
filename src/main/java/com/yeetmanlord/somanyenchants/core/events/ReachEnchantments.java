@@ -4,17 +4,17 @@ import java.util.UUID;
 
 import com.yeetmanlord.somanyenchants.Main;
 import com.yeetmanlord.somanyenchants.core.init.AttributeInit;
+import com.yeetmanlord.somanyenchants.core.network.NetworkHandler;
+import com.yeetmanlord.somanyenchants.core.network.message.AttackPacket;
 import com.yeetmanlord.somanyenchants.core.util.NBTHelper;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.HoeItem;
@@ -28,6 +28,8 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent.ClickInputEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -38,6 +40,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
 public class ReachEnchantments
 {
+	
 	private static boolean enchanted = false;
 	@SubscribeEvent
 	public static void attackReach(final PlayerTickEvent event) 
@@ -57,7 +60,7 @@ public class ReachEnchantments
 				{
 					String id = enchant.getString("id");
 					Short lvl = enchant.getShort("lvl");
-					if(id.matches("enchants_plus:attack_reach") && lvl >= 1)
+					if(id.matches("so_many_enchants:attack_reach") && lvl >= 1)
 					{
 						ListNBT attributes = itemInHand.getTag().getList("AttributeModifiers", 10);
 						for(int y = 0; y < attributes.size(); y++)
@@ -71,7 +74,7 @@ public class ReachEnchantments
 								attribute.putDouble("amount", 1024.0D);
 								return;
 							}
-							if(atName.matches("enchants_plus:player.attack_distance") && name.matches("Mainhand modifier"))
+							if(atName.matches("so_many_enchants:player.attack_distance") && name.matches("Mainhand modifier"))
 							{
 								return;
 							} else if(!attributeFound)
@@ -81,7 +84,6 @@ public class ReachEnchantments
 						}
 						itemInHand.addAttributeModifier(AttributeInit.ATTACK_DISTANCE.get(), new AttributeModifier(new UUID(123, 321), "Mainhand modifier", (double)lvl * 1.5D, Operation.ADDITION), EquipmentSlotType.MAINHAND);
 						addModifiers(itemInHand, player, lvl);
-						itemInHand.getTooltip(player, ITooltipFlag.TooltipFlags.ADVANCED);
 						CompoundNBT nbt = itemInHand.getTag();
 						nbt.putInt("HideFlags", 2);
 						enchanted = true;
@@ -108,7 +110,7 @@ public class ReachEnchantments
 					return;
 				}
 				
-				if(atName.matches("enchants_plus:player.attack_distance") && name.matches("Mainhand modifier"))
+				if(atName.matches("so_many_enchants:player.attack_distance") && name.matches("Mainhand modifier"))
 				{
 					if(itemInHand.isEnchanted())
 					{
@@ -120,7 +122,7 @@ public class ReachEnchantments
 							if(enchant.getInt("lvl") <= Short.MAX_VALUE)
 							{
 								String id = enchant.getString("id");
-								if(id.matches("enchants_plus:attack_reach"))
+								if(id.matches("so_many_enchants:attack_reach"))
 								{
 									return;
 								} else if(y < enchants.size() - 1)
@@ -172,6 +174,7 @@ public class ReachEnchantments
 		{
 			stack.addAttributeModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Mainhand modifier", NBTHelper.getAttackDamage(item), Operation.ADDITION), EquipmentSlotType.MAINHAND);
 			stack.addAttributeModifier(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Mainhand modifier", NBTHelper.getAttackSpeed(item), Operation.ADDITION), EquipmentSlotType.MAINHAND);
+			Main.LOGGER.info("Test");
 			NBTHelper.renderCustomAttributeLore(player, reachLvl * 1.5, reachDistBase, "Attack Reach Distance");
 			return;
 		} else if(!(item instanceof HoeItem))
@@ -214,7 +217,7 @@ public class ReachEnchantments
 				{
 					String id = enchant.getString("id");
 					Short lvl = enchant.getShort("lvl");
-					if(id.matches("enchants_plus:block_reach") && lvl >= 1)
+					if(id.matches("so_many_enchants:block_reach") && lvl >= 1)
 					{
 						ListNBT attributes = itemInHand.getTag().getList("AttributeModifiers", 10);
 						for(int y = 0; y < attributes.size(); y++)
@@ -238,7 +241,6 @@ public class ReachEnchantments
 						}
 						itemInHand.addAttributeModifier(ForgeMod.REACH_DISTANCE.get(), new AttributeModifier(new UUID(321, 123), "", (double)lvl, Operation.ADDITION), EquipmentSlotType.MAINHAND);
 						addModifiersBlock(itemInHand, player, lvl);
-						itemInHand.getTooltip(player, ITooltipFlag.TooltipFlags.ADVANCED);
 						CompoundNBT nbt = itemInHand.getTag();
 						nbt.putInt("HideFlags", 2);
 						enchantedBlock = true;
@@ -277,7 +279,7 @@ public class ReachEnchantments
 							if(enchant.getInt("lvl") <= Short.MAX_VALUE)
 							{
 								String id = enchant.getString("id");
-								if(id.matches("enchants_plus:block_reach"))
+								if(id.matches("so_many_enchants:block_reach"))
 								{
 									return;
 								} else if(y < enchants.size() - 1)
@@ -343,48 +345,46 @@ public class ReachEnchantments
 		} else return;
 	}
 	
-	
+	@SuppressWarnings("unused")
 	@SubscribeEvent
+	@OnlyIn(Dist.CLIENT)
 	public static void extraReach(final ClickInputEvent click)
 	{
 		Minecraft mc = Minecraft.getInstance();
-		PlayerEntity playerE = (PlayerEntity)mc.player;
-		ServerPlayerEntity player = Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUUID(playerE.getUniqueID());
-		if(click.isAttack() && !click.isCanceled())
+		PlayerEntity player = mc.player;
+		if(click.isAttack() && player != null)
 		{
-			//Handles raytracing
-			double reachDist = 4.0D;
-			if(playerE.getAttributeManager().hasAttributeInstance(AttributeInit.ATTACK_DISTANCE.get()))
-			{
-				reachDist = playerE.getAttribute(AttributeInit.ATTACK_DISTANCE.get()).getValue();
-			}
-			Vector3d startVector = playerE.getEyePosition(1.0F);
-			Vector3d lookVector = playerE.getLook(1.0F);
-			Vector3d endVector = startVector.add(lookVector.x * reachDist, lookVector.y * reachDist, lookVector.z * reachDist);	
-			AxisAlignedBB axisalignedbb = playerE.getBoundingBox().expand(lookVector.scale(reachDist)).grow(1.0D, 1.0D, 1.0D);
-			EntityRayTraceResult entityRayTrace = ProjectileHelper.rayTraceEntities(player, startVector, endVector, axisalignedbb, (p_215312_0_) -> {
-	               return !p_215312_0_.isSpectator() && p_215312_0_.canBeCollidedWith();
-	            }, reachDist * reachDist);
-			
-			
-			if(entityRayTrace != null && !player.isSpectator())
-			{
-				//Gets entity
-				Entity tracedEntity = entityRayTrace.getEntity();
-				if(player.getDistanceSq(tracedEntity) > 9.0D && player.getDistanceSq(tracedEntity) <= Math.pow(reachDist, 2.0D))
+				//Handles raytracing
+				double reachDist = 4.0D;
+				if(player.getAttributeManager().hasAttributeInstance(AttributeInit.ATTACK_DISTANCE.get()))
 				{
-					//Attacks the entity
-					player.attackTargetEntityWithCurrentItem(tracedEntity);
+					reachDist = player.getAttribute(AttributeInit.ATTACK_DISTANCE.get()).getValue();
 				}
-			} else if(entityRayTrace == null || player.isSpectator())
-			{
-				
-			} else
-			{
-				Main.LOGGER.error("Ray trace failed. This is not a good thing!!");
-				Main.LOGGER.info(entityRayTrace);
-			}
+				Vector3d startVector = player.getEyePosition(1.0F);
+				Vector3d lookVector = player.getLook(1.0F);
+				Vector3d endVector = startVector.add(lookVector.x * reachDist, lookVector.y * reachDist, lookVector.z * reachDist);	
+				AxisAlignedBB axisalignedbb = player.getBoundingBox().expand(lookVector.scale(reachDist)).grow(1.0D, 1.0D, 1.0D);
+				EntityRayTraceResult entityRayTrace = ProjectileHelper.rayTraceEntities(player, startVector, endVector, axisalignedbb, (p_215312_0_) -> {
+		               return !p_215312_0_.isSpectator() && p_215312_0_.canBeCollidedWith();
+		            }, reachDist * reachDist);
+				if(entityRayTrace != null)
+				{
+					//Gets entity
+					Entity tracedEntity = entityRayTrace.getEntity();
+					if(player.getDistanceSq(tracedEntity) > 9.0D && player.getDistanceSq(tracedEntity) <= Math.pow(reachDist, 2.0D))
+					{
+						NetworkHandler.CHANNEL.sendToServer(new AttackPacket(tracedEntity.getEntityId()));
+					}
+					return;
+				} else if(entityRayTrace == null || player.isSpectator())
+				{
+					
+				} else
+				{
+					Main.LOGGER.error("Ray trace failed. This is not a good thing!!");
+					Main.LOGGER.info(entityRayTrace);
+					return;
+				}
 		}
-		
 	}
 }

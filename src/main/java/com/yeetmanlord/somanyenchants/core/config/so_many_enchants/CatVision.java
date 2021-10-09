@@ -22,11 +22,11 @@ public class CatVision extends EnchantmentConfig
 	{
 		builder.push(name);
 		
-		isEnabled = builder
+		this.isEnabled = builder
 				.comment(" Whether this enchantment is used")
 				.define("isEnabled", true);
 		
-		maxLevel = (IntValue) builder
+		this.maxLevel = (IntValue) builder
 				.comment(" The maximum enchantment level")
 				.defineInRange("maxLevel", max, 1, 1);
 		

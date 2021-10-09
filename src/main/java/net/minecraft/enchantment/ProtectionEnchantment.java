@@ -1,5 +1,7 @@
 package net.minecraft.enchantment;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.DamageSource;
@@ -31,7 +33,11 @@ public class ProtectionEnchantment extends Enchantment
 	    */
 	   @Override
 	   public int getMaxLevel() {
-	      return 10;
+		   if(Config.pr.isEnabled.get() == false)
+			 {
+				 return 4;
+			 }
+			 else return Config.pr.maxLevel.get();
 	   }
 
 	   /**
@@ -149,11 +155,11 @@ public class ProtectionEnchantment extends Enchantment
 	   }
 
 	   public static enum Type {
-		   ALL("all", 1, 11),
-		   FIRE("fire", 10, 8),
-		   FALL("fall", 5, 6),
-		   EXPLOSION("explosion", 5, 8),
-		   PROJECTILE("projectile", 3, 6);
+	      ALL("all", 1, 6),
+	      FIRE("fire", 10, 5),
+	      FALL("fall", 5, 6),
+	      EXPLOSION("explosion", 5, 4),
+	      PROJECTILE("projectile", 3, 5);
 
 	      @SuppressWarnings("unused")
 		private final String typeName;

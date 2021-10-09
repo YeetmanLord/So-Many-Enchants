@@ -1,5 +1,7 @@
 package net.minecraft.enchantment;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.inventory.EquipmentSlotType;
 
 public class RiptideEnchantment extends Enchantment {
@@ -22,7 +24,11 @@ public class RiptideEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-      return 5;
+	   if(Config.ri.isEnabled.get() == false)
+		 {
+			 return 3;
+		 }
+		 else return Config.ri.maxLevel.get();
    }
 
    /**

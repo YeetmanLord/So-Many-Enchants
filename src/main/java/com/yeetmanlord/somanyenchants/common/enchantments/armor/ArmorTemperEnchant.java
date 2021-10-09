@@ -1,5 +1,6 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.armor;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.enchantment.Enchantment;
@@ -34,7 +35,11 @@ public class ArmorTemperEnchant extends Enchantment
 	 @Override
 	public int getMaxLevel() 
 	{
-		 return 1;
+		 if(Config.te.isEnabled.get() == false)
+		 {
+			 return 0;
+		 }
+		 else return Config.te.maxLevel.get();
 	}
 	 
 	@Override

@@ -1,5 +1,6 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.armor;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.enchantment.Enchantment;
@@ -33,7 +34,11 @@ public class ArmorHeavyEnchant extends Enchantment
 	 @Override
 	public int getMaxLevel() 
 	{
-		 return 1;
+		 if(Config.he.isEnabled.get() == false)
+		 {
+			 return 0;
+		 }
+		 else return Config.he.maxLevel.get();
 	}
 	 
 	@Override

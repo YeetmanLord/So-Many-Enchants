@@ -1,5 +1,6 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.tools;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.enchantment.Enchantment;
@@ -29,7 +30,11 @@ public class BlockReachEnchant extends Enchantment
 	@Override
 	public int getMaxLevel() 
 	{
-		return 3;
+		if(Config.b.isEnabled.get() == false)
+		 {
+			 return 0;
+		 }
+		 else return Config.b.maxLevel.get();
 	}
 	
 	@Override

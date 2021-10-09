@@ -1,5 +1,6 @@
 package net.minecraft.enchantment;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.inventory.EquipmentSlotType;
@@ -13,7 +14,7 @@ public class SoulSpeedEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return enchantmentLevel * 10;
+      return enchantmentLevel * 8;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
@@ -42,7 +43,11 @@ public class SoulSpeedEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-      return 5;
+	   if(Config.ss.isEnabled.get() == false)
+		 {
+			 return 3;
+		 }
+		 else return Config.ss.maxLevel.get();
    }
    
    public boolean canApplyTogether(Enchantment ench)

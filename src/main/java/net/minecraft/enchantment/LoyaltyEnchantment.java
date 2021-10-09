@@ -1,5 +1,7 @@
 package net.minecraft.enchantment;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.inventory.EquipmentSlotType;
 
 public class LoyaltyEnchantment extends Enchantment {
@@ -11,18 +13,22 @@ public class LoyaltyEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 5 + enchantmentLevel * 7;
+      return 5 + enchantmentLevel * 5;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return 50;
+      return 75;
    }
 
    /**
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-      return 5;
+	   if(Config.lo.isEnabled.get() == false)
+		 {
+			 return 3;
+		 }
+		 else return Config.lo.maxLevel.get();
    }
 
    /**

@@ -3,7 +3,6 @@ package com.yeetmanlord.somanyenchants.core.events;
 import java.util.Random;
 
 import com.yeetmanlord.somanyenchants.Main;
-import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.DoubleBreak;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
 import net.minecraft.block.Block;
@@ -11,7 +10,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CocoaBlock;
 import net.minecraft.block.CropsBlock;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,6 +17,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -31,7 +30,6 @@ public class ToolEnchants
 	@SubscribeEvent
 	public static void replant(final BreakEvent event)
 	{
-		Main.LOGGER.info(DoubleBreak.isEnabled.get());
 		if(event.getState().getBlock() != Blocks.AIR)
 		{
 			Block block = event.getState().getBlock();
@@ -117,12 +115,12 @@ public class ToolEnchants
 	public static void doubleBreak(final BreakEvent event)
 	{
 		Random rand = new Random();
-		Minecraft mc = Minecraft.getInstance();
 		PlayerEntity player = event.getPlayer();
 		boolean creative = player.isCreative();
 		BlockPos pos = event.getPos();
 		BlockPos newPos;
 		BlockState newState;
+		RayTraceResult raytrace = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0, false);
 		int enchant = ModEnchantmentHelper.getDoubleBreakLevel(player);
 		if(enchant > 0)
 		{
@@ -130,9 +128,9 @@ public class ToolEnchants
 			if(chance <= enchant * 20)
 			{
 				//Handles raytracing
-				if(mc.objectMouseOver.getType() == RayTraceResult.Type.BLOCK)
+				if(raytrace.getType() == RayTraceResult.Type.BLOCK)
 				{
-					BlockRayTraceResult blockTrace = (BlockRayTraceResult)mc.objectMouseOver;
+					BlockRayTraceResult blockTrace = (BlockRayTraceResult)raytrace;
 					Direction dir = blockTrace.getFace();
 					if(dir == Direction.DOWN)
 					{

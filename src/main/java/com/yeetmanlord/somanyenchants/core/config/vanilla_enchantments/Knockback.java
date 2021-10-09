@@ -22,11 +22,11 @@ public class Knockback extends EnchantmentConfig
 	{
 		builder.push(name);
 		
-		isEnabled = builder
+		this.isEnabled = builder
 				.comment(" Whether the mod changes this enchantment")
 				.define("isEnabled", true);
 		
-		maxLevel = builder
+		this.maxLevel = builder
 				.comment(" The maximum enchantment level")
 				.defineInRange("maxLevel", max, 1, 10);
 		

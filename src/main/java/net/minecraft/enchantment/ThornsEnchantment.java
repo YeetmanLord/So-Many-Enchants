@@ -2,6 +2,9 @@ package net.minecraft.enchantment;
 
 import java.util.Random;
 import java.util.Map.Entry;
+
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -18,20 +21,29 @@ public class ThornsEnchantment extends Enchantment {
    /**
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
-   public int getMinEnchantability(int enchantmentLevel) 
-   {
-	   return 10 + 20 * (enchantmentLevel - 1);
+   public int getMinEnchantability(int enchantmentLevel) {
+      if(enchantmentLevel <= 5)
+      {
+    	  return 5 + 8 * (enchantmentLevel - 1);
+      } else
+      {
+    	  return 10 + 12 * (enchantmentLevel - 1);
+      }
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-	   return super.getMinEnchantability(enchantmentLevel) + 50;
+      return super.getMinEnchantability(enchantmentLevel) + 20;
    }
 
    /**
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-      return 10;
+	   if(Config.t.isEnabled.get() == false)
+		 {
+			 return 3;
+		 }
+		 else return Config.t.maxLevel.get();
    }
 
    /**

@@ -90,7 +90,7 @@ public class ModEnchantmentHelper
 	    	  {
 	    		  armorSlot = 3;
 	    	  }
-	    	  ItemStack stack = ((PlayerEntity)entityIn).inventory.armorItemInSlot(armorSlot);
+	    	  ItemStack stack = ((PlayerEntity)entityIn).inventory.armorInventory.get(armorSlot);
 	    	  if(stack.isEnchanted())
 	    	  {
 	    		  return getEnchantmentLevel(enchantmentIn, stack);

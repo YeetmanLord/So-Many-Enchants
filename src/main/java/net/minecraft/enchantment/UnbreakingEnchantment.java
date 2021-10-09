@@ -1,6 +1,9 @@
 package net.minecraft.enchantment;
 
 import java.util.Random;
+
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
@@ -14,18 +17,22 @@ public class UnbreakingEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 5 + (enchantmentLevel - 1) * 8;
+      return 5 + (enchantmentLevel - 1) * 5;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return super.getMinEnchantability(enchantmentLevel) + 50;
+      return super.getMinEnchantability(enchantmentLevel) + 30;
    }
 
    /**
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-      return 10;
+	   if(Config.u.isEnabled.get() == false)
+		 {
+			 return 3;
+		 }
+		 else return Config.u.maxLevel.get();
    }
 
    /**

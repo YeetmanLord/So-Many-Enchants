@@ -1,5 +1,7 @@
 package net.minecraft.enchantment;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.inventory.EquipmentSlotType;
 
@@ -12,18 +14,22 @@ public class ImpalingEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 1 + (enchantmentLevel - 1) * 8;
+      return 1 + (enchantmentLevel - 1) * 5;
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return this.getMinEnchantability(enchantmentLevel) + 20;
+      return this.getMinEnchantability(enchantmentLevel) + 15;
    }
 
    /**
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-      return 10;
+	   if(Config.i.isEnabled.get() == false)
+		 {
+			 return 5;
+		 }
+		 else return Config.i.maxLevel.get();
    }
 
    /**

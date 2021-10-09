@@ -1,5 +1,8 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.armor;
 
+import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.enchantment.Enchantments;
@@ -32,9 +35,15 @@ public class FlightEnchant extends Enchantment
 		return false;
 	}
 	
+	@Override
+	public boolean canApply(ItemStack stack) 
+	{
+		return EnchantmentType.ARMOR_FEET.canEnchantItem(stack.getItem());
+	}
 	
 	public boolean canApplyTogether(Enchantment ench)
 	{
+		Main.LOGGER.info(super.canApplyTogether(ench) && ench != Enchantments.SOUL_SPEED);
 	      return super.canApplyTogether(ench) && ench != Enchantments.SOUL_SPEED;
 	} 
 	
@@ -51,7 +60,11 @@ public class FlightEnchant extends Enchantment
 	@Override
 	public int getMaxLevel()
 	{
-		return 3;
+		if(Config.fl.isEnabled.get() == false)
+		 {
+			 return 0;
+		 }
+		 else return Config.fl.maxLevel.get();
 	}
 	
 	@Override

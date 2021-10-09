@@ -1,5 +1,6 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.weapons;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.enchantment.Enchantment;
@@ -25,13 +26,17 @@ public class AttackReachEnchant extends Enchantment
 	@Override
 	public boolean canApply(ItemStack stack) 
 	{
-		return stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem ? true : super.canApply(stack);
+		return stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem ? true : EnchantmentType.WEAPON.canEnchantItem(stack.getItem());
 	}
 	
 	@Override
 	public int getMaxLevel() 
 	{
-		return 1;
+		if(Config.a.isEnabled.get() == false)
+		 {
+			 return 0;
+		 }
+		 else return Config.a.maxLevel.get();
 	}
 	
 	@Override

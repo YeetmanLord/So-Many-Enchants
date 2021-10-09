@@ -1,5 +1,7 @@
 package net.minecraft.enchantment;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.inventory.EquipmentSlotType;
 
 public class KnockbackEnchantment extends Enchantment {
@@ -11,17 +13,21 @@ public class KnockbackEnchantment extends Enchantment {
     * Returns the minimal value of enchantability needed on the enchantment level passed.
     */
    public int getMinEnchantability(int enchantmentLevel) {
-      return 5 + 20 * (enchantmentLevel - 1);
+      return 5 + 5 * (enchantmentLevel - 1);
    }
 
    public int getMaxEnchantability(int enchantmentLevel) {
-      return super.getMinEnchantability(enchantmentLevel) + 50;
+      return super.getMinEnchantability(enchantmentLevel) + 30;
    }
 
    /**
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-      return 10;
+	   if(Config.k.isEnabled.get() == false)
+		 {
+			 return 2;
+		 }
+		 else return Config.k.maxLevel.get();
    }
 }

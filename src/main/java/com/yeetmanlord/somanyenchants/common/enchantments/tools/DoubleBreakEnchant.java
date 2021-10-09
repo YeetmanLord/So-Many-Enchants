@@ -1,5 +1,7 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.tools;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -27,7 +29,11 @@ public class DoubleBreakEnchant extends Enchantment
 	@Override
 	public int getMaxLevel() 
 	{
-		return 5;
+		if(Config.d.isEnabled.get() == false)
+		 {
+			 return 0;
+		 }
+		 else return Config.d.maxLevel.get();
 	}
 	
 	@Override

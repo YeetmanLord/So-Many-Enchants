@@ -21,11 +21,11 @@ public class DoubleBreak extends EnchantmentConfig
 	{
 		builder.push(name);
 		
-		isEnabled = builder
+		this.isEnabled = builder
 				.comment(" Whether this enchantment is used")
 				.define("isEnabled", false);
 		
-		maxLevel = builder
+		this.maxLevel = builder
 				.comment(" The maximum enchantment level")
 				.defineInRange("maxLevel", max, 1, 5);
 		

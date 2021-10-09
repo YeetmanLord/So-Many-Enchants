@@ -1,5 +1,6 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.weapons;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.enchantment.Enchantment;
@@ -49,7 +50,11 @@ public class FreezingEnchant extends Enchantment {
 	 @Override
 	public int getMaxLevel() 
 	{
-		return 3;
+		 if(Config.fr.isEnabled.get() == false)
+		 {
+			 return 0;
+		 }
+		 else return Config.fr.maxLevel.get();
 	}
 	 
 	 @Override

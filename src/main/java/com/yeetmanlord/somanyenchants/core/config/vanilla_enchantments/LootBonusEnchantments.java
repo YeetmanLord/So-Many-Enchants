@@ -22,11 +22,11 @@ public class LootBonusEnchantments extends EnchantmentConfig
 	{
 		builder.comment(" Contains Looting, Fortune, and Luck of the Sea").push(name);
 		
-		isEnabled = builder
+		this.isEnabled = builder
 				.comment(" Whether the mod changes these enchantments")
 				.define("isEnabled", true);
 		
-		maxLevel = builder
+		this.maxLevel = builder
 				.comment(" The maximum enchantment level")
 				.defineInRange("maxLevel", max, 1, 10);
 		
