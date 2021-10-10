@@ -3,6 +3,7 @@ package com.yeetmanlord.somanyenchants.core.events;
 import java.util.Random;
 
 import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
 import net.minecraft.block.Block;
@@ -30,7 +31,7 @@ public class ToolEnchants
 	@SubscribeEvent
 	public static void replant(final BreakEvent event)
 	{
-		if(event.getState().getBlock() != Blocks.AIR)
+		if(event.getState().getBlock() != Blocks.AIR && Config.re.isEnabled.get() == true)
 		{
 			Block block = event.getState().getBlock();
 			PlayerEntity player = event.getPlayer();
@@ -122,7 +123,7 @@ public class ToolEnchants
 		BlockState newState;
 		RayTraceResult raytrace = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0, false);
 		int enchant = ModEnchantmentHelper.getDoubleBreakLevel(player);
-		if(enchant > 0)
+		if(enchant > 0 && Config.d.isEnabled.get() == true)
 		{
 			int chance = (int) (rand.nextFloat() * 100);
 			if(chance <= enchant * 20)

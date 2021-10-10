@@ -1,6 +1,7 @@
 package com.yeetmanlord.somanyenchants.core.events;
 
 import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.ParticleTypesInit;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
@@ -25,7 +26,7 @@ public class Frostbite {
 	{
 		DamageSource source = event.getSource();
 		Entity e = event.getEntity();
-		if(e instanceof LivingEntity) {
+		if(e instanceof LivingEntity && Config.fr.isEnabled.get() == true) {
 			LivingEntity attacked = (LivingEntity)e;
 			if(source instanceof EntityDamageSource)
 			{

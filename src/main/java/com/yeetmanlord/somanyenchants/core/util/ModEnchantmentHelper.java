@@ -38,6 +38,8 @@ public class ModEnchantmentHelper
 		return getMaxEnchantmentLevelArmor(EnchantmentInit.REINFORCEMENT.get(), player, armorSlot);
 	}
 	
+	
+	
 	public static int getTemperLevel(LivingEntity player, int armorSlot)
 	{
 		return getMaxEnchantmentLevelArmor(EnchantmentInit.TEMPER.get(), player, armorSlot);

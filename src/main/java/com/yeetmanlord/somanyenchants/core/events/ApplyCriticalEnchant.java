@@ -3,6 +3,7 @@ package com.yeetmanlord.somanyenchants.core.events;
 import java.util.Random;
 
 import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
 import net.minecraft.entity.Entity;
@@ -27,7 +28,7 @@ public class ApplyCriticalEnchant
 		PlayerEntity player = event.getPlayer();
 		int criticalLevel = ModEnchantmentHelper.getCriticalLevel(player);
 
-		if(criticalLevel > 0)
+		if(criticalLevel > 0 && Config.cr.isEnabled.get() == true)
 		{
 			if(event.isVanillaCritical())
 			{
@@ -69,7 +70,7 @@ public class ApplyCriticalEnchant
 	{
 		Random rand = new Random();
 		LivingEntity target = event.getEntityLiving();
-		if(event.getSource() instanceof EntityDamageSource)
+		if(event.getSource() instanceof EntityDamageSource && Config.cr.isEnabled.get() == true)
 		{
 			Entity attacker = event.getSource().getTrueSource();
 			if(attacker instanceof LivingEntity && !(attacker instanceof PlayerEntity))
