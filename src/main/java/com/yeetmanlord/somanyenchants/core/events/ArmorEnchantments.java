@@ -416,6 +416,7 @@ public class ArmorEnchantments {
 		ItemStack boots = player.inventory.armorInventory.get(0);
 		if(!boots.isEmpty() && Config.fl.isEnabled.get() == true)
 		{
+			Main.LOGGER.info("ff");
 			ListNBT enchantments = boots.getEnchantmentTagList();
 			for(int x = 0; x < enchantments.size(); x ++)
 			{
@@ -514,6 +515,7 @@ public class ArmorEnchantments {
 			}
 		} else if(!player.abilities.isCreativeMode && !player.isSpectator() && Config.fl.isEnabled.get() == true)
 		{
+			Main.LOGGER.info("f");
 			player.abilities.allowFlying = false;
 			player.abilities.isFlying = false;
 		}
