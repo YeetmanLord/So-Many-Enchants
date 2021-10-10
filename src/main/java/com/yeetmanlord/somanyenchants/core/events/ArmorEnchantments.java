@@ -420,6 +420,7 @@ public class ArmorEnchantments {
 			if(!boots.isEmpty() && !player.getShouldBeDead() && !player.isCreative() && !player.isSpectator())
 			{
 				player.abilities.allowFlying = true;
+				player.sendPlayerAbilities();
 				int lvl = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FLIGHT.get(), boots);
 						if(lvl == 1 && player.getFoodStats().getFoodLevel() > 4) 
 						{
@@ -497,15 +498,18 @@ public class ArmorEnchantments {
 						{
 							player.abilities.allowFlying = false;
 							player.abilities.isFlying = false;
+							player.sendPlayerAbilities();
 						} else if(!player.isCreative() && !player.isSpectator())
 						{
 							player.abilities.allowFlying = false;
 							player.abilities.isFlying = false;
+							player.sendPlayerAbilities();
 						}
 					} else if(!player.isCreative() && !player.isSpectator() && !player.getShouldBeDead())
 					{
 						player.abilities.isFlying = false;
 						player.abilities.allowFlying = false;
+						player.sendPlayerAbilities();
 					}
 				}
 	}
@@ -527,6 +531,7 @@ public class ArmorEnchantments {
 					if(level > 0 && !player.getShouldBeDead())
 					{
 						player.abilities.allowFlying = true;
+						player.sendPlayerAbilities();
 					}
 				}
 				else if(oldSlot != ItemStack.EMPTY)
@@ -536,6 +541,7 @@ public class ArmorEnchantments {
 					{
 						player.abilities.allowFlying = false;
 						player.abilities.isFlying = false;
+						player.sendPlayerAbilities();
 					}
 				}
 			}
