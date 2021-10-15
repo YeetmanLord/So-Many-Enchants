@@ -65,6 +65,11 @@ public class ModEnchantmentHelper
 		return getMaxEnchantmentLevelArmor(EnchantmentInit.CAT_VISION.get(), player, 3) > 0;
 	}
 	
+	public static boolean hasFastHopper(LivingEntity player)
+	{
+		return getMaxEnchantmentLevel(EnchantmentInit.FAST_HOPPER.get(), player) > 0;
+	}
+	
 	public static int getMaxEnchantmentLevel(Enchantment enchantmentIn, LivingEntity entityIn) 
 	{
 	      Iterable<ItemStack> iterable = enchantmentIn.getEntityEquipment(entityIn).values();

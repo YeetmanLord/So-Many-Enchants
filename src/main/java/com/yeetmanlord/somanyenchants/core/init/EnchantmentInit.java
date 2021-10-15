@@ -8,6 +8,7 @@ import com.yeetmanlord.somanyenchants.common.enchantments.armor.CatVisionEnchant
 import com.yeetmanlord.somanyenchants.common.enchantments.armor.FlightEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.armor.HealthBoostEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.armor.StepAssistEnchant;
+import com.yeetmanlord.somanyenchants.common.enchantments.blocks.FastHopperEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.tools.BlockReachEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.tools.DoubleBreakEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.tools.ReplantingEnchant;
@@ -50,6 +51,8 @@ public class EnchantmentInit
 	public static final RegistryObject<Enchantment> FREEZING = ENCHANTMENTS.register("freezing_attack", () -> new FreezingEnchant(Rarity.UNCOMMON, EquipmentSlotType.MAINHAND));
 	
 	public static final RegistryObject<Enchantment> STEP_ASSIST = ENCHANTMENTS.register("step_assist", () -> new StepAssistEnchant(Rarity.RARE, ARMOR_SLOTS));
+	
+	public static final RegistryObject<Enchantment> FAST_HOPPER = ENCHANTMENTS.register("fast_hopper", () -> new FastHopperEnchant(Rarity.UNCOMMON, EquipmentSlotType.MAINHAND));
 	
 	
 	

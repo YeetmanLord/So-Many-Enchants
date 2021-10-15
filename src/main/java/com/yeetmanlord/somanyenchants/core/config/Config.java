@@ -5,6 +5,7 @@ import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.BlockReach;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.CatVision;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.Critical;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.DoubleBreak;
+import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.FastHopper;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.Flight;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.Freezing;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.HealthBoost;
@@ -73,7 +74,7 @@ public class Config
 	public static CatVision c;
 	public static Critical cr;
 	public static DoubleBreak d;
-//	public static FastHopper f;
+	public static FastHopper f;
 	public static Flight fl;
 	public static Freezing fr;
 	public static HealthBoost h;
@@ -114,7 +115,7 @@ public class Config
 			c = new CatVision(1);
 			cr = new Critical(5);
 			d = new DoubleBreak(5);
-//			f = new FastHopper(1);
+			f = new FastHopper(1);
 			fl = new Flight(3);
 			fr = new Freezing(10);
 			h = new HealthBoost(10);

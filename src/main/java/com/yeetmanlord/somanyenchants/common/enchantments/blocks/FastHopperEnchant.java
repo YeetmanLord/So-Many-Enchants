@@ -1,5 +1,6 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.blocks;
 
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentTypesInit;
 
 import net.minecraft.enchantment.Enchantment;
@@ -34,11 +35,10 @@ public class FastHopperEnchant extends Enchantment
 	@Override
 	public int getMaxLevel() 
 	{
-		return 1;
-//		if(Config.f.isEnabled.get() == false)
-//		 {
-//			 return 0;
-//		 }
-//		 else return Config.f.maxLevel.get();
+		if(Config.f.isEnabled.get() == false)
+		 {
+			 return 0;
+		 }
+		 else return Config.f.maxLevel.get();
 	}
 }

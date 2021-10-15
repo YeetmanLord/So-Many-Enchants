@@ -133,7 +133,7 @@ public class ConfigMenu extends Screen {
 	    	Config.sa.maxLevel.set(file.get("Step Assist" + ".maxLevel"));
 	    	Config.sa.isEnabled.set(file.get("Step Assist" + ".isEnabled"));
 
-	//    	Config.f.isEnabled.set(file.get("Fast Hopper" + ".isEnabled"));
+	    	Config.f.isEnabled.set(file.get("Fast Hopper" + ".isEnabled"));
 	
 	    	
 	    	Config.b.maxLevel.set(file.get("Block Reach" + ".maxLevel"));
@@ -369,8 +369,8 @@ public class ConfigMenu extends Screen {
 	      		new BooleanOption("so_many_enchants.screen.config.enabled.modded", get -> (boolean) 
 	      				Config.sa.isEnabled.get(), (set, val) -> Config.sa.isEnabled.set(val.booleanValue())));
 	      
-	//      this.optionsRowList.addOption(new BooleanOption("so_many_enchants.screen.config.enabled.f", get -> (boolean) 
-	//      				Config.f.isEnabled.get(), (set, val) -> Config.f.isEnabled.set(val.booleanValue())));
+	      this.optionsRowList.addOption(new BooleanOption("so_many_enchants.screen.config.enabled.f", get -> (boolean) 
+	      				Config.f.isEnabled.get(), (set, val) -> Config.f.isEnabled.set(val.booleanValue())));
 	      
 	      this.optionsRowList.addOption(new SliderPercentageOption("so_many_enchants.screen.config.max_level.b", 1, Config.b.absoluteMax, 1, get -> (double) Config.b.maxLevel.get(), (set, val) -> Config.b.maxLevel.set(val.intValue()), (gs, option) ->
 	      new StringTextComponent(
@@ -438,10 +438,6 @@ public class ConfigMenu extends Screen {
 	        ));
 	        
 	        file.close();
-//	        I have a config menu and it accesses the config file toml and my game keeps crashing with 
-//	        `java.nio.file.FileSystemException: The process cannot access the file because it is being used by another process.`
-//	        and
-//	        `com.electronwill.nightconfig.core.io.WritingException: An I/O error occured`
     }
 	
 	
@@ -528,7 +524,7 @@ public class ConfigMenu extends Screen {
     	Config.sa.isEnabled.set(false);
 
     	
-//    	Config.f.isEnabled.set(true);
+    	Config.f.isEnabled.set(true);
 
     	
     	Config.b.maxLevel.set(3);
@@ -666,7 +662,7 @@ public class ConfigMenu extends Screen {
     	file.set("Step Assist" + ".maxLevel", Config.sa.maxLevel.get());
     	file.set("Step Assist" + ".isEnabled", Config.sa.isEnabled.get());
 
-//    	file.set("Fast Hopper" + ".isEnabled", Config.f.isEnabled.get());
+    	file.set("Fast Hopper" + ".isEnabled", Config.f.isEnabled.get());
     	
     	file.set("Block Reach" + ".maxLevel", Config.b.maxLevel.get());
     	file.set("Block Reach" + ".isEnabled", Config.b.isEnabled.get());
@@ -799,7 +795,7 @@ public class ConfigMenu extends Screen {
     	file.set("Step Assist" + ".maxLevel", Config.sa.maxLevel.get());
     	file.set("Step Assist" + ".isEnabled", Config.sa.isEnabled.get());
 
-//    	file.set("Fast Hopper" + ".isEnabled", Config.f.isEnabled.get());
+    	file.set("Fast Hopper" + ".isEnabled", Config.f.isEnabled.get());
     	
     	file.set("Block Reach" + ".maxLevel", Config.b.maxLevel.get());
     	file.set("Block Reach" + ".isEnabled", Config.b.isEnabled.get());
