@@ -395,4 +395,40 @@ public class NBTHelper
 			}
 		}
 	}
+	public static void updateAttributeLore(ItemStack stack, PlayerEntity player, Attribute attr, String displayName)
+	{
+		double attrValue = player.getAttributeValue(attr);
+		CompoundNBT tag = stack.getTag();
+		if(tag.contains("display", 10) && attrValue > attr.getDefaultValue())
+		{
+			CompoundNBT display = tag.getCompound("display");
+			if(display.contains("Lore", 9))
+			{
+				ListNBT lore = display.getList("Lore", 8);
+				for(int x = 0; x < lore.size(); x++)
+				{
+					String s = lore.getString(x);
+					if(s.contains(" " + displayName + "\"}"))
+					{
+						if(s.contains(String.valueOf((Math.round(attrValue) * 10) / 10)))
+						{
+							return;
+						}
+						lore.remove(x);
+						StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72" + String.valueOf(Math.round((attrValue) * 10) / 10) + " " + displayName + "\"}");
+						if((Math.round(attrValue) * 10) / 10 != 1 + attrValue)
+						{
+							attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72" + String.valueOf(((float) Math.round((attrValue) * 10)) / 10) + " " + displayName + "\"}");
+						} else
+						{
+							attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72" + String.valueOf(Math.round((attrValue) * 10) / 10) + " " + displayName + "\"}");
+						}
+						
+						lore.add(x, attackDamageNBT);
+					}
+				}
+			}
+		}
+	}
+	
 }

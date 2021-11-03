@@ -16,7 +16,6 @@ public class ParticleFactoriesInit
 	@SubscribeEvent
 	public static void registerParticleFactories(final ParticleFactoryRegisterEvent event)
 	{
-		Main.LOGGER.info("fired");
 		Minecraft.getInstance().particles.registerFactory(ParticleTypesInit.FREEZE_PARTICLE.get(), FreezeParticle.Factory::new);
 	}
 }

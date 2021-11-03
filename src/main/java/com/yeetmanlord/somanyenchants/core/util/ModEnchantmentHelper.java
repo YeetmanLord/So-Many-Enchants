@@ -15,6 +15,14 @@ import net.minecraft.util.registry.Registry;
 
 public class ModEnchantmentHelper 
 {
+	public static boolean hasCamouflage(ListNBT nbt) {
+		return getEnchantmentLevel(nbt, EnchantmentInit.CAMOUFLAGE.get()) > 0;
+	}
+	
+	public static boolean isCavernousStorage(ListNBT nbt) {
+		return getEnchantmentLevel(nbt, EnchantmentInit.CAVERNOUS_STORAGE.get()) > 0;
+	}
+	
 	public static int getFreezingEnchant(LivingEntity player) {
 	      return getMaxEnchantmentLevel(EnchantmentInit.FREEZING.get(), player);
 	}
@@ -125,5 +133,18 @@ public class ModEnchantmentHelper
 
 	         return 0;
 	      }
+	}
+	
+	public static int getEnchantmentLevel(ListNBT nbt, Enchantment ench)
+	{
+		ResourceLocation resourcelocation = Registry.ENCHANTMENT.getKey(ench);
+		for(int i = 0; i < nbt.size(); ++i) {
+            CompoundNBT compoundnbt = nbt.getCompound(i);
+            ResourceLocation resourcelocation1 = ResourceLocation.tryCreate(compoundnbt.getString("id"));
+            if (resourcelocation1 != null && resourcelocation1.equals(resourcelocation)) {
+               return MathHelper.clamp(compoundnbt.getInt("lvl"), 0, 255);
+            }
+         }
+		return 0;
 	}
 }

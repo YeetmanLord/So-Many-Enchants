@@ -3,7 +3,6 @@ package com.yeetmanlord.somanyenchants.core.network.message;
 import java.util.function.Supplier;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.yeetmanlord.somanyenchants.Main;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -43,7 +42,6 @@ public class ConfigSetPacket {
 			MinecraftServer server = player.getServer();
 			if(server.isDedicatedServer())
 			{
-				Main.LOGGER.info("Fired");
 				final CommentedFileConfig file = CommentedFileConfig.builder(server.getFile("world/serverconfig/so_many_enchants-server.toml")).build();
 				file.load();
 
@@ -125,11 +123,12 @@ public class ConfigSetPacket {
 		    	Config.sa.maxLevel.set(file.get("Step Assist" + ".maxLevel"));
 		    	Config.sa.isEnabled.set(file.get("Step Assist" + ".isEnabled"));
 		
+		    	Config.f.isEnabled.set(file.get("Fast Hopper" + ".isEnabled"));
 		    	
-		//    	Config.f.maxLevel.set(file.get("Fast Hopper" + ".maxLevel"));
-		//    	Config.f.isEnabled.set(file.get("Fast Hopper" + ".isEnabled"));
+		    	Config.cs.isEnabled.set(file.get("Cavernous Storage" + ".isEnabled"));
+		    	
+		    	Config.cf.isEnabled.set(file.get("Camouflage" + ".isEnabled"));
 		
-		    	
 		    	Config.b.maxLevel.set(file.get("Block Reach" + ".maxLevel"));
 		    	Config.b.isEnabled.set(file.get("Block Reach" + ".isEnabled"));
 		    	
@@ -150,6 +149,10 @@ public class ConfigSetPacket {
 		    	Config.fr.isEnabled.set(file.get("Freezing" + ".isEnabled"));
 
 		    	Config.v.isEnabled.set(file.get("Enchanter Villager" + ".isEnabled"));
+		    	
+		    	Config.cs.isEnabled.set(file.get("Cavernous Storage.isEnabled"));
+				
+				Config.cf.isEnabled.set(file.get("Camouflage.isEnabled"));
 				
 				Config.SyncedServerConfig.setConfig(file);
 				

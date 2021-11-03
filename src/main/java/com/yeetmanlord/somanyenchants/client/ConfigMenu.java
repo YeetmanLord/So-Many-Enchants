@@ -155,6 +155,10 @@ public class ConfigMenu extends Screen {
 	    	Config.fr.isEnabled.set(file.get("Freezing" + ".isEnabled"));
 
 	    	Config.v.isEnabled.set(file.get("Enchanter Villager" + ".isEnabled"));
+	    	
+	    	Config.cs.isEnabled.set(file.get("Cavernous Storage" + ".isEnabled"));
+	    	
+	    	Config.cf.isEnabled.set(file.get("Camouflage" + ".isEnabled"));
 			
 	        this.optionsRowList = new OptionsRowList
 	        (
@@ -416,8 +420,13 @@ public class ConfigMenu extends Screen {
 	      				Config.fr.isEnabled.get(), (set, val) -> Config.fr.isEnabled.set(val.booleanValue())));
 	      
 	      this.optionsRowList.addOption(new BooleanOption("so_many_enchants.screen.config.enabled.v", get -> (boolean) 
-    				Config.v.isEnabled.get(), (set, val) -> Config.v.isEnabled.set(val.booleanValue())));
-
+  				Config.v.isEnabled.get(), (set, val) -> Config.v.isEnabled.set(val.booleanValue())));
+	      
+	      this.optionsRowList.addOption(new BooleanOption("so_many_enchants.screen.config.enabled.cs", get -> (boolean) 
+  				Config.cs.isEnabled.get(), (set, val) -> Config.cs.isEnabled.set(val.booleanValue())));
+	      
+	      this.optionsRowList.addOption(new BooleanOption("so_many_enchants.screen.config.enabled.cf", get -> (boolean) 
+	  				Config.cf.isEnabled.get(), (set, val) -> Config.cf.isEnabled.set(val.booleanValue())));
 	      
 	        this.children.add(this.optionsRowList);
 	        
@@ -547,6 +556,10 @@ public class ConfigMenu extends Screen {
     	Config.fr.isEnabled.set(true);
 
     	Config.v.isEnabled.set(true);
+    	
+    	Config.cs.isEnabled.set(true);
+    	
+    	Config.cf.isEnabled.set(true);
     	this.refresh();
 	}
 
@@ -683,6 +696,10 @@ public class ConfigMenu extends Screen {
 
     	file.set("Enchanter Villager" + ".isEnabled", Config.v.isEnabled.get());
     	
+    	file.set("Cavernous Storage" + ".isEnabled", Config.cs.isEnabled.get());
+    	
+    	file.set("Camouflage" + ".isEnabled", Config.cf.isEnabled.get());
+    	
     	Config.SyncedServerConfig.setConfig(file);
     	Config.SyncedServerConfig.save();
     	
@@ -815,6 +832,8 @@ public class ConfigMenu extends Screen {
     	file.set("Freezing" + ".isEnabled", Config.fr.isEnabled.get());
 
     	file.set("Enchanter Villager" + ".isEnabled", Config.v.isEnabled.get());
+    	
+    	file.set("Cavernous Storage" + ".isEnabled", Config.cs.isEnabled.get());
     	
     	Config.SyncedServerConfig.setConfig(file);
     	Config.SyncedServerConfig.save();

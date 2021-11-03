@@ -2,7 +2,10 @@ package com.yeetmanlord.somanyenchants.core.util;
 
 
 import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.client.EnchantedChestScreen;
 import com.yeetmanlord.somanyenchants.client.EnchantedHopperScreen;
+import com.yeetmanlord.somanyenchants.client.EnchantedShulkerBoxScreen;
+import com.yeetmanlord.somanyenchants.client.override.OverridenShulkerBoxScreen;
 import com.yeetmanlord.somanyenchants.core.init.ContainerTypeInit;
 
 import net.minecraft.client.gui.ScreenManager;
@@ -19,6 +22,16 @@ public class ScreenHandler
 	public static void clientSetup(FMLClientSetupEvent event)
 	{
 		ScreenManager.registerFactory(ContainerTypeInit.ENCHANTED_HOPPER.get(), EnchantedHopperScreen::new);
+		
+		ScreenManager.registerFactory(ContainerTypeInit.GENERIC_9X8.get(), EnchantedChestScreen::new);
+		ScreenManager.registerFactory(ContainerTypeInit.GENERIC_9X4.get(), EnchantedChestScreen::new);
+		
+		ScreenManager.registerFactory(ContainerTypeInit.GENERIC_9X3.get(), EnchantedChestScreen::new);
+		ScreenManager.registerFactory(ContainerTypeInit.GENERIC_9X6.get(), EnchantedChestScreen::new);
+		
+		ScreenManager.registerFactory(ContainerTypeInit.ENCHANTED_SHULKER_BOX.get(), EnchantedShulkerBoxScreen::new);
+		
+		ScreenManager.registerFactory(ContainerTypeInit.SHULKER_BOX.get(), OverridenShulkerBoxScreen::new);
 	}
 
 }

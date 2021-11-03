@@ -12,10 +12,19 @@
 	"enchantment.so_many_enchants.cat_vision": "Cat Vision",
 	"enchantment.so_many_enchants.double_break": "Double Break",
 	"enchantment.so_many_enchants.step_assist": "Step Assist",
+	"enchantment.so_many_enchants.fast_hopper": "Speedy Transfer",
+	"enchantment.so_many_enchants.cavernous_storage": "Cavernous Storage",
+	"enchantment.so_many_enchants.camouflage": "Camouflage",
 	
 	"container.enchanted_hopper": "Enchanted Item Hopper",
+	"container.enchanted_chest": "Enchanted Chest",
+	"container.enchantedChestDouble": "Large Enchanted Chest",
+	"container.enchantedBarrel": "Enchanted Barrel",
+	"container.enchantedShulkerBox": "Enchanted Shulker Box",
+	
 	
 	"block.so_many_enchants.enchanted_hopper": "Enchanted Hopper",
+	"block.so_many_enchants.enchanted_chest": "Enchanted Chest",
 	
 	"entity.minecraft.villager.so_many_enchants.enchanter": "Enchanter",
 	
@@ -48,15 +57,37 @@
 	"so_many_enchants.screen.config.max_level.fl": "Flight | Max Level",
 	"so_many_enchants.screen.config.max_level.h": "Health Boost | Max Level",
 	"so_many_enchants.screen.config.max_level.sa": "Step Assist | Max Level",
-	"so_many_enchants.screen.config.enabled.f": "Fast Hopper | Enabled?",
+	"so_many_enchants.screen.config.enabled.f": "Speedy Transfer",
 	"so_many_enchants.screen.config.max_level.b": "Block Reach | Max Level",
 	"so_many_enchants.screen.config.max_level.d": "Double Break | Max Level",
 	"so_many_enchants.screen.config.enabled.re": "Replanting",
 	"so_many_enchants.screen.config.max_level.a": "Attack Reach | Max Level",
 	"so_many_enchants.screen.config.max_level.cr": "Critical Hit | Max Level",
 	"so_many_enchants.screen.config.max_level.fr": "Frostbite | Max Level",
+	"so_many_enchants.screen.config.enabled.cs": "Cavernous Storage",
+	"so_many_enchants.screen.config.enabled.cf": "Camouflage",
 	"so_many_enchants.screen.config.enabled.v": "Enchanter Villager",
 	"so_many_enchants.screen.config.enabled.vanilla": "Modded changes",
 	"so_many_enchants.screen.config.enabled.modded": "Enbaled?",
-	"so_many_enchants.screen.config.default": "Set to default"
+	"so_many_enchants.screen.config.default": "Set to default",
+	
+	
+	"comment": "Items",
+	"block.so_many_enchants.enchanted_shulker_box": "Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_red_shulker_box": "Red Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_orange_shulker_box": "Orange Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_blue_shulker_box": "Blue Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_light_blue_shulker_box": "Light Blue Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_black_shulker_box": "Black Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_white_shulker_box": "White Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_gray_shulker_box": "Gray Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_light_gray_shulker_box": "Light Gray Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_purple_shulker_box": "Purple Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_magenta_shulker_box": "Magenta Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_cyan_shulker_box": "Cyan Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_green_shulker_box": "Green Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_lime_shulker_box": "Lime Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_yellow_shulker_box": "Yellow Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_pink_shulker_box": "Pink Enchanted Shulker Box",
+	"block.so_many_enchants.enchanted_brown_shulker_box": "Brown Enchanted Shulker Box"
 }

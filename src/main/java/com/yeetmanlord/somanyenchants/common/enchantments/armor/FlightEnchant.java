@@ -1,6 +1,5 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.armor;
 
-import com.yeetmanlord.somanyenchants.Main;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 
 import net.minecraft.enchantment.Enchantment;
@@ -43,7 +42,6 @@ public class FlightEnchant extends Enchantment
 	
 	public boolean canApplyTogether(Enchantment ench)
 	{
-		Main.LOGGER.info(super.canApplyTogether(ench) && ench != Enchantments.SOUL_SPEED);
 	      return super.canApplyTogether(ench) && ench != Enchantments.SOUL_SPEED;
 	} 
 	

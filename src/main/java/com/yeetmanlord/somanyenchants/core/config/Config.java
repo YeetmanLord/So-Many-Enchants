@@ -2,7 +2,9 @@ package com.yeetmanlord.somanyenchants.core.config;
 
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.AttackReach;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.BlockReach;
+import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.Camouflage;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.CatVision;
+import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.CavernousStorage;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.Critical;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.DoubleBreak;
 import com.yeetmanlord.somanyenchants.core.config.so_many_enchants.FastHopper;
@@ -72,6 +74,8 @@ public class Config
 	public static AttackReach a;
 	public static BlockReach b;
 	public static CatVision c;
+	public static Camouflage cf;
+	public static CavernousStorage cs;
 	public static Critical cr;
 	public static DoubleBreak d;
 	public static FastHopper f;
@@ -113,7 +117,9 @@ public class Config
 			a = new AttackReach(3);
 			b = new BlockReach(5);
 			c = new CatVision(1);
+			cf = new Camouflage(1);
 			cr = new Critical(5);
+			cs = new CavernousStorage(1);
 			d = new DoubleBreak(5);
 			f = new FastHopper(1);
 			fl = new Flight(3);

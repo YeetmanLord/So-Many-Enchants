@@ -25,37 +25,27 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
-public class ToolEnchants
-{
+public class ToolEnchants {
 	@SuppressWarnings("static-access")
 	@SubscribeEvent
-	public static void replant(final BreakEvent event)
-	{
-		if(event.getState().getBlock() != Blocks.AIR && Config.re.isEnabled.get() == true)
-		{
+	public static void replant(final BreakEvent event) {
+		if (event.getState().getBlock() != Blocks.AIR && Config.re.isEnabled.get() == true) {
 			Block block = event.getState().getBlock();
 			PlayerEntity player = event.getPlayer();
-			if(block instanceof CropsBlock)
-			{
+			if (block instanceof CropsBlock) {
 				ItemStack cropSeed = new ItemStack(block.asItem());
 				ItemStack stack = player.getHeldItemMainhand();
-				if(stack != ItemStack.EMPTY)
-				{
-					if(stack.getItem() instanceof Item && stack.isEnchanted())
-					{
+				if (stack != ItemStack.EMPTY) {
+					if (stack.getItem() instanceof Item && stack.isEnchanted()) {
 						boolean hasEnchant = ModEnchantmentHelper.getReplantEnchant(player) > 0;
-						if(hasEnchant)
-						{
-							if(player.inventory.hasItemStack(cropSeed))
-							{
-								for(int x = 0; x < player.inventory.getSizeInventory(); x++)
-								{
-									cropSeed.setCount(player.inventory.getStackInSlot(x).getCount()); 
-									if(ItemStack.areItemsEqual(player.inventory.getStackInSlot(x), cropSeed) || player.isCreative())
-									{
+						if (hasEnchant) {
+							if (player.inventory.hasItemStack(cropSeed)) {
+								for (int x = 0; x < player.inventory.getSizeInventory(); x++) {
+									cropSeed.setCount(player.inventory.getStackInSlot(x).getCount());
+									if (ItemStack.areItemsEqual(player.inventory.getStackInSlot(x), cropSeed)
+											|| player.isCreative()) {
 										player.world.setBlockState(event.getPos(), Blocks.AIR.getDefaultState(), 16);
-										if(player.isCreative())
-										{
+										if (player.isCreative()) {
 											player.world.setBlockState(event.getPos(), block.getDefaultState());
 											event.setCanceled(true);
 											return;
@@ -71,33 +61,28 @@ public class ToolEnchants
 						}
 					}
 				}
-			} else if(block instanceof CocoaBlock)
-			{
+			} else if (block instanceof CocoaBlock) {
 				ItemStack cropSeed = new ItemStack(block.asItem());
 				ItemStack stack = player.getHeldItemMainhand();
-				if(stack != ItemStack.EMPTY)
-				{
-					if(stack.getItem() instanceof Item && stack.isEnchanted())
-					{
+				if (stack != ItemStack.EMPTY) {
+					if (stack.getItem() instanceof Item && stack.isEnchanted()) {
 						boolean hasEnchant = ModEnchantmentHelper.getReplantEnchant(player) > 0;
-						if(hasEnchant)
-						{
-							if(player.inventory.hasItemStack(cropSeed))
-							{
-								for(int x = 0; x < player.inventory.getSizeInventory(); x++)
-								{
-									cropSeed.setCount(player.inventory.getStackInSlot(x).getCount()); 
-									if(ItemStack.areItemsEqual(player.inventory.getStackInSlot(x), cropSeed) || player.isCreative())
-									{
+						if (hasEnchant) {
+							if (player.inventory.hasItemStack(cropSeed)) {
+								for (int x = 0; x < player.inventory.getSizeInventory(); x++) {
+									cropSeed.setCount(player.inventory.getStackInSlot(x).getCount());
+									if (ItemStack.areItemsEqual(player.inventory.getStackInSlot(x), cropSeed)
+											|| player.isCreative()) {
 										player.world.setBlockState(event.getPos(), Blocks.AIR.getDefaultState(), 16);
-										if(player.isCreative())
-										{
-											player.world.setBlockState(event.getPos(), event.getState().with(((CocoaBlock) block).AGE, 0));
+										if (player.isCreative()) {
+											player.world.setBlockState(event.getPos(),
+													event.getState().with(((CocoaBlock) block).AGE, 0));
 											event.setCanceled(true);
 											return;
 										}
 										block.spawnDrops(event.getState(), player.world, event.getPos());
-										player.world.setBlockState(event.getPos(), event.getState().with(((CocoaBlock) block).AGE, 0));
+										player.world.setBlockState(event.getPos(),
+												event.getState().with(((CocoaBlock) block).AGE, 0));
 										player.inventory.decrStackSize(x, 1);
 										event.setCanceled(true);
 										return;
@@ -110,11 +95,9 @@ public class ToolEnchants
 			}
 		}
 	}
-	
-	
+
 	@SubscribeEvent
-	public static void doubleBreak(final BreakEvent event)
-	{
+	public static void doubleBreak(final BreakEvent event) {
 		Random rand = new Random();
 		PlayerEntity player = event.getPlayer();
 		boolean creative = player.isCreative();
@@ -123,84 +106,87 @@ public class ToolEnchants
 		BlockState newState;
 		RayTraceResult raytrace = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0, false);
 		int enchant = ModEnchantmentHelper.getDoubleBreakLevel(player);
-		if(enchant > 0 && Config.d.isEnabled.get() == true)
-		{
+		if (enchant > 0 && Config.d.isEnabled.get() == true) {
 			int chance = (int) (rand.nextFloat() * 100);
-			if(chance <= enchant * 20)
-			{
-				//Handles raytracing
-				if(raytrace.getType() == RayTraceResult.Type.BLOCK)
-				{
-					BlockRayTraceResult blockTrace = (BlockRayTraceResult)raytrace;
+			if (chance <= enchant * 20) {
+				// Handles raytracing
+				if (raytrace.getType() == RayTraceResult.Type.BLOCK) {
+					BlockRayTraceResult blockTrace = (BlockRayTraceResult) raytrace;
 					Direction dir = blockTrace.getFace();
-					if(dir == Direction.DOWN)
-					{
+					if (dir == Direction.DOWN) {
 						newPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
 						newState = player.world.getBlockState(newPos);
-						if((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player) || newState.getRequiresTool() == false) && newState.getBlockHardness(player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ), newPos) >= 0.0F)
-						{
-							if(!creative) 
-							{
+						if ((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player)
+								|| newState.getRequiresTool() == false)
+								&& newState.getBlockHardness(
+										player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ),
+										newPos) >= 0.0F) {
+							if (!creative) {
 								Block.spawnDrops(newState, player.world, newPos);
 							}
 							player.world.setBlockState(newPos, Blocks.AIR.getDefaultState());
 						}
-					} else if(dir == Direction.UP)
-					{
+					} else if (dir == Direction.UP) {
 						newPos = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
 						newState = player.world.getBlockState(newPos);
-						if((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player) || newState.getRequiresTool() == false) && newState.getBlockHardness(player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ), newPos) >= 0.0F)
-						{
-							if(!creative) 
-							{
+						if ((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player)
+								|| newState.getRequiresTool() == false)
+								&& newState.getBlockHardness(
+										player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ),
+										newPos) >= 0.0F) {
+							if (!creative) {
 								Block.spawnDrops(newState, player.world, newPos);
 							}
 							player.world.setBlockState(newPos, Blocks.AIR.getDefaultState());
 						}
-					} else if(dir == Direction.SOUTH)
-					{
+					} else if (dir == Direction.SOUTH) {
 						newPos = new BlockPos(pos.getX(), pos.getY(), pos.getZ() - 1);
 						newState = player.world.getBlockState(newPos);
-						if((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player) || newState.getRequiresTool() == false) && newState.getBlockHardness(player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ), newPos) >= 0.0F)
-						{
-							if(!creative) 
-							{
+						if ((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player)
+								|| newState.getRequiresTool() == false)
+								&& newState.getBlockHardness(
+										player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ),
+										newPos) >= 0.0F) {
+							if (!creative) {
 								Block.spawnDrops(newState, player.world, newPos);
 							}
 							player.world.setBlockState(newPos, Blocks.AIR.getDefaultState());
 						}
-					} else if(dir == Direction.NORTH)
-					{
+					} else if (dir == Direction.NORTH) {
 						newPos = new BlockPos(pos.getX(), pos.getY(), pos.getZ() + 1);
 						newState = player.world.getBlockState(newPos);
-						if((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player) || newState.getRequiresTool() == false) && newState.getBlockHardness(player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ), newPos) >= 0.0F)
-						{
-							if(!creative) 
-							{
+						if ((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player)
+								|| newState.getRequiresTool() == false)
+								&& newState.getBlockHardness(
+										player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ),
+										newPos) >= 0.0F) {
+							if (!creative) {
 								Block.spawnDrops(newState, player.world, newPos);
 							}
 							player.world.setBlockState(newPos, Blocks.AIR.getDefaultState());
 						}
-					} else if(dir == Direction.EAST)
-					{
+					} else if (dir == Direction.EAST) {
 						newPos = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ());
 						newState = player.world.getBlockState(newPos);
-						if((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player) || newState.getRequiresTool() == false) && newState.getBlockHardness(player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ), newPos) >= 0.0F)
-						{
-							if(!creative) 
-							{
+						if ((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player)
+								|| newState.getRequiresTool() == false)
+								&& newState.getBlockHardness(
+										player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ),
+										newPos) >= 0.0F) {
+							if (!creative) {
 								Block.spawnDrops(newState, player.world, newPos);
 							}
 							player.world.setBlockState(newPos, Blocks.AIR.getDefaultState());
 						}
-					} else if(dir == Direction.WEST)
-					{
+					} else if (dir == Direction.WEST) {
 						newPos = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ());
 						newState = player.world.getBlockState(newPos);
-						if((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player) || newState.getRequiresTool() == false) && newState.getBlockHardness(player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ), newPos) >= 0.0F)
-						{
-							if(!creative) 
-							{
+						if ((newState.getBlock().canHarvestBlock(newState, player.world, newPos, player)
+								|| newState.getRequiresTool() == false)
+								&& newState.getBlockHardness(
+										player.world.getBlockReader((int) player.chunkCoordX, (int) player.chunkCoordZ),
+										newPos) >= 0.0F) {
+							if (!creative) {
 								Block.spawnDrops(newState, player.world, newPos);
 							}
 							player.world.setBlockState(newPos, Blocks.AIR.getDefaultState());
