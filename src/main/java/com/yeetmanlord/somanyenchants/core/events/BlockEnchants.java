@@ -701,7 +701,7 @@ public class BlockEnchants {
 	}
 
 	@SubscribeEvent
-	public static void breakEnchantedHopper(final BreakEvent event) {
+	public static void breakEnchantedBlocks(final BreakEvent event) {
 		PlayerEntity player = event.getPlayer();
 		Block block = event.getState().getBlock();
 		World world = (World) event.getWorld();
@@ -741,6 +741,22 @@ public class BlockEnchants {
 				}
 				if (ModEnchantmentHelper.isCavernousStorage(nbt)) {
 					stack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+				}
+			}
+			
+			if (block == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator()
+					&& block.canHarvestBlock(state, player.world, pos, player)) {
+				stack = new ItemStack(Items.TRAPPED_CHEST);
+				tile = world.getTileEntity(pos);
+				if (tile instanceof EnchantedHiddenTrappedChestTileEntity) {
+					EnchantedHiddenTrappedChestTileEntity eTile = (EnchantedHiddenTrappedChestTileEntity) tile;
+					ListNBT nbt = eTile.getEnchants();
+					if (ModEnchantmentHelper.hasCamouflage(nbt)) {
+						stack.addEnchantment(EnchantmentInit.CAMOUFLAGE.get(), 1);
+					}
+					if (ModEnchantmentHelper.isCavernousStorage(nbt)) {
+						stack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+					}
 				}
 			}
 			ItemEntity item = new ItemEntity((World) world, pos.getX(), pos.getY(), pos.getZ(), stack);
