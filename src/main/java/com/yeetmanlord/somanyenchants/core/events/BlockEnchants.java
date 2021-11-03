@@ -743,11 +743,12 @@ public class BlockEnchants {
 					stack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 				}
 			}
+		}
 			
 			if (block == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator()
 					&& block.canHarvestBlock(state, player.world, pos, player)) {
-				stack = new ItemStack(Items.TRAPPED_CHEST);
-				tile = world.getTileEntity(pos);
+				ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
+				TileEntity tile = world.getTileEntity(pos);
 				if (tile instanceof EnchantedHiddenTrappedChestTileEntity) {
 					EnchantedHiddenTrappedChestTileEntity eTile = (EnchantedHiddenTrappedChestTileEntity) tile;
 					ListNBT nbt = eTile.getEnchants();
@@ -758,7 +759,6 @@ public class BlockEnchants {
 						stack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 					}
 				}
-			}
 			ItemEntity item = new ItemEntity((World) world, pos.getX(), pos.getY(), pos.getZ(), stack);
 
 			item.setPickupDelay(10);

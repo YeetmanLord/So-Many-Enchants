@@ -59,7 +59,6 @@ public class ApplyCriticalEnchant {
 	public static void applyEnchantmentToNonPlayer(final LivingHurtEvent event) {
 		Random rand = new Random();
 		LivingEntity target = event.getEntityLiving();
-		Main.LOGGER.info(event.getAmount());
 		if (event.getSource() instanceof EntityDamageSource && Config.cr.isEnabled.get() == true) {
 			Entity attacker = event.getSource().getTrueSource();
 			if (attacker instanceof LivingEntity && !(attacker instanceof PlayerEntity)) {
