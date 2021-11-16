@@ -6,9 +6,7 @@ import com.yeetmanlord.somanyenchants.common.blocks.EnchantedChestBlock;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedHopper;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedTrappedChestBlock;
-import com.yeetmanlord.somanyenchants.common.blocks.override.OverridenShulkerBoxBlock;
 import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedShulkerBoxTileEntity;
-import com.yeetmanlord.somanyenchants.common.tileentities.overrides.OverridenShulkerBoxTileEntity;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -20,6 +18,7 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -121,43 +120,6 @@ public class BlockInit {
 			}
 		};
 		return new EnchantedShulkerBoxBlock(color, properties.hardnessAndResistance(2.0F).variableOpacity().notSolid()
-				.setSuffocates(abstractblock$ipositionpredicate).setBlocksVision(abstractblock$ipositionpredicate));
-	}
-	
-	
-	public static final DeferredRegister<Block> MINECRAFT_BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "minecraft");
-	
-	public static final RegistryObject<Block> SHULKER_BOX = MINECRAFT_BLOCKS.register("shulker_box", () -> createShulkerBoxFromColorAndProperties((DyeColor)null, AbstractBlock.Properties.create(Material.SHULKER)));
-	public static final RegistryObject<Block> WHITE_SHULKER_BOX = MINECRAFT_BLOCKS.register("white_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.WHITE, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.SNOW)));
-	public static final RegistryObject<Block> ORANGE_SHULKER_BOX = MINECRAFT_BLOCKS.register("orange_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.ORANGE, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.ADOBE)));
-	public static final RegistryObject<Block> MAGENTA_SHULKER_BOX = MINECRAFT_BLOCKS.register("magenta_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.MAGENTA, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.MAGENTA)));
-	public static final RegistryObject<Block> LIGHT_BLUE_SHULKER_BOX = MINECRAFT_BLOCKS.register("light_blue_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.LIGHT_BLUE, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.LIGHT_BLUE)));
-	public static final RegistryObject<Block> YELLOW_SHULKER_BOX = MINECRAFT_BLOCKS.register("yellow_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.YELLOW, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.YELLOW)));
-	public static final RegistryObject<Block> LIME_SHULKER_BOX = MINECRAFT_BLOCKS.register("lime_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.LIME, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.LIME)));
-	public static final RegistryObject<Block> PINK_SHULKER_BOX = MINECRAFT_BLOCKS.register("pink_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.PINK, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.PINK)));
-	public static final RegistryObject<Block> GRAY_SHULKER_BOX = MINECRAFT_BLOCKS.register("gray_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.GRAY, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.GRAY)));
-	public static final RegistryObject<Block> LIGHT_GRAY_SHULKER_BOX = MINECRAFT_BLOCKS.register("light_gray_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.LIGHT_GRAY, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.LIGHT_GRAY)));
-	public static final RegistryObject<Block> CYAN_SHULKER_BOX = MINECRAFT_BLOCKS.register("cyan_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.CYAN, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.CYAN)));
-	public static final RegistryObject<Block> PURPLE_SHULKER_BOX = MINECRAFT_BLOCKS.register("purple_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.PURPLE, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.PURPLE_TERRACOTTA)));
-	public static final RegistryObject<Block> BLUE_SHULKER_BOX = MINECRAFT_BLOCKS.register("blue_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.BLUE, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.BLUE)));
-	public static final RegistryObject<Block> BROWN_SHULKER_BOX = MINECRAFT_BLOCKS.register("brown_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.BROWN, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.BROWN)));
-	public static final RegistryObject<Block> GREEN_SHULKER_BOX = MINECRAFT_BLOCKS.register("green_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.GREEN, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.GREEN)));
-	public static final RegistryObject<Block> RED_SHULKER_BOX = MINECRAFT_BLOCKS.register("red_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.RED, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.RED)));
-	public static final RegistryObject<Block> BLACK_SHULKER_BOX = MINECRAFT_BLOCKS.register("black_shulker_box", () -> createShulkerBoxFromColorAndProperties(DyeColor.BLACK, AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.BLACK)));
-	
-	
-	private static OverridenShulkerBoxBlock createShulkerBoxFromColorAndProperties(DyeColor color,
-			AbstractBlock.Properties properties) {
-		AbstractBlock.IPositionPredicate abstractblock$ipositionpredicate = (state, reader, pos) -> {
-			TileEntity tileentity = reader.getTileEntity(pos);
-			if (!(tileentity instanceof OverridenShulkerBoxTileEntity)) {
-				return true;
-			} else {
-				OverridenShulkerBoxTileEntity shulkerboxtileentity = (OverridenShulkerBoxTileEntity) tileentity;
-				return shulkerboxtileentity.isVisuallyClosed();
-			}
-		};
-		return new OverridenShulkerBoxBlock(color, properties.hardnessAndResistance(2.0F).variableOpacity().notSolid()
-				.setSuffocates(abstractblock$ipositionpredicate).setBlocksVision(abstractblock$ipositionpredicate));
+				.setSuffocates(abstractblock$ipositionpredicate).setBlocksVision(abstractblock$ipositionpredicate).harvestTool(ToolType.PICKAXE).harvestLevel(0));
 	}
 }

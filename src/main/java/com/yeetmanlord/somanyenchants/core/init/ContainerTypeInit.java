@@ -4,7 +4,6 @@ import com.yeetmanlord.somanyenchants.Main;
 import com.yeetmanlord.somanyenchants.common.container.EnchantedChestContainer;
 import com.yeetmanlord.somanyenchants.common.container.EnchantedHopperContainer;
 import com.yeetmanlord.somanyenchants.common.container.EnchantedShulkerBoxContainer;
-import com.yeetmanlord.somanyenchants.common.container.override.OverridenShulkerBoxContainer;
 
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.fml.RegistryObject;
@@ -38,10 +37,5 @@ public class ContainerTypeInit {
 
 	public static final DeferredRegister<ContainerType<?>> MINECRAFT_CONTIAINER_TYPES = DeferredRegister
 			.create(ForgeRegistries.CONTAINERS, "minecraft");
-
-	
-	public static final RegistryObject<ContainerType<OverridenShulkerBoxContainer>> SHULKER_BOX = CONTIAINER_TYPES
-			.register("shulker_box",
-					() -> new ContainerType<OverridenShulkerBoxContainer>(OverridenShulkerBoxContainer::new));
 
 }

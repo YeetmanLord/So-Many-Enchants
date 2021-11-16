@@ -9,9 +9,9 @@ import com.yeetmanlord.somanyenchants.common.blocks.EnchantedChestBlock;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedHopper;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedTrappedChestBlock;
-import com.yeetmanlord.somanyenchants.common.blocks.override.OverridenShulkerBoxBlock;
 import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedHiddenTrappedChestTileEntity;
 import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedTrappedChestTileEntity;
+import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.BlockInit;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentTypesInit;
@@ -22,6 +22,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.HopperBlock;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.TrappedChestBlock;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.EntitySelector;
@@ -70,7 +71,7 @@ public class BlockEnchants {
 			}
 			BlockRayTraceResult b = (BlockRayTraceResult) r;
 
-			if (event.getPlacedBlock().getBlock() == Blocks.HOPPER) {
+			if (event.getPlacedBlock().getBlock() == Blocks.HOPPER && Config.f.isEnabled.get() == true) {
 				if (mainhand.getItem() == Items.HOPPER) {
 					if (ModEnchantmentHelper.hasFastHopper(player)) {
 						event.getWorld().setBlockState(event.getPos(),
@@ -91,34 +92,34 @@ public class BlockEnchants {
 				}
 			}
 			
-			if (event.getPlacedBlock().getBlock() instanceof OverridenShulkerBoxBlock) {
+			if (event.getPlacedBlock().getBlock() instanceof ShulkerBoxBlock && Config.cs.isEnabled.get() == true) {
 				if (mainhand.getItem() instanceof BlockItem) {
 					
 					
 					if (ModEnchantmentHelper.isCavernousStorage(mainhand.getEnchantmentTagList())) {
-						BlockState state = EnchantedShulkerBoxBlock.getBlockByColor(((OverridenShulkerBoxBlock)((BlockItem)mainhand.getItem()).getBlock()).getColor()).getDefaultState();
+						BlockState state = EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock)((BlockItem)mainhand.getItem()).getBlock()).getColor()).getDefaultState();
 						
 						event.getWorld().setBlockState(event.getPos(),
 								state.with(EnchantedShulkerBoxBlock.FACING,
-										event.getState().get(OverridenShulkerBoxBlock.FACING)),
+										event.getState().get(ShulkerBoxBlock.FACING)),
 								1);
 					}
 				} else if (!(mainhand.getItem() instanceof BlockItem)) {
 					if (offhand.getItem() instanceof BlockItem) {
 						if (ModEnchantmentHelper.isCavernousStorage(offhand.getEnchantmentTagList())) {
-							BlockState state = EnchantedShulkerBoxBlock.getBlockByColor(((OverridenShulkerBoxBlock)((BlockItem)offhand.getItem()).getBlock()).getColor()).getDefaultState();
+							BlockState state = EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock)((BlockItem)offhand.getItem()).getBlock()).getColor()).getDefaultState();
 							
 							event.getWorld()
 									.setBlockState(event.getPos(),
 											state.with(
-													EnchantedShulkerBoxBlock.FACING, event.getState().get(OverridenShulkerBoxBlock.FACING)),
+													EnchantedShulkerBoxBlock.FACING, event.getState().get(ShulkerBoxBlock.FACING)),
 											1);
 						}
 					}
 				}
 			}
 
-			if (event.getPlacedBlock().getBlock() == Blocks.CHEST) {
+			if (event.getPlacedBlock().getBlock() == Blocks.CHEST && Config.cs.isEnabled.get() == true) {
 				if (mainhand.getItem() == Items.CHEST) {
 					if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAVERNOUS_STORAGE.get(),
 							mainhand) > 0) {
@@ -254,13 +255,13 @@ public class BlockEnchants {
 				}
 			}
 
-			if (event.getPlacedBlock().getBlock() == Blocks.TRAPPED_CHEST) {
+			if (event.getPlacedBlock().getBlock() == Blocks.TRAPPED_CHEST && (Config.cs.isEnabled.get() == true || Config.cf.isEnabled.get() == true)) {
 				boolean placed = false;
 				boolean hidden = false;
 				if (mainhand.getItem() == Items.TRAPPED_CHEST) {
 					if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand) > 0
 							&& ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(),
-									mainhand) <= 0) {
+									mainhand) <= 0 && Config.cs.isEnabled.get() == true) {
 						event.getWorld().setBlockState(event.getPos(),
 								BlockInit.TRAPPED_ENCHANTED_CHEST.get().getDefaultState().with(
 										EnchantedTrappedChestBlock.FACING,
@@ -277,7 +278,7 @@ public class BlockEnchants {
 						hidden = false;
 					}
 					
-					if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(), mainhand) > 0) {
+					if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(), mainhand) > 0 && Config.cf.isEnabled.get() == true) {
 						event.getWorld().setBlockState(event.getPos(),
 								BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().getDefaultState().with(
 										EnchantedTrappedChestBlock.FACING,
@@ -296,7 +297,7 @@ public class BlockEnchants {
 
 					if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand) > 0
 							&& ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(),
-									mainhand) > 0) {
+									mainhand) > 0 && Config.cs.isEnabled.get() == true && Config.cf.isEnabled.get() == true) {
 
 						TileEntity t = event.getWorld().getTileEntity(event.getPos());
 						if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity) {
@@ -308,7 +309,7 @@ public class BlockEnchants {
 						hidden = true;
 					}
 
-					if (placed && !hidden) {
+					if (placed && !hidden && Config.cs.isEnabled.get() == true) {
 						World world = (World) event.getWorld();
 						BlockState state = BlockInit.TRAPPED_ENCHANTED_CHEST.get().getDefaultState()
 								.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING));
@@ -367,7 +368,7 @@ public class BlockEnchants {
 						world.setBlockState(event.getPos(), state);
 					}
 
-					if (placed && hidden) {
+					if (placed && hidden && Config.cf.isEnabled.get() == true) {
 						World world = (World) event.getWorld();
 						BlockState state = BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().getDefaultState()
 								.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING));
@@ -481,7 +482,7 @@ public class BlockEnchants {
 						if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAVERNOUS_STORAGE.get(),
 								offhand) > 0
 								&& ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(),
-										offhand) <= 0) {
+										offhand) <= 0 && Config.cs.isEnabled.get() == true) {
 							event.getWorld().setBlockState(event.getPos(),
 									BlockInit.TRAPPED_ENCHANTED_CHEST.get().getDefaultState().with(
 											EnchantedTrappedChestBlock.FACING,
@@ -497,7 +498,7 @@ public class BlockEnchants {
 							placed = true;
 							hidden = false;
 						}
-						if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(), offhand) > 0) {
+						if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(), offhand) > 0 && Config.cf.isEnabled.get() == true) {
 							event.getWorld().setBlockState(event.getPos(),
 									BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().getDefaultState().with(
 											EnchantedTrappedChestBlock.FACING,
@@ -517,7 +518,7 @@ public class BlockEnchants {
 						if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAVERNOUS_STORAGE.get(),
 								offhand) > 0
 								&& ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(),
-										offhand) > 0) {
+										offhand) > 0 && Config.cs.isEnabled.get() == true && Config.cf.isEnabled.get() == true) {
 
 							TileEntity t = event.getWorld().getTileEntity(event.getPos());
 							if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity) {
@@ -529,7 +530,7 @@ public class BlockEnchants {
 							hidden = true;
 						}
 
-						if (placed && !hidden) {
+						if (placed && !hidden && Config.cs.isEnabled.get() == true) {
 							World world = (World) event.getWorld();
 							BlockState state = BlockInit.TRAPPED_ENCHANTED_CHEST.get().getDefaultState()
 									.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING));
@@ -588,7 +589,7 @@ public class BlockEnchants {
 							world.setBlockState(event.getPos(), state);
 						}
 
-						if (placed && hidden) {
+						if (placed && hidden && Config.cf.isEnabled.get() == true) {
 							World world = (World) event.getWorld();
 							BlockState state = BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().getDefaultState()
 									.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING));
@@ -786,7 +787,7 @@ public class BlockEnchants {
 						if(entity instanceof LivingEntity)
 						{
 							LivingEntity living = (LivingEntity) entity;
-							if(EnchantmentTypesInit.STORAGE.canEnchantItem(living.getHeldItemMainhand().getItem()) && enchant == EnchantmentInit.CAVERNOUS_STORAGE.get())
+							if(EnchantmentTypesInit.STORAGE.canEnchantItem(living.getHeldItemMainhand().getItem()) && enchant == EnchantmentInit.CAVERNOUS_STORAGE.get() && Config.cs.isEnabled.get() == true)
 							{
 								ItemStack stack = living.getHeldItemMainhand();
 								Item item = stack.getItem();
@@ -794,9 +795,9 @@ public class BlockEnchants {
 								{
 									BlockItem blockItem = (BlockItem) item;
 									Block block = blockItem.getBlock();
-									if(block instanceof OverridenShulkerBoxBlock)
+									if(block instanceof ShulkerBoxBlock)
 									{
-										ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((OverridenShulkerBoxBlock)block).getColor()));
+										ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock)block).getColor()));
 										newStack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 										newStack.setTag(stack.getTag());
 										if(living instanceof PlayerEntity)
@@ -846,12 +847,12 @@ public class BlockEnchants {
 		ItemStack stack = event.getPlayer().inventory.getItemStack();
 		if(ItemStack.areItemsEqual(initial, stack))
 		{
-			if(ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTagList()) && stack.getItem() instanceof BlockItem) 
+			if(ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTagList()) && stack.getItem() instanceof BlockItem && Config.cs.isEnabled.get() == true) 
 			{
 				Block block = Block.getBlockFromItem(stack.getItem());
-				if(block instanceof OverridenShulkerBoxBlock)
+				if(block instanceof ShulkerBoxBlock)
 				{
-					ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((OverridenShulkerBoxBlock)block).getColor()).asItem());
+					ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock)block).getColor()).asItem());
 					newStack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 					newStack.setTag(stack.getTag());
 					player.inventory.setItemStack(newStack);
@@ -865,12 +866,12 @@ public class BlockEnchants {
 				if(ItemStack.areItemsEqual(initial, player.inventory.getStackInSlot(x)))
 				{
 					ItemStack stack1 = player.inventory.getStackInSlot(x);
-					if(ModEnchantmentHelper.isCavernousStorage(stack1.getEnchantmentTagList()) && stack1.getItem() instanceof BlockItem) 
+					if(ModEnchantmentHelper.isCavernousStorage(stack1.getEnchantmentTagList()) && stack1.getItem() instanceof BlockItem && Config.cs.isEnabled.get() == true) 
 					{
 						Block block = ((BlockItem)stack1.getItem()).getBlock();
-						if(block instanceof OverridenShulkerBoxBlock)
+						if(block instanceof ShulkerBoxBlock)
 						{
-							ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((OverridenShulkerBoxBlock)block).getColor()).asItem());
+							ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock)block).getColor()).asItem());
 							newStack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 							newStack.setTag(stack1.getTag());
 							player.replaceItemInInventory(x, newStack);
@@ -889,12 +890,12 @@ public class BlockEnchants {
 		int x = getSlotFor(stack, player);
 		if(x >= 0)
 		{
-			if(ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTagList()) && stack.getItem() instanceof BlockItem)
+			if(ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTagList()) && stack.getItem() instanceof BlockItem && Config.cs.isEnabled.get() == true)
 			{
 				Block block = Block.getBlockFromItem(stack.getItem());
-				if(block instanceof OverridenShulkerBoxBlock)
+				if(block instanceof ShulkerBoxBlock)
 				{
-					ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((OverridenShulkerBoxBlock)block).getColor()).asItem());
+					ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock)block).getColor()).asItem());
 					newStack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 					newStack.setTag(stack.getTag());
 					player.replaceItemInInventory(x, newStack);

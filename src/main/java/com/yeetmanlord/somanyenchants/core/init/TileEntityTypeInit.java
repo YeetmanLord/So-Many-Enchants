@@ -7,7 +7,6 @@ import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedHiddenTrapped
 import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedHopperTileEntity;
 import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedShulkerBoxTileEntity;
 import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedTrappedChestTileEntity;
-import com.yeetmanlord.somanyenchants.common.tileentities.overrides.OverridenShulkerBoxTileEntity;
 
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.RegistryObject;
@@ -29,8 +28,4 @@ public class TileEntityTypeInit {
 	public static final RegistryObject<TileEntityType<EnchantedHiddenTrappedChestTileEntity>> HIDDEN_TRAPPED_ENCHANTED_CHEST =  TILE_ENTITY_TYPES.register("enchanted_hidden_trapped_chest", () -> TileEntityType.Builder.create(EnchantedHiddenTrappedChestTileEntity::new, BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()).build(null));
 	
 	public static final RegistryObject<TileEntityType<EnchantedShulkerBoxTileEntity>> ENCHANTED_SHULKER_BOX = TILE_ENTITY_TYPES.register("enchanted_shulker_box", () -> TileEntityType.Builder.create(EnchantedShulkerBoxTileEntity::new, BlockInit.ENCHANTED_SHULKER_BOX.get(), BlockInit.ENCHANTED_BLACK_SHULKER_BOX.get(), BlockInit.ENCHANTED_BLUE_SHULKER_BOX.get(), BlockInit.ENCHANTED_BROWN_SHULKER_BOX.get(), BlockInit.ENCHANTED_CYAN_SHULKER_BOX.get(), BlockInit.ENCHANTED_GRAY_SHULKER_BOX.get(), BlockInit.ENCHANTED_GREEN_SHULKER_BOX.get(), BlockInit.ENCHANTED_LIGHT_BLUE_SHULKER_BOX.get(), BlockInit.ENCHANTED_LIGHT_GRAY_SHULKER_BOX.get(), BlockInit.ENCHANTED_LIME_SHULKER_BOX.get(), BlockInit.ENCHANTED_MAGENTA_SHULKER_BOX.get(), BlockInit.ENCHANTED_ORANGE_SHULKER_BOX.get(), BlockInit.ENCHANTED_PINK_SHULKER_BOX.get(), BlockInit.ENCHANTED_PURPLE_SHULKER_BOX.get(), BlockInit.ENCHANTED_RED_SHULKER_BOX.get(), BlockInit.ENCHANTED_WHITE_SHULKER_BOX.get(), BlockInit.ENCHANTED_YELLOW_SHULKER_BOX.get()).build(null));
-
-	public static final DeferredRegister<TileEntityType<?>> MINECRAFT_TE_TYPES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, "minecraft");
-	
-	public static final RegistryObject<TileEntityType<OverridenShulkerBoxTileEntity>> SHULKER_BOX = MINECRAFT_TE_TYPES.register("shulker_box", () -> TileEntityType.Builder.create(OverridenShulkerBoxTileEntity::new, BlockInit.SHULKER_BOX.get(), BlockInit.BLACK_SHULKER_BOX.get(), BlockInit.BLUE_SHULKER_BOX.get(), BlockInit.BROWN_SHULKER_BOX.get(), BlockInit.CYAN_SHULKER_BOX.get(), BlockInit.GRAY_SHULKER_BOX.get(), BlockInit.GREEN_SHULKER_BOX.get(), BlockInit.LIGHT_BLUE_SHULKER_BOX.get(), BlockInit.LIGHT_GRAY_SHULKER_BOX.get(), BlockInit.LIME_SHULKER_BOX.get(), BlockInit.MAGENTA_SHULKER_BOX.get(), BlockInit.ORANGE_SHULKER_BOX.get(), BlockInit.PINK_SHULKER_BOX.get(), BlockInit.PURPLE_SHULKER_BOX.get(), BlockInit.RED_SHULKER_BOX.get(), BlockInit.WHITE_SHULKER_BOX.get(), BlockInit.YELLOW_SHULKER_BOX.get()).build(null));
 }

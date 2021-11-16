@@ -27,7 +27,7 @@ public class BlockReach extends EnchantmentConfig
 		
 		this.maxLevel = builder
 				.comment(" The maximum enchantment level")
-				.defineInRange("maxLevel", max, 1, 5);
+				.defineInRange("maxLevel", max, 1, this.absoluteMax);
 		
 		builder.pop();
 	}

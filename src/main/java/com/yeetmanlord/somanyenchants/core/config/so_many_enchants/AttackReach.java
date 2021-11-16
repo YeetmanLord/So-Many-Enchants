@@ -28,7 +28,7 @@ public class AttackReach extends EnchantmentConfig
 		
 		this.maxLevel = builder
 				.comment(" The maximum enchantment level")
-				.defineInRange("maxLevel", max, 1, 3);
+				.defineInRange("maxLevel", max, 1, this.absoluteMax);
 		
 		builder.pop();
 	}

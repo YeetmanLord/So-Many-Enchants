@@ -56,28 +56,4 @@ public class ItemInit {
 			
 	public static final RegistryObject<BlockItem> ENCHANTED_BLACK_SHULKER_BOX = BLOCK_ITEMS.register(
 			"enchanted_black_shulker_box", () -> new BlockItem(BlockInit.ENCHANTED_BLACK_SHULKER_BOX.get(), p));
-	
-	
-	public static final DeferredRegister<Item> MINECRAFT_BLOCK_ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "minecraft");
-	
-	
-	
-	
-	public static final RegistryObject<BlockItem> SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("shulker_box", () -> new BlockItem(BlockInit.SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> WHITE_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("white_shulker_box", () -> new BlockItem(BlockInit.WHITE_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> ORANGE_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("orange_shulker_box", () -> new BlockItem(BlockInit.ORANGE_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> MAGENTA_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("magenta_shulker_box", () -> new BlockItem(BlockInit.MAGENTA_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> LIGHT_BLUE_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("light_blue_shulker_box", () -> new BlockItem(BlockInit.LIGHT_BLUE_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> YELLOW_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("yellow_shulker_box", () -> new BlockItem(BlockInit.YELLOW_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> LIME_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("lime_shulker_box", () -> new BlockItem(BlockInit.LIME_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> PINK_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("pink_shulker_box", () -> new BlockItem(BlockInit.PINK_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> GRAY_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("gray_shulker_box", () -> new BlockItem(BlockInit.GRAY_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> LIGHT_GRAY_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("light_gray_shulker_box", () -> new BlockItem(BlockInit.LIGHT_GRAY_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> CYAN_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("cyan_shulker_box", () -> new BlockItem(BlockInit.CYAN_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> PURPLE_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("purple_shulker_box", () -> new BlockItem(BlockInit.PURPLE_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> BLUE_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("blue_shulker_box", () -> new BlockItem(BlockInit.BLUE_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> BROWN_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("brown_shulker_box", () -> new BlockItem(BlockInit.BROWN_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> GREEN_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("green_shulker_box", () -> new BlockItem(BlockInit.GREEN_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> RED_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("red_shulker_box", () -> new BlockItem(BlockInit.RED_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
-	public static final RegistryObject<BlockItem> BLACK_SHULKER_BOX = MINECRAFT_BLOCK_ITEMS.register("black_shulker_box", () -> new BlockItem(BlockInit.BLACK_SHULKER_BOX.get(), (new Item.Properties()).maxStackSize(1).group(ItemGroup.DECORATIONS)));
 }

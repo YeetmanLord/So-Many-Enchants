@@ -1,10 +1,10 @@
 package com.yeetmanlord.somanyenchants.core.init;
 
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
-import com.yeetmanlord.somanyenchants.common.blocks.override.OverridenShulkerBoxBlock;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -25,7 +25,7 @@ public class EnchantmentTypesInit {
 		if (item instanceof BlockItem) {
 			BlockItem blockItem = (BlockItem) item;
 			Block block = blockItem.getBlock();
-			if (block instanceof OverridenShulkerBoxBlock || block instanceof EnchantedShulkerBoxBlock) {
+			if (block instanceof ShulkerBoxBlock || block instanceof EnchantedShulkerBoxBlock) {
 				return true;
 			} else if (item == Items.CHEST || item == Items.TRAPPED_CHEST || item == Items.BARREL) {
 				return true;

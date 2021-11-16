@@ -1,15 +1,14 @@
-package com.yeetmanlord.somanyenchants.common.container.slots;
+package net.minecraft.inventory.container;
 
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
-public class EnchantedShulkerBoxSlot extends Slot {
-   public EnchantedShulkerBoxSlot(IInventory inventoryIn, int slotIndexIn, int xPosition, int yPosition) {
+public class ShulkerBoxSlot extends Slot {
+   public ShulkerBoxSlot(IInventory inventoryIn, int slotIndexIn, int xPosition, int yPosition) {
       super(inventoryIn, slotIndexIn, xPosition, yPosition);
    }
 
@@ -17,6 +16,6 @@ public class EnchantedShulkerBoxSlot extends Slot {
     * Check if the stack is allowed to be placed in this slot, used for armor slots as well as furnace fuel.
     */
    public boolean isItemValid(ItemStack stack) {
-      return !(Block.getBlockFromItem(stack.getItem()) instanceof ShulkerBoxBlock || Block.getBlockFromItem(stack.getItem()) instanceof EnchantedShulkerBoxBlock);
+      return !(Block.getBlockFromItem(stack.getItem()) instanceof ShulkerBoxBlock) && !(Block.getBlockFromItem(stack.getItem()) instanceof EnchantedShulkerBoxBlock) ;
    }
 }

@@ -12,7 +12,6 @@ import com.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedChestT
 import com.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedHiddenTrappedChestTileEntityRenderer;
 import com.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedShulkerBoxTileEntityRenderer;
 import com.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedTrappedChestTileEntityRenderer;
-import com.yeetmanlord.somanyenchants.client.renderer.tileentity.override.OverridenShulkerBoxTileEntityRenderer;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.AttributeInit;
 import com.yeetmanlord.somanyenchants.core.init.BlockInit;
@@ -54,7 +53,6 @@ public class Main
     public Main() {
     	Config.hasInit = false;
     	instance=this;
-    	
     	final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
     	
     		modEventBus.addListener(this::setup);
@@ -64,11 +62,8 @@ public class Main
     		ContainerTypeInit.CONTIAINER_TYPES.register(modEventBus);
     		ContainerTypeInit.MINECRAFT_CONTIAINER_TYPES.register(modEventBus);
     		TileEntityTypeInit.TILE_ENTITY_TYPES.register(modEventBus);
-    		TileEntityTypeInit.MINECRAFT_TE_TYPES.register(modEventBus);
     		BlockInit.BLOCKS.register(modEventBus);
-    		BlockInit.MINECRAFT_BLOCKS.register(modEventBus);
     		ItemInit.BLOCK_ITEMS.register(modEventBus);
-    		ItemInit.MINECRAFT_BLOCK_ITEMS.register(modEventBus);
     		VillagerProfessionInit.POI_TYPE.register(modEventBus);
     		VillagerProfessionInit.JOBS.register(modEventBus);
     		ParticleTypesInit.PARTICLES.register(modEventBus);;
@@ -120,7 +115,6 @@ public class Main
 
     private void doClientStuff(final FMLClientSetupEvent event) 
     {
-    	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.SHULKER_BOX.get(), OverridenShulkerBoxTileEntityRenderer::new);
     	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.ENCHANTED_SHULKER_BOX.get(), EnchantedShulkerBoxTileEntityRenderer::new);
     	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
     	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.TRAPPED_ENCHANTED_CHEST.get(), EnchantedTrappedChestTileEntityRenderer::new);

@@ -114,8 +114,8 @@ public class Config
 			u = new Unbreaking(10);
 			v = new VillagerConfig();
 			
-			a = new AttackReach(3);
-			b = new BlockReach(5);
+			a = new AttackReach(10);
+			b = new BlockReach(10);
 			c = new CatVision(1);
 			cf = new Camouflage(1);
 			cr = new Critical(5);
