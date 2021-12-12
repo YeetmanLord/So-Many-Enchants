@@ -300,7 +300,6 @@ public class ReachEnchantments {
 	}
 
 	private static void addModifiersBlock(ItemStack stack, PlayerEntity player, double reachLvl) {
-		Main.LOGGER.info("Test");
 		final UUID ATTACK_DAMAGE_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
 		final UUID ATTACK_SPEED_MODIFIER = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
 		final UUID REACH_MODIFIER = UUID.fromString("FA233F1C-4180-4865-B01B-BCCE9785ACA3");

@@ -66,6 +66,7 @@
 	"so_many_enchants.screen.config.max_level.fr": "Frostbite | Max Level",
 	"so_many_enchants.screen.config.enabled.cs": "Cavernous Storage",
 	"so_many_enchants.screen.config.enabled.cf": "Camouflage",
+	"so_many_enchants.screen.config.enabled.fs": "Fast Smelt",
 	"so_many_enchants.screen.config.enabled.v": "Enchanter Villager",
 	"so_many_enchants.screen.config.enabled.vanilla": "Modded changes",
 	"so_many_enchants.screen.config.enabled.modded": "Enbaled?",

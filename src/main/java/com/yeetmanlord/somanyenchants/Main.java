@@ -1,6 +1,7 @@
 package com.yeetmanlord.somanyenchants;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,8 +24,11 @@ import com.yeetmanlord.somanyenchants.core.init.ParticleTypesInit;
 import com.yeetmanlord.somanyenchants.core.init.TileEntityTypeInit;
 import com.yeetmanlord.somanyenchants.core.init.VillagerProfessionInit;
 import com.yeetmanlord.somanyenchants.core.network.NetworkHandler;
+import com.yeetmanlord.somanyenchants.core.util.PlayerUtilities;
+import com.yeetmanlord.somanyenchants.core.util.Scheduler;
 
 import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -49,8 +53,12 @@ public class Main
     public static final String MOD_ID = "so_many_enchants";
     public static Main instance;
     
+    public static HashMap<PlayerEntity, PlayerUtilities> playerUtils;
+	public static HashMap<PlayerEntity, Scheduler> playerTaskSchedulers = new HashMap<>();
     
     public Main() {
+    	playerUtils = new HashMap<>();
+    	
     	Config.hasInit = false;
     	instance=this;
     	final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -119,5 +127,35 @@ public class Main
     	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
     	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.TRAPPED_ENCHANTED_CHEST.get(), EnchantedTrappedChestTileEntityRenderer::new);
     	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get(), EnchantedHiddenTrappedChestTileEntityRenderer::new);
+    }
+    
+    public static PlayerUtilities getPlayerUtil(PlayerEntity player)
+    {
+    	PlayerUtilities util;
+    	
+    	if(playerUtils.containsKey(player))
+    	{
+    		return playerUtils.get(player);
+    	}
+    	else
+    	{
+    		util = new PlayerUtilities(player);
+    		playerUtils.put(player, util);
+    		return util;
+    	}
+    }
+    
+    public static Scheduler getScheduler(PlayerEntity player)
+    {
+    	if(playerTaskSchedulers.get(player) != null)
+    	{
+    		return playerTaskSchedulers.get(player);
+    	}
+    	else
+    	{
+    		Scheduler scheduler = new Scheduler(player);
+    		playerTaskSchedulers.put(player, scheduler);
+    		return scheduler;
+    	}
     }
 }

@@ -3,6 +3,7 @@ package com.yeetmanlord.somanyenchants.core.network;
 import com.yeetmanlord.somanyenchants.Main;
 import com.yeetmanlord.somanyenchants.core.network.message.AttackPacket;
 import com.yeetmanlord.somanyenchants.core.network.message.ConfigSetPacket;
+import com.yeetmanlord.somanyenchants.core.network.message.FlyingPacket;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -20,6 +21,7 @@ public class NetworkHandler {
 	{
 		CHANNEL.registerMessage(0, AttackPacket.class, AttackPacket::encode, AttackPacket::decode, AttackPacket::handle);
 		CHANNEL.registerMessage(1, ConfigSetPacket.class, ConfigSetPacket::encode, ConfigSetPacket::decode, ConfigSetPacket::handle);
+		CHANNEL.registerMessage(2, FlyingPacket.class, FlyingPacket::encode, FlyingPacket::decode, FlyingPacket::handle);
 	}
 	
 

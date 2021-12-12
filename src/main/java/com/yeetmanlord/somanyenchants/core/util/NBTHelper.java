@@ -1,7 +1,5 @@
 package com.yeetmanlord.somanyenchants.core.util;
 
-import com.yeetmanlord.somanyenchants.Main;
-
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -77,9 +75,6 @@ public class NBTHelper
 				
 				double attackDamage = NBTHelper.getAttackDamage(player) + 1;
 				double attackSpeed = NBTHelper.getAttackSpeed(player);
-
-				Main.LOGGER.info("1 " + attackDamage);
-				Main.LOGGER.info("2 " + attackSpeed);
 				
 				StringNBT space = StringNBT.valueOf("{\"text\": \"\"}");
 				StringNBT extra = StringNBT.valueOf("{\"text\": \"\u00a77When in Main Hand\"}");
@@ -251,7 +246,6 @@ public class NBTHelper
 	public static double getAttackDamage(PlayerEntity player)
 	{
 		double attackDamage = player.getAttributeValue(Attributes.ATTACK_DAMAGE);
-		Main.LOGGER.info("damage " + player.getAttributeValue(Attributes.ATTACK_DAMAGE));
 		
 		
 		EffectInstance effect = player.getActivePotionEffect(Effects.STRENGTH);
@@ -269,7 +263,6 @@ public class NBTHelper
 		}
 		attackDamage += sharpness;
 		attackDamage -= 1;
-		Main.LOGGER.info("4 " + attackDamage);
 		return attackDamage;
 	}
 	

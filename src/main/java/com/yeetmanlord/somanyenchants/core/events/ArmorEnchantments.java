@@ -5,13 +5,21 @@ import java.util.UUID;
 import com.yeetmanlord.somanyenchants.Main;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
+import com.yeetmanlord.somanyenchants.core.network.NetworkHandler;
+import com.yeetmanlord.somanyenchants.core.network.message.FlyingPacket;
 import com.yeetmanlord.somanyenchants.core.util.AttributeHelper;
+import com.yeetmanlord.somanyenchants.core.util.MathUtils;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
+import com.yeetmanlord.somanyenchants.core.util.PlayerUtilities;
+import com.yeetmanlord.somanyenchants.core.util.Scheduler;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
@@ -21,13 +29,14 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangeGameModeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 @EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
 public class ArmorEnchantments {
-
 	@SubscribeEvent
 	public static void extraArmor(final LivingEquipmentChangeEvent event) {
 		LivingEntity living = event.getEntityLiving();
@@ -362,94 +371,6 @@ public class ArmorEnchantments {
 		return 0;
 	}
 
-	private static int exhaustion;
-
-	@SubscribeEvent
-	public static void flyingEnchant(final PlayerTickEvent event) {
-		if (Config.fl.isEnabled.get() == true) {
-			PlayerEntity player = event.player;
-			ItemStack boots = player.inventory.armorInventory.get(0);
-			if (!boots.isEmpty() && !player.getShouldBeDead() && !player.isCreative() && !player.isSpectator()) {
-				player.abilities.allowFlying = true;
-				player.sendPlayerAbilities();
-				int lvl = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FLIGHT.get(), boots);
-				if (lvl == 1 && player.getFoodStats().getFoodLevel() > 4) {
-					if (player.abilities.isFlying) {
-						exhaustion = exhaustion + 1;
-						if (exhaustion >= 500) {
-							exhaustion = 0;
-							if (!player.isCreative() && !player.isSpectator()) {
-								player.addExhaustion(1.0f);
-								boots.damageItem(1, player, (p_213833_1_) -> {
-									p_213833_1_.sendBreakAnimation(player.getActiveHand());
-									net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player,
-											player.getActiveItemStack(), player.getActiveHand());
-								});
-							}
-						}
-					}
-				} else if (lvl == 2 && player.getFoodStats().getFoodLevel() > 4) {
-					if (player.abilities.isFlying) {
-						exhaustion = exhaustion + 1;
-						if (exhaustion >= 750) {
-							exhaustion = 0;
-							if (!player.isCreative() && !player.isSpectator()) {
-								player.addExhaustion(1.0f);
-								boots.damageItem(1, player, (p_213833_1_) -> {
-									p_213833_1_.sendBreakAnimation(player.getActiveHand());
-									net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player,
-											player.getActiveItemStack(), player.getActiveHand());
-								});
-							}
-						}
-					}
-				} else if (lvl == 3 && player.getFoodStats().getFoodLevel() > 4) {
-					if (player.abilities.isFlying) {
-						exhaustion = exhaustion + 1;
-						if (exhaustion >= 1000) {
-							exhaustion = 0;
-							if (!player.isCreative() && !player.isSpectator()) {
-								player.addExhaustion(1.0f);
-								boots.damageItem(1, player, (p_213833_1_) -> {
-									p_213833_1_.sendBreakAnimation(player.getActiveHand());
-									net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player,
-											player.getActiveItemStack(), player.getActiveHand());
-								});
-							}
-						}
-					}
-				} else if (lvl > 3 && player.getFoodStats().getFoodLevel() > 4) {
-					if (player.abilities.isFlying) {
-						exhaustion = exhaustion + 1;
-						if (exhaustion >= 1000 + lvl * 100) {
-							exhaustion = 0;
-							if (!player.isCreative() && !player.isSpectator()) {
-								player.addExhaustion(1.0f);
-								boots.damageItem(1, player, (p_213833_1_) -> {
-									p_213833_1_.sendBreakAnimation(player.getActiveHand());
-									net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player,
-											player.getActiveItemStack(), player.getActiveHand());
-								});
-							}
-						}
-					}
-				} else if (player.getFoodStats().getFoodLevel() < 4) {
-					player.abilities.allowFlying = false;
-					player.abilities.isFlying = false;
-					player.sendPlayerAbilities();
-				} else if (!player.isCreative() && !player.isSpectator()) {
-					player.abilities.allowFlying = false;
-					player.abilities.isFlying = false;
-					player.sendPlayerAbilities();
-				}
-			} else if (!player.isCreative() && !player.isSpectator() && !player.getShouldBeDead()) {
-				player.abilities.isFlying = false;
-				player.abilities.allowFlying = false;
-				player.sendPlayerAbilities();
-			}
-		}
-	}
-
 	@SubscribeEvent
 	public static void applyFlight(final LivingEquipmentChangeEvent event) {
 		LivingEntity living = event.getEntityLiving();
@@ -463,13 +384,16 @@ public class ArmorEnchantments {
 					if (level > 0 && !player.getShouldBeDead()) {
 						player.abilities.allowFlying = true;
 						player.sendPlayerAbilities();
+						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {return (ServerPlayerEntity) player;}), new FlyingPacket(true));
+						
 					}
 				} else if (oldSlot != ItemStack.EMPTY) {
-					int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FLIGHT.get(), oldSlot);
+					int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FLIGHT.get(), oldSlot); 
 					if (level > 0 && !player.getShouldBeDead()) {
 						player.abilities.allowFlying = false;
 						player.abilities.isFlying = false;
 						player.sendPlayerAbilities();
+						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {return (ServerPlayerEntity) player;}), new FlyingPacket(false));
 					}
 				}
 			}
@@ -1346,12 +1270,94 @@ public class ArmorEnchantments {
 	}
 
 	@SubscribeEvent
-	public static void stepAssist(final PlayerTickEvent event) {
-		PlayerEntity player = event.player;
-		if (ModEnchantmentHelper.getStepAssistLevel(player) > 0 && Config.sa.isEnabled.get() == true) {
-			player.stepHeight = 0.6F + ModEnchantmentHelper.getStepAssistLevel(player) * 0.5F;
-		} else {
-			player.stepHeight = 0.6F;
+	public static void stepAssist(final LivingEquipmentChangeEvent event) {
+		LivingEntity e = event.getEntityLiving();
+		if (e instanceof PlayerEntity && Config.sa.isEnabled.get() == true) {
+			PlayerEntity player = (PlayerEntity) e;
+			ItemStack a = event.getFrom();
+			ItemStack b = event.getTo();
+			PlayerUtilities util = Main.getPlayerUtil(player);
+			if (event.getSlot() == EquipmentSlotType.FEET) {
+				if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 0 && ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) <= 3) {
+					player.stepHeight = player.stepHeight
+							- ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) * 0.5f;
+					util.setLastModifiedStepHeight(0.6f
+							+ ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) * 0.5f);
+					util.setStepHeight(player.stepHeight);
+				}
+				else if(ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 3)
+				{
+					player.stepHeight = player.stepHeight
+							- 3 * 0.5f;
+					util.setLastModifiedStepHeight(0.6f
+							+ 3 * 0.5f);
+					util.setStepHeight(player.stepHeight);
+				}
+
+				if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), b) > 0 && ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), b) <= 3) {
+					util.setLastModifiedStepHeight(player.stepHeight
+							- ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) * 0.5f);
+					player.stepHeight = 0.6f
+							+ ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), b) * 0.5f;
+					util.setStepHeight(player.stepHeight);
+				}
+				else if(ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 3)
+				{
+					util.setLastModifiedStepHeight(player.stepHeight
+							- 3 * 0.5f);
+					player.stepHeight = 0.6f
+							+ 3 * 0.5f;
+					util.setStepHeight(player.stepHeight);
+				}
+			}
 		}
+	}
+
+	@SubscribeEvent
+	public static void updateStepAssist(final PlayerTickEvent event) {
+
+		PlayerEntity player = event.player;
+		PlayerUtilities util = Main.getPlayerUtil(player);
+		if (ModEnchantmentHelper.getStepAssistLevel(player) > 0 && Config.sa.isEnabled.get() == true) {
+			player.stepHeight = util.getStepHeight();
+		} else if (MathUtils.roundNearestPlace(util.getStepHeight(), -1) == 0.6f
+				&& MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) != MathUtils
+						.roundNearestPlace(util.getStepHeight(), -1)
+				&& ModEnchantmentHelper.getStepAssistLevel(player) == 0
+				&& MathUtils.roundNearestPlace(player.stepHeight, -1) == MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) && Config.sa.isEnabled.get() == true) {
+			player.stepHeight = 0.6f;
+		}
+	}
+	
+	public static class ClientAccess
+	{
+		public static void updatePlayerFlying(boolean flying) 
+		{
+			@SuppressWarnings("resource")
+			ClientPlayerEntity player = Minecraft.getInstance().player;
+			player.abilities.allowFlying = flying;
+			player.sendPlayerAbilities();
+		}
+	}
+
+	@SubscribeEvent
+	public static void switchGM(final PlayerChangeGameModeEvent event)
+	{
+		PlayerEntity player = event.getPlayer();
+		Scheduler sch = Main.getScheduler(player);
+		sch.schedule(() -> new Runnable() {
+			@Override
+			public void run() 
+			{
+				ItemStack stack = player.inventory.armorInventory.get(0);
+				int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FLIGHT.get(), stack);
+				if(level > 0)
+				{
+					player.abilities.allowFlying = true;
+					player.sendPlayerAbilities();
+					NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {return (ServerPlayerEntity) player;}), new FlyingPacket(true));
+				}
+			}
+		}, 0);
 	}
 }

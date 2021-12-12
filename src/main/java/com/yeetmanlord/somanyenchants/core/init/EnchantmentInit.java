@@ -11,6 +11,7 @@ import com.yeetmanlord.somanyenchants.common.enchantments.armor.StepAssistEnchan
 import com.yeetmanlord.somanyenchants.common.enchantments.blocks.CamouflageEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.blocks.CavernousStorageEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.blocks.FastHopperEnchant;
+import com.yeetmanlord.somanyenchants.common.enchantments.blocks.FastSmeltEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.tools.BlockReachEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.tools.DoubleBreakEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.tools.ReplantingEnchant;
@@ -59,6 +60,8 @@ public class EnchantmentInit
 	public static final RegistryObject<Enchantment> CAVERNOUS_STORAGE = ENCHANTMENTS.register("cavernous_storage", () -> new CavernousStorageEnchant(Rarity.RARE, EquipmentSlotType.MAINHAND));
 	
 	public static final RegistryObject<Enchantment> CAMOUFLAGE = ENCHANTMENTS.register("camouflage", () -> new CamouflageEnchant(Rarity.RARE, EquipmentSlotType.MAINHAND));
+	
+	public static final RegistryObject<Enchantment> FAST_SMELT = ENCHANTMENTS.register("fast_smelt", () -> new FastSmeltEnchant(Rarity.RARE, EquipmentSlotType.MAINHAND));
 	
 	
 	
