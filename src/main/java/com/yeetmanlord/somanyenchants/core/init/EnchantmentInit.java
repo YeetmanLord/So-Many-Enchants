@@ -20,7 +20,8 @@ import com.yeetmanlord.somanyenchants.common.enchantments.tools.ReplantingEnchan
 import com.yeetmanlord.somanyenchants.common.enchantments.weapons.AttackReachEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.weapons.CriticalEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.weapons.FreezingEnchant;
-import com.yeetmanlord.somanyenchants.common.enchantments.weapons.HeavyBladeEnchantment;
+import com.yeetmanlord.somanyenchants.common.enchantments.weapons.HeavyBladeEnchant;
+import com.yeetmanlord.somanyenchants.common.enchantments.weapons.LightBladeEnchant;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantment.Rarity;
@@ -69,8 +70,10 @@ public class EnchantmentInit
 	public static final RegistryObject<Enchantment> FUEL_EFFICIENT = ENCHANTMENTS.register("fuel_efficient", () -> new FuelEfficientSmelterEnchant(Rarity.UNCOMMON, EquipmentSlotType.MAINHAND));
 	
 	public static final RegistryObject<Enchantment> EXTRA_EXPERIENCE = ENCHANTMENTS.register("extra_experience", () -> new ExtraExperienceSmelterEnchant(Rarity.UNCOMMON, EquipmentSlotType.MAINHAND));
+
+	public static final RegistryObject<Enchantment> HEAVY_BLADE = ENCHANTMENTS.register("heavy_blade", () -> new HeavyBladeEnchant(Rarity.VERY_RARE, EquipmentSlotType.MAINHAND));
 	
-	public static final RegistryObject<Enchantment> HEAVY_BLADE = ENCHANTMENTS.register("heavy_blade", () -> new HeavyBladeEnchantment(Rarity.VERY_RARE, EquipmentSlotType.MAINHAND));
+	public static final RegistryObject<Enchantment> LIGHT_BLADE = ENCHANTMENTS.register("light_blade", () -> new LightBladeEnchant(Rarity.VERY_RARE, EquipmentSlotType.MAINHAND));
 	
 	
 	

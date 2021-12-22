@@ -278,7 +278,7 @@ public class BlockEnchants
 					}
 
 				}
-				else if (!offhand.isEnchanted())
+				else if (!offhand.isEnchanted() && !mainhand.isEnchanted())
 				{
 					event.getWorld().setBlockState(event.getPos(),
 							ShulkerBoxBlock.getBlockByColor(shulker.getColor()).getDefaultState().with(

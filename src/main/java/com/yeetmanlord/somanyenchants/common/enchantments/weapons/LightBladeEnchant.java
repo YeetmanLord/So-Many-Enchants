@@ -1,6 +1,7 @@
 package com.yeetmanlord.somanyenchants.common.enchantments.weapons;
 
 import com.yeetmanlord.somanyenchants.core.config.Config;
+import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.enchantment.DamageEnchantment;
 import net.minecraft.enchantment.Enchantment;
@@ -11,9 +12,9 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.TridentItem;
 
-public class HeavyBladeEnchantment extends Enchantment {
+public class LightBladeEnchant extends Enchantment {
 
-	public HeavyBladeEnchantment(Rarity rarityIn, EquipmentSlotType... slots) {
+	public LightBladeEnchant(Rarity rarityIn, EquipmentSlotType... slots) {
 		super(rarityIn, EnchantmentType.WEAPON, slots);
 	}
 
@@ -47,10 +48,10 @@ public class HeavyBladeEnchantment extends Enchantment {
 
 	@Override
 	public int getMaxLevel() {
-		if (Config.heavyBlade.isEnabled.get() == false) {
+		if (Config.lightBlade.isEnabled.get() == false) {
 			return 0;
 		} else
-			return Config.heavyBlade.maxLevel.get();
+			return Config.lightBlade.maxLevel.get();
 	}
 
 	@Override
@@ -60,13 +61,15 @@ public class HeavyBladeEnchantment extends Enchantment {
 
 	@Override
 	protected boolean canApplyTogether(Enchantment ench) {
-		return super.canApplyTogether(ench) && !(ench instanceof DamageEnchantment); 
+		return ench == EnchantmentInit.HEAVY_BLADE.get() || ench instanceof DamageEnchantment
+				|| ench == EnchantmentInit.ATTACK_REACH.get() || ench == EnchantmentInit.BLOCK_REACH.get()
+						? false : super.canApplyTogether(ench);
 	}
 	
 	@Override
 	public float calcDamageByCreature(int level, CreatureAttribute creatureType) 
 	{
-		return (float) (Math.max(0, level - 1) * 2 + 4);
+		return (float) ((level - 1) * -.5 - 1);
 	}
 
 }

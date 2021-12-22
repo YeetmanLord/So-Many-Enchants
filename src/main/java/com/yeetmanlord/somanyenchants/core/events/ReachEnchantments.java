@@ -7,6 +7,7 @@ import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.AttributeInit;
 import com.yeetmanlord.somanyenchants.core.network.NetworkHandler;
 import com.yeetmanlord.somanyenchants.core.network.message.AttackPacket;
+import com.yeetmanlord.somanyenchants.core.util.AttributeHelper;
 import com.yeetmanlord.somanyenchants.core.util.NBTHelper;
 
 import net.minecraft.client.Minecraft;
@@ -37,44 +38,65 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
-public class ReachEnchantments {
+public class ReachEnchantments
+{
 
 	private static boolean enchanted = false;
 
 	@SubscribeEvent
-	public static void attackReach(final PlayerTickEvent event) {
-		if (Config.attackReach.isEnabled.get() == true) {
+	public static void attackReach(final PlayerTickEvent event)
+	{
+
+		if (Config.attackReach.isEnabled.get() == true)
+		{
 			boolean attributeFound = false;
 			PlayerEntity player = event.player;
 			ItemStack itemInHand = player.getHeldItemMainhand();
 
-			if (itemInHand == ItemStack.EMPTY)
-				return;
-			if (itemInHand.isEnchanted() && !enchanted) {
+			if (itemInHand == ItemStack.EMPTY) return;
+
+			if (itemInHand.isEnchanted() && !enchanted)
+			{
 				ListNBT enchants = itemInHand.getEnchantmentTagList();
-				for (int x = 0; x < enchants.size(); x++) {
+
+				for (int x = 0; x < enchants.size(); x++)
+				{
 					CompoundNBT enchant = enchants.getCompound(x);
-					if (enchant.getInt("lvl") <= Short.MAX_VALUE) {
+
+					if (enchant.getInt("lvl") <= Short.MAX_VALUE)
+					{
 						String id = enchant.getString("id");
 						Short lvl = enchant.getShort("lvl");
-						if (id.matches("so_many_enchants:attack_reach") && lvl >= 1) {
+
+						if (id.matches("so_many_enchants:attack_reach") && lvl >= 1)
+						{
 							ListNBT attributes = itemInHand.getTag().getList("AttributeModifiers", 10);
-							for (int y = 0; y < attributes.size(); y++) {
+
+							for (int y = 0; y < attributes.size(); y++)
+							{
 								CompoundNBT attribute = attributes.getCompound(x);
 								String name = attribute.getString("Name");
 								String atName = attribute.getString("AttributeName");
 								double amount = attribute.getDouble("amount");
-								if (amount > 1024.0D) {
+
+								if (amount > 1024.0D)
+								{
 									attribute.putDouble("amount", 1024.0D);
 									return;
 								}
+
 								if (atName.matches("so_many_enchants:player.attack_distance")
-										&& name.matches("Mainhand modifier")) {
+										&& name.matches("Mainhand modifier"))
+								{
 									return;
-								} else if (!attributeFound) {
+								}
+								else if (!attributeFound)
+								{
 									attributeFound = false;
 								}
+
 							}
+
 							itemInHand.addAttributeModifier(
 									AttributeInit.ATTACK_DISTANCE.get(), new AttributeModifier(new UUID(123, 321),
 											"Mainhand modifier", (double) lvl * 1.5D, Operation.ADDITION),
@@ -85,83 +107,126 @@ public class ReachEnchantments {
 							enchanted = true;
 							return;
 						}
-					} else {
+
+					}
+					else
+					{
 						enchant.putShort("lvl", Short.MAX_VALUE);
 						return;
 					}
+
 				}
+
 			}
+
 			if (itemInHand.getAttributeModifiers(EquipmentSlotType.MAINHAND) != null
 					&& (itemInHand.getItem() instanceof TieredItem || itemInHand.getItem() instanceof TridentItem)
-					&& itemInHand.getTag() != null) {
+					&& itemInHand.getTag() != null)
+			{
 				ListNBT attributes = itemInHand.getTag().getList("AttributeModifiers", 10);
-				for (int x = 0; x < attributes.size(); x++) {
+
+				for (int x = 0; x < attributes.size(); x++)
+				{
 					CompoundNBT attribute = attributes.getCompound(x);
 					String name = attribute.getString("Name");
 					String atName = attribute.getString("AttributeName");
 					double amount = attribute.getDouble("amount");
-					if (amount > 1024.0D) {
+
+					if (amount > 1024.0D)
+					{
 						attribute.putDouble("amount", 1024.0D);
 						return;
 					}
 
-					if (atName.matches("so_many_enchants:player.attack_distance")
-							&& name.matches("Mainhand modifier")) {
-						if (itemInHand.isEnchanted()) {
+					if (atName.matches("so_many_enchants:player.attack_distance") && name.matches("Mainhand modifier"))
+					{
+
+						if (itemInHand.isEnchanted())
+						{
 							ListNBT enchants = itemInHand.getEnchantmentTagList();
-							for (int y = 0; y < enchants.size(); y++) {
+
+							for (int y = 0; y < enchants.size(); y++)
+							{
 
 								CompoundNBT enchant = enchants.getCompound(y);
-								if (enchant.getInt("lvl") <= Short.MAX_VALUE) {
-									String id = enchant.getString("id");
-									if (id.matches("so_many_enchants:attack_reach")) {
-										return;
-									} else if (y < enchants.size() - 1) {
 
-									} else if (y >= enchants.size() - 1) {
+								if (enchant.getInt("lvl") <= Short.MAX_VALUE)
+								{
+									String id = enchant.getString("id");
+
+									if (id.matches("so_many_enchants:attack_reach"))
+									{
+										return;
+									}
+									else if (y < enchants.size() - 1)
+									{
+
+									}
+									else if (y >= enchants.size() - 1)
+									{
 										NBTHelper.removeCustomAttributeLore(player.getHeldItemMainhand(),
 												"Attack Reach Distance");
 										attributes.remove(x);
+										CompoundNBT nbt = itemInHand.getTag();
+										nbt.remove("AttributeModifiers");
 										return;
-									} else {
+									}
+									else
+									{
 										Main.LOGGER.error("{} has invalid weapon attribute",
 												(Object) player.getName().getString());
 										return;
 									}
+
 								}
+
 							}
-						} else {
+
+						}
+						else
+						{
 							NBTHelper.removeCustomAttributeLore(player.getHeldItemMainhand(), "Attack Reach Distance");
+							CompoundNBT nbt = itemInHand.getTag();
+							nbt.remove("AttributeModifiers");
 							attributeFound = false;
 							attributes.remove(x);
 							enchanted = false;
 							return;
 						}
-					} else if (enchanted && x >= attributes.size()) {
+
+					}
+					else if (enchanted && x >= attributes.size())
+					{
 						enchanted = false;
 						return;
 					}
+
 				}
-				if (enchanted) {
+
+				if (enchanted)
+				{
 					enchanted = false;
 				}
+
 			}
+
 		}
+
 	}
 
-	private static void addModifiers(ItemStack stack, PlayerEntity player, double reachLvl) {
+	private static void addModifiers(ItemStack stack, PlayerEntity player, double reachLvl)
+	{
 		final UUID ATTACK_DAMAGE_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
 		final UUID ATTACK_SPEED_MODIFIER = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
 		final UUID REACH_MODIFIER = UUID.fromString("FA233F1C-4180-4865-B01B-BCCE9785ACA3");
 		Attribute reachDistBase = AttributeInit.ATTACK_DISTANCE.get();
 		stack.addAttributeModifier(Attributes.ATTACK_DAMAGE,
 				new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Mainhand modifier",
-						NBTHelper.getAttackDamage(player) - NBTHelper.getSharpnessDamage(player),
-						Operation.ADDITION),
+						NBTHelper.getAttackDamage(player), Operation.ADDITION),
 				EquipmentSlotType.MAINHAND);
 		stack.addAttributeModifier(Attributes.ATTACK_SPEED,
 				new AttributeModifier(ATTACK_SPEED_MODIFIER, "Mainhand modifier",
-						-player.getBaseAttributeValue(Attributes.ATTACK_SPEED) + NBTHelper.getAttackSpeed(player),
+						AttributeHelper.getAttackSpeed(player.getHeldItemMainhand().getItem()),
 						Operation.ADDITION),
 				EquipmentSlotType.MAINHAND);
 		NBTHelper.renderCustomAttributeLore(player, reachLvl * 1.5, reachDistBase, "Attack Reach Distance");
@@ -172,54 +237,81 @@ public class ReachEnchantments {
 	private static boolean enchantedBlock = false;
 
 	@SubscribeEvent
-	public static void updateAttributeLore(final PlayerTickEvent event) {
+	public static void updateAttributeLore(final PlayerTickEvent event)
+	{
 		PlayerEntity player = event.player;
 		ItemStack itemInHand = player.getHeldItemMainhand();
-		if (wait >= 20 && itemInHand.hasTag()) {
+
+		if (wait >= 20 && itemInHand.hasTag())
+		{
 			wait = 0;
 			NBTHelper.updateAttributeLore(itemInHand, player);
 			NBTHelper.updateAttributeLore(itemInHand, player, AttributeInit.ATTACK_DISTANCE.get(),
 					"Attack Reach Distance");
 			NBTHelper.updateAttributeLore(itemInHand, player, ForgeMod.REACH_DISTANCE.get(), "Block Reach Distance");
-		} else if (wait >= 20) {
+		}
+		else if (wait >= 20)
+		{
 			wait = 0;
 		}
+
 		wait++;
 	}
 
 	@SubscribeEvent
-	public static void blockReach(final PlayerTickEvent event) {
-		if (Config.blockReach.isEnabled.get() == true) {
+	public static void blockReach(final PlayerTickEvent event)
+	{
+
+		if (Config.blockReach.isEnabled.get() == true)
+		{
 			boolean attributeFound = false;
 			PlayerEntity player = event.player;
 			ItemStack itemInHand = player.getHeldItemMainhand();
 
-			if (itemInHand == ItemStack.EMPTY) {return;}
+			if (itemInHand == ItemStack.EMPTY)
+			{ return; }
 
-			if (itemInHand.isEnchanted() && !enchantedBlock) {
+			if (itemInHand.isEnchanted() && !enchantedBlock)
+			{
 				ListNBT enchants = itemInHand.getEnchantmentTagList();
-				for (int x = 0; x < enchants.size(); x++) {
+
+				for (int x = 0; x < enchants.size(); x++)
+				{
 					CompoundNBT enchant = enchants.getCompound(x);
-					if (enchant.getInt("lvl") <= Short.MAX_VALUE) {
+
+					if (enchant.getInt("lvl") <= Short.MAX_VALUE)
+					{
 						String id = enchant.getString("id");
 						Short lvl = enchant.getShort("lvl");
-						if (id.matches("so_many_enchants:block_reach") && lvl >= 1) {
+
+						if (id.matches("so_many_enchants:block_reach") && lvl >= 1)
+						{
 							ListNBT attributes = itemInHand.getTag().getList("AttributeModifiers", 10);
-							for (int y = 0; y < attributes.size(); y++) {
+
+							for (int y = 0; y < attributes.size(); y++)
+							{
 								CompoundNBT attribute = attributes.getCompound(x);
 								String name = attribute.getString("Name");
 								String atName = attribute.getString("AttributeName");
 								double amount = attribute.getDouble("amount");
-								if (amount > 1024.0D) {
+
+								if (amount > 1024.0D)
+								{
 									attribute.putDouble("amount", 1024.0D);
 									return;
 								}
-								if (atName.matches("forge:reach_distance") && name.matches("")) {
+
+								if (atName.matches("forge:reach_distance") && name.matches(""))
+								{
 									return;
-								} else if (!attributeFound) {
+								}
+								else if (!attributeFound)
+								{
 									attributeFound = false;
 								}
+
 							}
+
 							itemInHand.addAttributeModifier(ForgeMod.REACH_DISTANCE.get(),
 									new AttributeModifier(new UUID(321, 123), "", (double) lvl, Operation.ADDITION),
 									EquipmentSlotType.MAINHAND);
@@ -229,77 +321,123 @@ public class ReachEnchantments {
 							enchantedBlock = true;
 							return;
 						}
-					} else {
+
+					}
+					else
+					{
 						enchant.putShort("lvl", Short.MAX_VALUE);
 						return;
 					}
+
 				}
+
 			}
-			if (itemInHand.getAttributeModifiers(EquipmentSlotType.MAINHAND) != null) {
+
+			if (itemInHand.getAttributeModifiers(EquipmentSlotType.MAINHAND) != null)
+			{
 				ListNBT attributes = new ListNBT();
-				if(itemInHand.getTag() == null)
+
+				if (itemInHand.getTag() == null)
 				{
-					
+
 				}
-				else if(itemInHand.getTag().getList("AttributeModifiers", 10) != null)
+				else if (itemInHand.getTag().getList("AttributeModifiers", 10) != null)
 				{
 					attributes = itemInHand.getTag().getList("AttributeModifiers", 10);
 				}
-				for (int x = 0; x < attributes.size(); x++) {
+
+				for (int x = 0; x < attributes.size(); x++)
+				{
 					CompoundNBT attribute = attributes.getCompound(x);
 					String name = attribute.getString("Name");
 					String atName = attribute.getString("AttributeName");
 					double amount = attribute.getDouble("amount");
-					if (amount > 1024.0D) {
+
+					if (amount > 1024.0D)
+					{
 						attribute.putDouble("amount", 1024.0D);
 						return;
 					}
 
-					if (atName.matches("forge:reach_distance") && name.matches("")) {
-						if (itemInHand.isEnchanted()) {
+					if (atName.matches("forge:reach_distance") && name.matches(""))
+					{
+
+						if (itemInHand.isEnchanted())
+						{
 							ListNBT enchants = itemInHand.getEnchantmentTagList();
-							for (int y = 0; y < enchants.size(); y++) {
+
+							for (int y = 0; y < enchants.size(); y++)
+							{
 
 								CompoundNBT enchant = enchants.getCompound(y);
-								if (enchant.getInt("lvl") <= Short.MAX_VALUE) {
-									String id = enchant.getString("id");
-									if (id.matches("so_many_enchants:block_reach")) {
-										return;
-									} else if (y < enchants.size() - 1) {
 
-									} else if (y >= enchants.size() - 1) {
+								if (enchant.getInt("lvl") <= Short.MAX_VALUE)
+								{
+									String id = enchant.getString("id");
+
+									if (id.matches("so_many_enchants:block_reach"))
+									{
+										return;
+									}
+									else if (y < enchants.size() - 1)
+									{
+
+									}
+									else if (y >= enchants.size() - 1)
+									{
 										NBTHelper.removeCustomAttributeLore(player.getHeldItemMainhand(),
 												"Block Reach Distance");
-										attributes.remove(x);
+										CompoundNBT nbt = itemInHand.getTag();
+										nbt.remove("AttributeModifiers");
 										enchantedBlock = false;
 										return;
-									} else {
+									}
+									else
+									{
 										Main.LOGGER.error("{} has invalid weapon attribute",
 												(Object) player.getName().getString());
 										return;
 									}
+
 								}
+
 							}
-						} else {
+
+						}
+						else
+						{
+							
 							NBTHelper.removeCustomAttributeLore(player.getHeldItemMainhand(), "Block Reach Distance");
+							CompoundNBT nbt = itemInHand.getTag();
+							nbt.remove("AttributeModifiers");
 							attributeFound = false;
 							attributes.remove(x);
 							enchantedBlock = false;
 							return;
 						}
-					} else if (enchantedBlock && x >= attributes.size()) {
+
+					}
+					else if (enchantedBlock && x >= attributes.size())
+					{
 						enchantedBlock = false;
 						return;
 					}
+
 				}
-				if (enchantedBlock) {
+
+				if (enchantedBlock)
+				{
 					enchantedBlock = false;
 				}
+
 			}
+
 		}
+
 	}
 
-	private static void addModifiersBlock(ItemStack stack, PlayerEntity player, double reachLvl) {
+	private static void addModifiersBlock(ItemStack stack, PlayerEntity player, double reachLvl)
+	{
 		final UUID ATTACK_DAMAGE_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
 		final UUID ATTACK_SPEED_MODIFIER = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
 		final UUID REACH_MODIFIER = UUID.fromString("FA233F1C-4180-4865-B01B-BCCE9785ACA3");
@@ -308,8 +446,7 @@ public class ReachEnchantments {
 		Attribute reachDistBase = ForgeMod.REACH_DISTANCE.get();
 		stack.addAttributeModifier(Attributes.ATTACK_DAMAGE,
 				new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Mainhand modifier",
-						NBTHelper.getAttackDamage(player) - NBTHelper.getSharpnessDamage(player),
-						Operation.ADDITION),
+						NBTHelper.getAttackDamage(player), Operation.ADDITION),
 				EquipmentSlotType.MAINHAND);
 		stack.addAttributeModifier(Attributes.ATTACK_SPEED,
 				new AttributeModifier(ATTACK_SPEED_MODIFIER, "Mainhand modifier",
@@ -323,15 +460,21 @@ public class ReachEnchantments {
 	@SuppressWarnings("unused")
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	public static void extraReach(final ClickInputEvent click) {
+	public static void extraReach(final ClickInputEvent click)
+	{
 		Minecraft mc = Minecraft.getInstance();
 		PlayerEntity player = mc.player;
-		if (click.isAttack() && player != null) {
+
+		if (click.isAttack() && player != null)
+		{
 			// Handles raytracing
 			double reachDist = 4.0D;
-			if (player.getAttributeManager().hasAttributeInstance(AttributeInit.ATTACK_DISTANCE.get())) {
+
+			if (player.getAttributeManager().hasAttributeInstance(AttributeInit.ATTACK_DISTANCE.get()))
+			{
 				reachDist = player.getAttribute(AttributeInit.ATTACK_DISTANCE.get()).getValue();
 			}
+
 			Vector3d startVector = player.getEyePosition(1.0F);
 			Vector3d lookVector = player.getLook(1.0F);
 			Vector3d endVector = startVector.add(lookVector.x * reachDist, lookVector.y * reachDist,
@@ -339,27 +482,41 @@ public class ReachEnchantments {
 			AxisAlignedBB axisalignedbb = player.getBoundingBox().expand(lookVector.scale(reachDist)).grow(1.0D, 1.0D,
 					1.0D);
 			EntityRayTraceResult entityRayTrace = ProjectileHelper.rayTraceEntities(player, startVector, endVector,
-					axisalignedbb, (p_215312_0_) -> {
+					axisalignedbb, (p_215312_0_) ->
+					{
 						return !p_215312_0_.isSpectator() && p_215312_0_.canBeCollidedWith();
 					}, reachDist * reachDist);
-			if (entityRayTrace != null) {
+
+			if (entityRayTrace != null)
+			{
 				// Gets entity
 				Entity tracedEntity = entityRayTrace.getEntity();
+
 				if (player.getDistanceSq(tracedEntity) > 9.0D
-						&& player.getDistanceSq(tracedEntity) <= Math.pow(reachDist, 2.0D) && !player.isCreative()) {
-					NetworkHandler.CHANNEL.sendToServer(new AttackPacket(tracedEntity.getEntityId()));
-				} else if (player.getDistanceSq(tracedEntity) > 36.0D
-						&& player.getDistanceSq(tracedEntity) <= Math.pow(reachDist, 2.0D) && player.isCreative()) {
+						&& player.getDistanceSq(tracedEntity) <= Math.pow(reachDist, 2.0D) && !player.isCreative())
+				{
 					NetworkHandler.CHANNEL.sendToServer(new AttackPacket(tracedEntity.getEntityId()));
 				}
-				return;
-			} else if (entityRayTrace == null || player.isSpectator()) {
+				else if (player.getDistanceSq(tracedEntity) > 36.0D
+						&& player.getDistanceSq(tracedEntity) <= Math.pow(reachDist, 2.0D) && player.isCreative())
+				{
+					NetworkHandler.CHANNEL.sendToServer(new AttackPacket(tracedEntity.getEntityId()));
+				}
 
-			} else {
+				return;
+			}
+			else if (entityRayTrace == null || player.isSpectator())
+			{
+
+			}
+			else
+			{
 				Main.LOGGER.error("Ray trace failed. This is not a good thing!!");
 				Main.LOGGER.error(entityRayTrace);
 				return;
 			}
+
 		}
+
 	}
 }

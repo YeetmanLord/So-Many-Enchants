@@ -59,6 +59,7 @@ public class Config
 	public static EnchantmentConfig temper;
 	public static EnchantmentConfig fastSmelt;
 	public static EnchantmentConfig heavyBlade;
+	public static EnchantmentConfig lightBlade;
 	public static EnchantmentConfig fuelEfficient;
 	public static EnchantmentConfig extraExperience;
 	
@@ -108,6 +109,7 @@ public class Config
 			fuelEfficient = new EnchantmentConfig(5, "Fuel Efficient", 1, true);
 			extraExperience = new EnchantmentConfig(5, "Extra Experience", 1, true);
 			heavyBlade = new EnchantmentConfig(5, "Heavy Blade", 5, true);
+			lightBlade = new EnchantmentConfig(5, "Light Blade", 3, true);
 			Config.hasInit = true;
 		}
 		config = builder.build();
@@ -234,6 +236,9 @@ public class Config
     	
     	Config.extraExperience.maxLevel.set(file.getInt(extraExperience.name + ".maxLevel"));
     	Config.extraExperience.isEnabled.set(file.get(extraExperience.name + ".isEnabled"));
+    	
+    	Config.lightBlade.maxLevel.set(file.get(lightBlade.name + ".maxLevel"));
+    	Config.lightBlade.isEnabled.set(file.get(lightBlade.name + ".isEnabled"));
     	
     	
 	}

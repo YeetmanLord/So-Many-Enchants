@@ -383,6 +383,15 @@ public class ConfigMenu extends Screen {
 				new BooleanOption("so_many_enchants.screen.config.enabled.modded",
 						get -> (boolean) Config.heavyBlade.isEnabled.get(),
 						(set, val) -> Config.heavyBlade.isEnabled.set(val.booleanValue())));
+		
+		this.optionsRowList.addOption(new SliderPercentageOption("so_many_enchants.screen.config.max_level.lightBlade", 1,
+				Config.lightBlade.absoluteMax, 1, get -> (double) Config.lightBlade.maxLevel.get(),
+				(set, val) -> Config.lightBlade.maxLevel.set(val.intValue()),
+				(gs, option) -> new StringTextComponent(I18n.format("so_many_enchants.screen.config.max_level.lightBlade")
+						+ ": " + (int) option.get(gs))),
+				new BooleanOption("so_many_enchants.screen.config.enabled.modded",
+						get -> (boolean) Config.lightBlade.isEnabled.get(),
+						(set, val) -> Config.lightBlade.isEnabled.set(val.booleanValue())));
 
 		this.children.add(this.optionsRowList);
 
@@ -506,6 +515,9 @@ public class ConfigMenu extends Screen {
 		
 		Config.heavyBlade.maxLevel.set(5);
 		Config.heavyBlade.isEnabled.set(true);
+		
+		Config.lightBlade.maxLevel.set(3);
+		Config.lightBlade.isEnabled.set(true);
 
 		Config.fastSmelt.maxLevel.set(1);
 		Config.fastSmelt.isEnabled.set(true);

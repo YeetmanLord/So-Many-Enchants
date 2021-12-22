@@ -1,7 +1,0 @@
-{
-  "parent": "so_many_enchants:item/template_shulker_block",
-  "textures": {
-  	"0": "so_many_enchants:blocks/shulkers/shulker_blue",
-    "particle": "minecraft:block/blue_shulker_box"
-  }
-}
