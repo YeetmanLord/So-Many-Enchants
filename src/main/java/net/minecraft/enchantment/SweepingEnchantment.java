@@ -24,11 +24,11 @@ public class SweepingEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.s.isEnabled.get() == false)
+	   if(Config.sweeping.isEnabled.get() == false)
 		 {
 			 return 3;
 		 }
-		 else return Config.s.maxLevel.get();
+		 else return Config.sweeping.maxLevel.get();
    }
 
    public static float getSweepingDamageRatio(int level) {

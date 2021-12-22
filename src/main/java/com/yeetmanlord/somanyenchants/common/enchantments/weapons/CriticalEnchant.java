@@ -33,11 +33,11 @@ public class CriticalEnchant extends Enchantment
 	@Override
 	public int getMaxLevel() 
 	{
-		if(Config.cr.isEnabled.get() == false)
+		if(Config.critical.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.cr.maxLevel.get();
+		 else return Config.critical.maxLevel.get();
 	}
 	
 	@Override

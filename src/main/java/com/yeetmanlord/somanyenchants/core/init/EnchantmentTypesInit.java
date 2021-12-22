@@ -1,9 +1,10 @@
 package com.yeetmanlord.somanyenchants.core.init;
 
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
+import com.yeetmanlord.somanyenchants.common.blocks.smelters.AbstractEnchantedSmelterBlock;
 
+import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.item.BlockItem;
@@ -38,7 +39,7 @@ public class EnchantmentTypesInit {
 		if (item instanceof BlockItem) {
 			BlockItem blockItem = (BlockItem) item;
 			Block block = blockItem.getBlock();
-			if (block == Blocks.FURNACE || block == Blocks.SMOKER || block == Blocks.BLAST_FURNACE) {
+			if (block instanceof AbstractFurnaceBlock || block instanceof AbstractEnchantedSmelterBlock) {
 				return true;
 			}
 		}

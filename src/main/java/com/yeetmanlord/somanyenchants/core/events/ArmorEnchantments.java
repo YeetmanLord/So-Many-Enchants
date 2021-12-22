@@ -40,7 +40,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void extraArmor(final LivingEquipmentChangeEvent event) {
 		LivingEntity living = event.getEntityLiving();
-		if (living instanceof PlayerEntity && Config.rei.isEnabled.get() == true) {
+		if (living instanceof PlayerEntity && Config.reinforcement.isEnabled.get() == true) {
 			PlayerEntity player = (PlayerEntity) living;
 			ItemStack head = player.inventory.armorInventory.get(3);
 			ItemStack chest = player.inventory.armorInventory.get(2);
@@ -204,7 +204,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void extraToughness(final LivingEquipmentChangeEvent event) {
 		LivingEntity living = event.getEntityLiving();
-		if (living instanceof PlayerEntity && Config.te.isEnabled.get() == true) {
+		if (living instanceof PlayerEntity && Config.temper.isEnabled.get() == true) {
 			PlayerEntity player = (PlayerEntity) living;
 			ItemStack head = player.inventory.armorInventory.get(3);
 			ItemStack chest = player.inventory.armorInventory.get(2);
@@ -374,7 +374,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void applyFlight(final LivingEquipmentChangeEvent event) {
 		LivingEntity living = event.getEntityLiving();
-		if (living instanceof PlayerEntity && Config.fl.isEnabled.get() == true) {
+		if (living instanceof PlayerEntity && Config.flight.isEnabled.get() == true) {
 			PlayerEntity player = (PlayerEntity) living;
 			if (event.getSlot() == EquipmentSlotType.FEET && !player.isCreative() && !player.isSpectator()) {
 				ItemStack newSlot = event.getTo();
@@ -408,7 +408,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void armorHPBoost(final LivingEquipmentChangeEvent event) {
 		LivingEntity entity = event.getEntityLiving();
-		if (entity instanceof PlayerEntity && Config.h.isEnabled.get() == true) {
+		if (entity instanceof PlayerEntity && Config.healthBoost.isEnabled.get() == true) {
 			PlayerEntity player = (PlayerEntity) entity;
 			if (player.inventory.armorInventory.get(3).isEnchanted()) {
 				EquipmentSlotType slot = EquipmentSlotType.HEAD;
@@ -1091,7 +1091,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void catVision(final PlayerTickEvent event) {
 		PlayerEntity player = event.player;
-		if (ModEnchantmentHelper.hasCatVision(player) && Config.c.isEnabled.get() == true) {
+		if (ModEnchantmentHelper.hasCatVision(player) && Config.catVision.isEnabled.get() == true) {
 			player.addPotionEffect(new EffectInstance(Effects.NIGHT_VISION, 220, 0, false, false, false));
 		}
 	}
@@ -1099,7 +1099,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void extraKBResistance(final LivingEquipmentChangeEvent event) {
 		LivingEntity living = event.getEntityLiving();
-		if (living instanceof PlayerEntity && Config.he.isEnabled.get() == true) {
+		if (living instanceof PlayerEntity && Config.heavyArmor.isEnabled.get() == true) {
 			PlayerEntity player = (PlayerEntity) living;
 			ItemStack head = player.inventory.armorInventory.get(3);
 			ItemStack chest = player.inventory.armorInventory.get(2);
@@ -1272,7 +1272,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void stepAssist(final LivingEquipmentChangeEvent event) {
 		LivingEntity e = event.getEntityLiving();
-		if (e instanceof PlayerEntity && Config.sa.isEnabled.get() == true) {
+		if (e instanceof PlayerEntity && Config.stepAssist.isEnabled.get() == true) {
 			PlayerEntity player = (PlayerEntity) e;
 			ItemStack a = event.getFrom();
 			ItemStack b = event.getTo();
@@ -1318,13 +1318,13 @@ public class ArmorEnchantments {
 
 		PlayerEntity player = event.player;
 		PlayerUtilities util = Main.getPlayerUtil(player);
-		if (ModEnchantmentHelper.getStepAssistLevel(player) > 0 && Config.sa.isEnabled.get() == true) {
+		if (ModEnchantmentHelper.getStepAssistLevel(player) > 0 && Config.stepAssist.isEnabled.get() == true) {
 			player.stepHeight = util.getStepHeight();
 		} else if (MathUtils.roundNearestPlace(util.getStepHeight(), -1) == 0.6f
 				&& MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) != MathUtils
 						.roundNearestPlace(util.getStepHeight(), -1)
 				&& ModEnchantmentHelper.getStepAssistLevel(player) == 0
-				&& MathUtils.roundNearestPlace(player.stepHeight, -1) == MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) && Config.sa.isEnabled.get() == true) {
+				&& MathUtils.roundNearestPlace(player.stepHeight, -1) == MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) && Config.stepAssist.isEnabled.get() == true) {
 			player.stepHeight = 0.6f;
 		}
 	}

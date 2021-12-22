@@ -50,11 +50,11 @@ public class FreezingEnchant extends Enchantment {
 	 @Override
 	public int getMaxLevel() 
 	{
-		 if(Config.fr.isEnabled.get() == false)
+		 if(Config.freezing.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.fr.maxLevel.get();
+		 else return Config.freezing.maxLevel.get();
 	}
 	 
 	 @Override

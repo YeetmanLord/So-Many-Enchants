@@ -24,10 +24,10 @@ public class PowerEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.po.isEnabled.get() == false)
+	   if(Config.power.isEnabled.get() == false)
 		 {
 			 return 5;
 		 }
-		 else return Config.po.maxLevel.get();
+		 else return Config.power.maxLevel.get();
    }
 }

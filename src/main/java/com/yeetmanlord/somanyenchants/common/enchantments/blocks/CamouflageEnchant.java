@@ -40,11 +40,11 @@ public class CamouflageEnchant extends Enchantment {
 	@Override
 	public int getMaxLevel() 
 	{
-		if(Config.cf.isEnabled.get() == false)
+		if(Config.camouflage.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.cf.maxLevel.get();
+		 else return Config.camouflage.maxLevel.get();
 	}
 
 }

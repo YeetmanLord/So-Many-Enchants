@@ -35,11 +35,11 @@ public class ArmorTemperEnchant extends Enchantment
 	 @Override
 	public int getMaxLevel() 
 	{
-		 if(Config.te.isEnabled.get() == false)
+		 if(Config.temper.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.te.maxLevel.get();
+		 else return Config.temper.maxLevel.get();
 	}
 	 
 	@Override

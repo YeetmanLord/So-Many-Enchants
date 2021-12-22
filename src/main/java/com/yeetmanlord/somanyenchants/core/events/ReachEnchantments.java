@@ -43,7 +43,7 @@ public class ReachEnchantments {
 
 	@SubscribeEvent
 	public static void attackReach(final PlayerTickEvent event) {
-		if (Config.a.isEnabled.get() == true) {
+		if (Config.attackReach.isEnabled.get() == true) {
 			boolean attributeFound = false;
 			PlayerEntity player = event.player;
 			ItemStack itemInHand = player.getHeldItemMainhand();
@@ -189,7 +189,7 @@ public class ReachEnchantments {
 
 	@SubscribeEvent
 	public static void blockReach(final PlayerTickEvent event) {
-		if (Config.b.isEnabled.get() == true) {
+		if (Config.blockReach.isEnabled.get() == true) {
 			boolean attributeFound = false;
 			PlayerEntity player = event.player;
 			ItemStack itemInHand = player.getHeldItemMainhand();

@@ -23,8 +23,8 @@ public class EnchantmentConfig
 	}
 	
 	public void init(ForgeConfigSpec.Builder builder)
-	{
-		builder.comment(" Contains Sharpness, Smite, and Bane Of Arthropods").push(name);
+	{		
+		builder.push(name).comment("Enchantment configuration for " + this.name);
 		
 		this.isEnabled = builder
 				.comment(" Whether the mod changes these enchantments")

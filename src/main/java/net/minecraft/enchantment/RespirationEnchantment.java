@@ -24,10 +24,10 @@ public class RespirationEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.r.isEnabled.get() == false)
+	   if(Config.respiration.isEnabled.get() == false)
 		 {
 			 return 3;
 		 }
-		 else return Config.r.maxLevel.get();
+		 else return Config.respiration.maxLevel.get();
    }
 }

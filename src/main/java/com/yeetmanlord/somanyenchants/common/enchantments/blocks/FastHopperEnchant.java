@@ -40,10 +40,10 @@ public class FastHopperEnchant extends Enchantment
 	@Override
 	public int getMaxLevel() 
 	{
-		if(Config.f.isEnabled.get() == false)
+		if(Config.fastHopper.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.f.maxLevel.get();
+		 else return Config.fastHopper.maxLevel.get();
 	}
 }

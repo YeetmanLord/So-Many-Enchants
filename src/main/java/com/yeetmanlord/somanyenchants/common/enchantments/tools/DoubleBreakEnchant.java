@@ -29,11 +29,11 @@ public class DoubleBreakEnchant extends Enchantment
 	@Override
 	public int getMaxLevel() 
 	{
-		if(Config.d.isEnabled.get() == false)
+		if(Config.doubleBreak.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.d.maxLevel.get();
+		 else return Config.doubleBreak.maxLevel.get();
 	}
 	
 	@Override

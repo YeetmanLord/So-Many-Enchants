@@ -24,10 +24,10 @@ public class KnockbackEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.k.isEnabled.get() == false)
+	   if(Config.knockback.isEnabled.get() == false)
 		 {
 			 return 2;
 		 }
-		 else return Config.k.maxLevel.get();
+		 else return Config.knockback.maxLevel.get();
    }
 }

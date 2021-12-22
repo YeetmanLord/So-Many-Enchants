@@ -6,6 +6,9 @@ import com.yeetmanlord.somanyenchants.common.blocks.EnchantedChestBlock;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedHopper;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedTrappedChestBlock;
+import com.yeetmanlord.somanyenchants.common.blocks.smelters.blast_furnace.EnchantedBlastFurnaceBlock;
+import com.yeetmanlord.somanyenchants.common.blocks.smelters.furnace.EnchantedFurnaceBlock;
+import com.yeetmanlord.somanyenchants.common.blocks.smelters.smoker.EnchantedSmokerBlock;
 import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedShulkerBoxTileEntity;
 
 import net.minecraft.block.AbstractBlock;
@@ -104,6 +107,10 @@ public class BlockInit {
 			"enchanted_black_shulker_box", () -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.BLACK,
 					AbstractBlock.Properties.create(Material.SHULKER, MaterialColor.BLACK)));
 
+	public static final RegistryObject<Block> ENCHANTED_FURNACE = BLOCKS.register("enchanted_furnace", () -> new EnchantedFurnaceBlock(Block.Properties.from(Blocks.FURNACE)));
+	public static final RegistryObject<Block> ENCHANTED_BLAST_FURNACE = BLOCKS.register("enchanted_blast_furnace", () -> new EnchantedBlastFurnaceBlock(Block.Properties.from(Blocks.BLAST_FURNACE)));
+	public static final RegistryObject<Block> ENCHANTED_SMOKER = BLOCKS.register("enchanted_smoker", () -> new EnchantedSmokerBlock(Block.Properties.from(Blocks.SMOKER)));
+	
 	private static boolean isntSolid(BlockState state, IBlockReader reader, BlockPos pos) {
 		return false;
 	}
@@ -120,6 +127,7 @@ public class BlockInit {
 			}
 		};
 		return new EnchantedShulkerBoxBlock(color, properties.hardnessAndResistance(2.0F).variableOpacity().notSolid()
-				.setSuffocates(abstractblock$ipositionpredicate).setBlocksVision(abstractblock$ipositionpredicate).harvestTool(ToolType.PICKAXE).harvestLevel(0));
+				.setSuffocates(abstractblock$ipositionpredicate).setBlocksVision(abstractblock$ipositionpredicate)
+				.harvestTool(ToolType.PICKAXE).harvestLevel(0));
 	}
 }

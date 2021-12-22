@@ -34,11 +34,11 @@ public class ArmorHeavyEnchant extends Enchantment
 	 @Override
 	public int getMaxLevel() 
 	{
-		 if(Config.he.isEnabled.get() == false)
+		 if(Config.heavyArmor.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.he.maxLevel.get();
+		 else return Config.heavyArmor.maxLevel.get();
 	}
 	 
 	@Override

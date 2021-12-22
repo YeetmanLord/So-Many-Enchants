@@ -25,7 +25,7 @@ public class Frostbite {
 	public static void frostBite(final LivingAttackEvent event) {
 		DamageSource source = event.getSource();
 		Entity e = event.getEntity();
-		if (e instanceof LivingEntity && Config.fr.isEnabled.get() == true) {
+		if (e instanceof LivingEntity && Config.freezing.isEnabled.get() == true) {
 			LivingEntity attacked = (LivingEntity) e;
 			if (source instanceof EntityDamageSource) {
 				Entity attackerEntity = source.getTrueSource();

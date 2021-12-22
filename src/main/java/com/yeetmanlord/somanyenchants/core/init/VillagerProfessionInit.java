@@ -52,7 +52,7 @@ public class VillagerProfessionInit {
 	
 	public static void fillTradeData()
 	{
-		if(Config.v.isEnabled.get() == false)
+		if(Config.villager.isEnabled.get() == false)
 		{
 			return;
 		} else 

@@ -40,10 +40,10 @@ public class ReplantingEnchant extends Enchantment
 	   
 	public int getMaxLevel() 
 	{
-		if(Config.re.isEnabled.get() == false)
+		if(Config.replanting.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.re.maxLevel.get();
+		 else return Config.replanting.maxLevel.get();
 	}
 }

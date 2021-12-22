@@ -66,7 +66,6 @@
 	"so_many_enchants.screen.config.max_level.fr": "Frostbite | Max Level",
 	"so_many_enchants.screen.config.enabled.cs": "Cavernous Storage",
 	"so_many_enchants.screen.config.enabled.cf": "Camouflage",
-	"so_many_enchants.screen.config.enabled.fs": "Fast Smelt",
 	"so_many_enchants.screen.config.enabled.v": "Enchanter Villager",
 	"so_many_enchants.screen.config.enabled.vanilla": "Modded changes",
 	"so_many_enchants.screen.config.enabled.modded": "Enbaled?",
@@ -90,5 +89,24 @@
 	"block.so_many_enchants.enchanted_lime_shulker_box": "Lime Enchanted Shulker Box",
 	"block.so_many_enchants.enchanted_yellow_shulker_box": "Yellow Enchanted Shulker Box",
 	"block.so_many_enchants.enchanted_pink_shulker_box": "Pink Enchanted Shulker Box",
-	"block.so_many_enchants.enchanted_brown_shulker_box": "Brown Enchanted Shulker Box"
+	"block.so_many_enchants.enchanted_brown_shulker_box": "Brown Enchanted Shulker Box",
+	
+	
+	
+	"so_many_enchants.screen.config.max_level.fs": "Fast Smelt | Max Level",
+	"so_many_enchants.screen.config.max_level.fuelE": "Fuel Efficient | Max Level",
+	"so_many_enchants.screen.config.max_level.eExp": "Experienced Smelter | Max Level",
+	"so_many_enchants.screen.config.max_level.hb": "Heavy Blade | Max Level",
+	"enchantment.so_many_enchants.fast_smelt": "Fast Smelt",
+	"enchantment.so_many_enchants.fuel_efficient": "Fuel Efficient",
+	"enchantment.so_many_enchants.extra_experience": "Experinced Smelter",
+	"enchantment.so_many_enchants.heavy_blade": "Heavy Blade",
+	"container.enchantedFurnace": "Enchanted Furnace",
+	"container.enchantedBlastFurnace": "Enchanted Blast Furnace",
+	"container.enchantedSmoker": "Enchanted Smoker",
+	"block.so_many_enchants.enchanted_barrel": "Enchanted Barrel",
+	"block.so_many_enchants.enchanted_furnace": "Enchanted Furnace",
+	"block.so_many_enchants.enchanted_blast_furnace": "Enchanted Blast Furnace",
+	"block.so_many_enchants.enchanted_smoker": "Enchanted Smoker"
+	
 }

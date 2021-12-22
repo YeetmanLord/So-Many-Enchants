@@ -24,11 +24,11 @@ public class LootBonusEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.lbe.isEnabled.get() == false)
+	   if(Config.lootBonusEnchantments.isEnabled.get() == false)
 		 {
 			 return 3;
 		 }
-		 else return Config.lbe.maxLevel.get();
+		 else return Config.lootBonusEnchantments.maxLevel.get();
    }
 
    /**

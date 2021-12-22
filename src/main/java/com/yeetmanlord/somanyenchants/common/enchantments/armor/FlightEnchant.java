@@ -58,11 +58,11 @@ public class FlightEnchant extends Enchantment
 	@Override
 	public int getMaxLevel()
 	{
-		if(Config.fl.isEnabled.get() == false)
+		if(Config.flight.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.fl.maxLevel.get();
+		 else return Config.flight.maxLevel.get();
 	}
 	
 	@Override

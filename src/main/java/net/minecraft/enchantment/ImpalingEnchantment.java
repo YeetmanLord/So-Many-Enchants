@@ -25,11 +25,11 @@ public class ImpalingEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.i.isEnabled.get() == false)
+	   if(Config.impaling.isEnabled.get() == false)
 		 {
 			 return 5;
 		 }
-		 else return Config.i.maxLevel.get();
+		 else return Config.impaling.maxLevel.get();
    }
 
    /**

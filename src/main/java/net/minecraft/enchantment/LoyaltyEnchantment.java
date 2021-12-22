@@ -24,11 +24,11 @@ public class LoyaltyEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.lo.isEnabled.get() == false)
+	   if(Config.loyalty.isEnabled.get() == false)
 		 {
 			 return 3;
 		 }
-		 else return Config.lo.maxLevel.get();
+		 else return Config.loyalty.maxLevel.get();
    }
 
    /**

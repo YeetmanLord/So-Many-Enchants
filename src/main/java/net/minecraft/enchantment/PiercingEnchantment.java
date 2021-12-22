@@ -24,11 +24,11 @@ public class PiercingEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.p.isEnabled.get() == false)
+	   if(Config.piercing.isEnabled.get() == false)
 		 {
 			 return 4;
 		 }
-		 else return Config.p.maxLevel.get();
+		 else return Config.piercing.maxLevel.get();
    }
 
    /**

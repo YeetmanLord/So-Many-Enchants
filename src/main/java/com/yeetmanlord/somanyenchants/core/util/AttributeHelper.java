@@ -226,10 +226,8 @@ public class AttributeHelper
 				return attackDamage;
 			}
 			return attackDamage;
-		} else
-		{
-			return attackDamage;
-		}
+		} 
+		return attackDamage;
 	}
 	
 	public static double getAttackSpeed(Item item)
@@ -280,6 +278,30 @@ public class AttributeHelper
 					String n = nbt.getString("Name");
 					
 					if(s.matches(String.valueOf(at.getRegistryName())) && n.matches(name))
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isAttributePresentExact(Attribute at, String name, ItemStack stack, double amount)
+	{
+		if(stack.hasTag())
+		{
+			if(stack.getTag().contains("AttributeModifiers"))
+			{
+				ListNBT attributes = stack.getTag().getList("AttributeModifiers", 10);
+				for(int x = 0; x < attributes.size(); x++)
+				{
+					CompoundNBT nbt = attributes.getCompound(x);
+					String s = nbt.getString("AttributeName");
+					String n = nbt.getString("Name");
+					double value = nbt.getDouble("Amount");
+					
+					if(s.matches(String.valueOf(at.getRegistryName())) && n.matches(name) && MathUtils.roundNearestPlace(value, -1) == MathUtils.roundNearestPlace(amount, -1))
 					{
 						return true;
 					}

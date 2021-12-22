@@ -35,11 +35,11 @@ public class ArmorReinforcementEnchant extends Enchantment
 	 @Override
 	public int getMaxLevel() 
 	{
-		 if(Config.rei.isEnabled.get() == false)
+		 if(Config.reinforcement.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.rei.maxLevel.get();
+		 else return Config.reinforcement.maxLevel.get();
 	}
 	 
 	@Override

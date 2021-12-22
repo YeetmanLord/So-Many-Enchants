@@ -36,7 +36,7 @@ public class CatVisionEnchant extends Enchantment
 	@Override
 	public int getMaxLevel() 
 	{
-		if(Config.c.isEnabled.get() == false)
+		if(Config.catVision.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }

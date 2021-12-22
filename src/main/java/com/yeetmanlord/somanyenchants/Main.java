@@ -58,8 +58,6 @@ public class Main
     
     public Main() {
     	playerUtils = new HashMap<>();
-    	
-    	Config.hasInit = false;
     	instance=this;
     	final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
     	
@@ -67,8 +65,7 @@ public class Main
     		
     		modEventBus.addListener(this::doClientStuff);
     		EnchantmentInit.ENCHANTMENTS.register(modEventBus);
-    		ContainerTypeInit.CONTIAINER_TYPES.register(modEventBus);
-    		ContainerTypeInit.MINECRAFT_CONTIAINER_TYPES.register(modEventBus);
+    		ContainerTypeInit.CONTAINER_TYPES.register(modEventBus);
     		TileEntityTypeInit.TILE_ENTITY_TYPES.register(modEventBus);
     		BlockInit.BLOCKS.register(modEventBus);
     		ItemInit.BLOCK_ITEMS.register(modEventBus);

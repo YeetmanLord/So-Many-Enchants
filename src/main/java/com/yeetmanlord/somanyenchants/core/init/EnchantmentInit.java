@@ -10,14 +10,17 @@ import com.yeetmanlord.somanyenchants.common.enchantments.armor.HealthBoostEncha
 import com.yeetmanlord.somanyenchants.common.enchantments.armor.StepAssistEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.blocks.CamouflageEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.blocks.CavernousStorageEnchant;
+import com.yeetmanlord.somanyenchants.common.enchantments.blocks.ExtraExperienceSmelterEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.blocks.FastHopperEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.blocks.FastSmeltEnchant;
+import com.yeetmanlord.somanyenchants.common.enchantments.blocks.FuelEfficientSmelterEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.tools.BlockReachEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.tools.DoubleBreakEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.tools.ReplantingEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.weapons.AttackReachEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.weapons.CriticalEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.weapons.FreezingEnchant;
+import com.yeetmanlord.somanyenchants.common.enchantments.weapons.HeavyBladeEnchantment;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantment.Rarity;
@@ -62,6 +65,12 @@ public class EnchantmentInit
 	public static final RegistryObject<Enchantment> CAMOUFLAGE = ENCHANTMENTS.register("camouflage", () -> new CamouflageEnchant(Rarity.RARE, EquipmentSlotType.MAINHAND));
 	
 	public static final RegistryObject<Enchantment> FAST_SMELT = ENCHANTMENTS.register("fast_smelt", () -> new FastSmeltEnchant(Rarity.RARE, EquipmentSlotType.MAINHAND));
+	
+	public static final RegistryObject<Enchantment> FUEL_EFFICIENT = ENCHANTMENTS.register("fuel_efficient", () -> new FuelEfficientSmelterEnchant(Rarity.UNCOMMON, EquipmentSlotType.MAINHAND));
+	
+	public static final RegistryObject<Enchantment> EXTRA_EXPERIENCE = ENCHANTMENTS.register("extra_experience", () -> new ExtraExperienceSmelterEnchant(Rarity.UNCOMMON, EquipmentSlotType.MAINHAND));
+	
+	public static final RegistryObject<Enchantment> HEAVY_BLADE = ENCHANTMENTS.register("heavy_blade", () -> new HeavyBladeEnchantment(Rarity.VERY_RARE, EquipmentSlotType.MAINHAND));
 	
 	
 	

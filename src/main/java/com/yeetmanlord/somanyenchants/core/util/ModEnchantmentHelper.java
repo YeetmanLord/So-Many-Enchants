@@ -1,5 +1,8 @@
 package com.yeetmanlord.somanyenchants.core.util;
 
+import java.util.HashMap;
+
+import com.yeetmanlord.somanyenchants.common.tileentities.AbstractEnchantedSmelterTileEntity;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.enchantment.Enchantment;
@@ -15,6 +18,11 @@ import net.minecraft.util.registry.Registry;
 
 public class ModEnchantmentHelper 
 {
+	public static boolean hasEnchant(Enchantment enchant, ItemStack stack)
+	{
+		return getEnchantmentLevel(enchant, stack) > 0;
+	}
+	
 	public static boolean hasCamouflage(ListNBT nbt) {
 		return getEnchantmentLevel(nbt, EnchantmentInit.CAMOUFLAGE.get()) > 0;
 	}
@@ -146,5 +154,26 @@ public class ModEnchantmentHelper
             }
          }
 		return 0;
+	}
+	
+	public static HashMap<Enchantment, Integer> currentSmelterEnchantments(AbstractEnchantedSmelterTileEntity smelter)
+	{
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		int i = getEnchantmentLevel(smelter.getEnchantments(), EnchantmentInit.FAST_SMELT.get());
+		if(i > 0)
+		{
+			enchants.put(EnchantmentInit.FAST_SMELT.get(), i);
+		}
+		i = getEnchantmentLevel(smelter.getEnchantments(), EnchantmentInit.FUEL_EFFICIENT.get());
+		if(i > 0)
+		{
+			enchants.put(EnchantmentInit.FUEL_EFFICIENT.get(), i);
+		}
+		i = getEnchantmentLevel(smelter.getEnchantments(), EnchantmentInit.EXTRA_EXPERIENCE.get());
+		if(i > 0)
+		{
+			enchants.put(EnchantmentInit.EXTRA_EXPERIENCE.get(), i);
+		}
+		return enchants;
 	}
 }

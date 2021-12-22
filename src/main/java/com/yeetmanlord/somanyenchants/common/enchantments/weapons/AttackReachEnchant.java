@@ -32,11 +32,11 @@ public class AttackReachEnchant extends Enchantment
 	@Override
 	public int getMaxLevel() 
 	{
-		if(Config.a.isEnabled.get() == false)
+		if(Config.attackReach.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.a.maxLevel.get();
+		 else return Config.attackReach.maxLevel.get();
 	}
 	
 	@Override

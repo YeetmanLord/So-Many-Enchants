@@ -40,11 +40,11 @@ public class CavernousStorageEnchant extends Enchantment {
 	@Override
 	public int getMaxLevel() 
 	{
-		if(Config.cs.isEnabled.get() == false)
+		if(Config.cavernousStorage.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.cs.maxLevel.get();
+		 else return Config.cavernousStorage.maxLevel.get();
 	}
 
 }

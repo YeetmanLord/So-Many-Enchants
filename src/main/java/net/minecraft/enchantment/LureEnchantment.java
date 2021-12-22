@@ -24,10 +24,10 @@ public class LureEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.l.isEnabled.get() == false)
+	   if(Config.lure.isEnabled.get() == false)
 		 {
 			 return 3;
 		 }
-		 else return Config.l.maxLevel.get();
+		 else return Config.lure.maxLevel.get();
    }
 }

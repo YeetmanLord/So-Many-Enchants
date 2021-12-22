@@ -41,7 +41,7 @@ public class ConfigSetPacket {
 			ServerPlayerEntity player = context.getSender();
 			MinecraftServer server = player.getServer();
 			if(server.isDedicatedServer())
-			{
+			{	
 				final CommentedFileConfig file = CommentedFileConfig.builder(server.getFile("world/serverconfig/so_many_enchants-server.toml")).build();
 				file.load();
 

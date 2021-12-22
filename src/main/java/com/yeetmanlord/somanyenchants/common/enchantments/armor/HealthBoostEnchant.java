@@ -44,11 +44,11 @@ public class HealthBoostEnchant extends Enchantment
 	 @Override
 	public int getMaxLevel() 
 	{
-		 if(Config.h.isEnabled.get() == false)
+		 if(Config.healthBoost.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.h.maxLevel.get();
+		 else return Config.healthBoost.maxLevel.get();
 	}
 	 
 	 @Override

@@ -24,10 +24,10 @@ public class PunchEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.pu.isEnabled.get() == false)
+	   if(Config.punch.isEnabled.get() == false)
 		 {
 			 return 2;
 		 }
-		 else return Config.pu.maxLevel.get();
+		 else return Config.punch.maxLevel.get();
    }
 }

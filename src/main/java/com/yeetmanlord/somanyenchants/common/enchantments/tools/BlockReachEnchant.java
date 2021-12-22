@@ -30,11 +30,11 @@ public class BlockReachEnchant extends Enchantment
 	@Override
 	public int getMaxLevel() 
 	{
-		if(Config.b.isEnabled.get() == false)
+		if(Config.blockReach.isEnabled.get() == false)
 		 {
 			 return 0;
 		 }
-		 else return Config.b.maxLevel.get();
+		 else return Config.blockReach.maxLevel.get();
 	}
 	
 	@Override

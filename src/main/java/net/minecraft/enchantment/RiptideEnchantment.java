@@ -24,11 +24,11 @@ public class RiptideEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.ri.isEnabled.get() == false)
+	   if(Config.riptide.isEnabled.get() == false)
 		 {
 			 return 3;
 		 }
-		 else return Config.ri.maxLevel.get();
+		 else return Config.riptide.maxLevel.get();
    }
 
    /**

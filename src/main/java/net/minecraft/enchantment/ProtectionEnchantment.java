@@ -33,11 +33,11 @@ public class ProtectionEnchantment extends Enchantment
 	    */
 	   @Override
 	   public int getMaxLevel() {
-		   if(Config.pr.isEnabled.get() == false)
+		   if(Config.protectionEnchantments.isEnabled.get() == false)
 			 {
 				 return 4;
 			 }
-			 else return Config.pr.maxLevel.get();
+			 else return Config.protectionEnchantments.maxLevel.get();
 	   }
 
 	   /**

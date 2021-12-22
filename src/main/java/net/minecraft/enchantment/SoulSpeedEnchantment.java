@@ -43,11 +43,11 @@ public class SoulSpeedEnchantment extends Enchantment {
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.ss.isEnabled.get() == false)
+	   if(Config.soulSpeed.isEnabled.get() == false)
 		 {
 			 return 3;
 		 }
-		 else return Config.ss.maxLevel.get();
+		 else return Config.soulSpeed.maxLevel.get();
    }
    
    public boolean canApplyTogether(Enchantment ench)

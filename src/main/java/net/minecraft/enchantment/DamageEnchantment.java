@@ -1,6 +1,7 @@
 package net.minecraft.enchantment;
 
 import com.yeetmanlord.somanyenchants.core.config.Config;
+import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
@@ -40,11 +41,11 @@ private static final String[] DAMAGE_NAMES = new String[]{"all", "undead", "arth
     * Returns the maximum level that the enchantment can have.
     */
    public int getMaxLevel() {
-	   if(Config.de.isEnabled.get() == false)
+	   if(Config.damageEnchantments.isEnabled.get() == false)
 		 {
 			 return 5;
 		 }
-		 else return Config.de.maxLevel.get();
+		 else return Config.damageEnchantments.maxLevel.get();
    }
 
    /**
@@ -65,7 +66,7 @@ private static final String[] DAMAGE_NAMES = new String[]{"all", "undead", "arth
     * Determines if the enchantment passed can be applyied together with this enchantment.
     */
    public boolean canApplyTogether(Enchantment ench) {
-      return !(ench instanceof DamageEnchantment);
+      return !(ench instanceof DamageEnchantment) && ench != EnchantmentInit.HEAVY_BLADE.get();
    }
 
    /**

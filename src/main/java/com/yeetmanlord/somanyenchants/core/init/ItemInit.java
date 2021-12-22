@@ -4,14 +4,13 @@ import com.yeetmanlord.somanyenchants.Main;
 
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ItemInit {
 	
-	private static Item.Properties p = new Item.Properties().group(ItemGroup.DECORATIONS).maxStackSize(1);
+	private static Item.Properties p = new Item.Properties().maxStackSize(1);
 	
 	public static final DeferredRegister<Item> BLOCK_ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Main.MOD_ID);
 	
@@ -56,4 +55,8 @@ public class ItemInit {
 			
 	public static final RegistryObject<BlockItem> ENCHANTED_BLACK_SHULKER_BOX = BLOCK_ITEMS.register(
 			"enchanted_black_shulker_box", () -> new BlockItem(BlockInit.ENCHANTED_BLACK_SHULKER_BOX.get(), p));
+
+	public static final RegistryObject<BlockItem> ENCHANTED_FURNACE = BLOCK_ITEMS.register("enchanted_furnace", () -> new BlockItem(BlockInit.ENCHANTED_FURNACE.get(), new Item.Properties()));
+	public static final RegistryObject<BlockItem> ENCHANTED_BLAST_FURNACE = BLOCK_ITEMS.register("enchanted_blast_furnace", () -> new BlockItem(BlockInit.ENCHANTED_BLAST_FURNACE.get(), new Item.Properties()));
+	public static final RegistryObject<BlockItem> ENCHANTED_SMOKER = BLOCK_ITEMS.register("enchanted_smoker", () -> new BlockItem(BlockInit.ENCHANTED_SMOKER.get(), new Item.Properties()));
 }
