@@ -69,7 +69,7 @@ public class LightBladeEnchant extends Enchantment {
 	@Override
 	public float calcDamageByCreature(int level, CreatureAttribute creatureType) 
 	{
-		return (float) ((level - 1) * -.5 - 1);
+		return (float) (((Math.max(0, level - 1)) * -.5) - 1);
 	}
 
 }

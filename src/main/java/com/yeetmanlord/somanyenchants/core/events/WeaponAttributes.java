@@ -124,7 +124,7 @@ public class WeaponAttributes
 										Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER,
 												"Mainhand modifier", (double) amount, Operation.ADDITION),
 										EquipmentSlotType.MAINHAND);
-								addModifiers(itemInHand, player, (Math.max(0, lvl - 1) * -.5 - 1));
+								addModifiers(itemInHand, player, ((Math.max(0, lvl - 1)) * -.5) - 1);
 								CompoundNBT nbt = itemInHand.getTag();
 								nbt.putInt("HideFlags", 2);
 								enchanted = true;
@@ -140,7 +140,6 @@ public class WeaponAttributes
 					}
 
 				}
-
 				if (itemInHand.getAttributeModifiers(EquipmentSlotType.MAINHAND) != null
 						&& (itemInHand.getItem() instanceof TieredItem || itemInHand.getItem() instanceof TridentItem)
 						&& itemInHand.getTag() != null)

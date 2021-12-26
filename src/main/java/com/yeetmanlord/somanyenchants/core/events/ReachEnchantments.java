@@ -242,7 +242,7 @@ public class ReachEnchantments
 		PlayerEntity player = event.player;
 		ItemStack itemInHand = player.getHeldItemMainhand();
 
-		if (wait >= 20 && itemInHand.hasTag())
+		if (wait >= 40 && itemInHand.hasTag())
 		{
 			wait = 0;
 			NBTHelper.updateAttributeLore(itemInHand, player);
@@ -250,7 +250,7 @@ public class ReachEnchantments
 					"Attack Reach Distance");
 			NBTHelper.updateAttributeLore(itemInHand, player, ForgeMod.REACH_DISTANCE.get(), "Block Reach Distance");
 		}
-		else if (wait >= 20)
+		else if (wait >= 40)
 		{
 			wait = 0;
 		}

@@ -22,6 +22,8 @@ import net.minecraft.item.TieredItem;
 import net.minecraft.item.TridentItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 
 public class AttributeHelper
 {
@@ -309,5 +311,15 @@ public class AttributeHelper
 			}
 		}
 		return false;
+	}
+
+	public static double getStrengthEffect(PlayerEntity player)
+	{
+		EffectInstance effect = player.getActivePotionEffect(Effects.STRENGTH);
+		if(effect != null)
+		{
+			return effect.getAmplifier() * 3 + 3;
+		}
+		return 0;
 	}
 }

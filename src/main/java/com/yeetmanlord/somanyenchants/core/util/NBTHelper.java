@@ -112,49 +112,39 @@ public class NBTHelper
 					loreList.add(extra);
 				}
 
-				if (attackDamage != player.getBaseAttributeValue(Attributes.ATTACK_DAMAGE))
+				StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+						+ String.valueOf(MathUtils.roundNearestPlace(attackDamage, -1)) + " Attack Damage\"}");
+
+				if (MathUtils.roundNearestPlace(attackDamage, -1) == MathUtils.roundNearestPlace(attackDamage, 0))
 				{
-					StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-							+ String.valueOf(MathUtils.roundNearestPlace(attackDamage, -1)) + " Attack Damage\"}");
-
-					if (MathUtils.roundNearestPlace(attackDamage, -1) == MathUtils.roundNearestPlace(attackDamage, 0))
-					{
-						attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-								+ String.valueOf((int) MathUtils.roundNearestPlace(attackDamage, 0))
-								+ " Attack Damage\"}");
-					}
-
-					if (loreList.contains(attackDamageNBT))
-					{
-					}
-					else
-					{
-						loreList.add(attackDamageNBT);
-					}
-
+					attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+							+ String.valueOf((int) MathUtils.roundNearestPlace(attackDamage, 0)) + " Attack Damage\"}");
 				}
 
-				if (attackDamage != player.getBaseAttributeValue(Attributes.ATTACK_SPEED))
+				if (loreList.contains(attackDamageNBT))
 				{
-					StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-							+ String.valueOf(MathUtils.roundNearestPlace(attackSpeed, -1)) + " Attack Speed\"}");
+				}
+				else
+				{
+					loreList.add(attackDamageNBT);
+				}
 
-					if (MathUtils.roundNearestPlace(attackSpeed, -1) == MathUtils.roundNearestPlace(attackSpeed, 0))
-					{
-						attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-								+ String.valueOf((int) MathUtils.roundNearestPlace(attackSpeed, 0))
-								+ " Attack Speed\"}");
-					}
+				StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+						+ String.valueOf(MathUtils.roundNearestPlace(attackSpeed, -1)) + " Attack Speed\"}");
 
-					if (loreList.contains(attackSpeedNBT))
-					{
+				if (MathUtils.roundNearestPlace(attackSpeed, -1) == MathUtils.roundNearestPlace(attackSpeed, 0))
+				{
+					attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+							+ String.valueOf((int) MathUtils.roundNearestPlace(attackSpeed, 0)) + " Attack Speed\"}");
+				}
 
-					}
-					else
-					{
-						loreList.add(attackSpeedNBT);
-					}
+				if (loreList.contains(attackSpeedNBT))
+				{
 
+				}
+				else
+				{
+					loreList.add(attackSpeedNBT);
 				}
 
 				displayList.put("Lore", loreList);
@@ -186,47 +176,39 @@ public class NBTHelper
 				loreList.add(extra);
 			}
 
-			if (attackDamage != player.getBaseAttributeValue(Attributes.ATTACK_DAMAGE))
+			StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+					+ String.valueOf(MathUtils.roundNearestPlace(attackDamage, -1)) + " Attack Damage\"}");
+
+			if (MathUtils.roundNearestPlace(attackDamage, -1) == MathUtils.roundNearestPlace(attackDamage, 0))
 			{
-				StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-						+ String.valueOf(MathUtils.roundNearestPlace(attackDamage, -1)) + " Attack Damage\"}");
-
-				if (MathUtils.roundNearestPlace(attackDamage, -1) == MathUtils.roundNearestPlace(attackDamage, 0))
-				{
-					attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-							+ String.valueOf((int) MathUtils.roundNearestPlace(attackDamage, 0)) + " Attack Damage\"}");
-				}
-
-				if (loreList.contains(attackDamageNBT))
-				{
-				}
-				else
-				{
-					loreList.add(attackDamageNBT);
-				}
-
+				attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+						+ String.valueOf((int) MathUtils.roundNearestPlace(attackDamage, 0)) + " Attack Damage\"}");
 			}
 
-			if (attackDamage != player.getBaseAttributeValue(Attributes.ATTACK_SPEED))
+			if (loreList.contains(attackDamageNBT))
 			{
-				StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-						+ String.valueOf(MathUtils.roundNearestPlace(attackSpeed, -1)) + " Attack Speed\"}");
+			}
+			else
+			{
+				loreList.add(attackDamageNBT);
+			}
 
-				if (MathUtils.roundNearestPlace(attackSpeed, -1) == MathUtils.roundNearestPlace(attackSpeed, 0))
-				{
-					attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-							+ String.valueOf((int) MathUtils.roundNearestPlace(attackSpeed, 0)) + " Attack Speed\"}");
-				}
+			StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+					+ String.valueOf(MathUtils.roundNearestPlace(attackSpeed, -1)) + " Attack Speed\"}");
 
-				if (loreList.contains(attackSpeedNBT))
-				{
+			if (MathUtils.roundNearestPlace(attackSpeed, -1) == MathUtils.roundNearestPlace(attackSpeed, 0))
+			{
+				attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+						+ String.valueOf((int) MathUtils.roundNearestPlace(attackSpeed, 0)) + " Attack Speed\"}");
+			}
 
-				}
-				else
-				{
-					loreList.add(attackSpeedNBT);
-				}
+			if (loreList.contains(attackSpeedNBT))
+			{
 
+			}
+			else
+			{
+				loreList.add(attackSpeedNBT);
 			}
 
 			displayList.put("Lore", loreList);
@@ -258,47 +240,39 @@ public class NBTHelper
 			loreList.add(extra);
 		}
 
-		if (attackDamage != player.getBaseAttributeValue(Attributes.ATTACK_DAMAGE))
+		StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+				+ String.valueOf(MathUtils.roundNearestPlace(attackDamage, -1)) + " Attack Damage\"}");
+
+		if (MathUtils.roundNearestPlace(attackDamage, -1) == MathUtils.roundNearestPlace(attackDamage, 0))
 		{
-			StringNBT attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-					+ String.valueOf(MathUtils.roundNearestPlace(attackDamage, -1)) + " Attack Damage\"}");
-
-			if (MathUtils.roundNearestPlace(attackDamage, -1) == MathUtils.roundNearestPlace(attackDamage, 0))
-			{
-				attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-						+ String.valueOf((int) MathUtils.roundNearestPlace(attackDamage, 0)) + " Attack Damage\"}");
-			}
-
-			if (loreList.contains(attackDamageNBT))
-			{
-			}
-			else
-			{
-				loreList.add(attackDamageNBT);
-			}
-
+			attackDamageNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+					+ String.valueOf((int) MathUtils.roundNearestPlace(attackDamage, 0)) + " Attack Damage\"}");
 		}
 
-		if (attackDamage != player.getBaseAttributeValue(Attributes.ATTACK_SPEED))
+		if (loreList.contains(attackDamageNBT))
 		{
-			StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-					+ String.valueOf(MathUtils.roundNearestPlace(attackSpeed, -1)) + " Attack Speed\"}");
+		}
+		else
+		{
+			loreList.add(attackDamageNBT);
+		}
 
-			if (MathUtils.roundNearestPlace(attackSpeed, -1) == MathUtils.roundNearestPlace(attackSpeed, 0))
-			{
-				attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
-						+ String.valueOf((int) MathUtils.roundNearestPlace(attackSpeed, 0)) + " Attack Speed\"}");
-			}
+		StringNBT attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+				+ String.valueOf(MathUtils.roundNearestPlace(attackSpeed, -1)) + " Attack Speed\"}");
 
-			if (loreList.contains(attackSpeedNBT))
-			{
+		if (MathUtils.roundNearestPlace(attackSpeed, -1) == MathUtils.roundNearestPlace(attackSpeed, 0))
+		{
+			attackSpeedNBT = StringNBT.valueOf("{\"text\": \" \u00a72"
+					+ String.valueOf((int) MathUtils.roundNearestPlace(attackSpeed, 0)) + " Attack Speed\"}");
+		}
 
-			}
-			else
-			{
-				loreList.add(attackSpeedNBT);
-			}
+		if (loreList.contains(attackSpeedNBT))
+		{
 
+		}
+		else
+		{
+			loreList.add(attackSpeedNBT);
 		}
 
 		loreTag.put("Lore", loreList);
@@ -309,9 +283,11 @@ public class NBTHelper
 	public static double getAttackDamage(PlayerEntity player)
 	{
 		double attackDamage = AttributeHelper.getAttackDamage(player.getHeldItemMainhand().getItem())
-				+ NBTHelper.getSharpnessDamage(player) + (player.getAttributeValue(Attributes.ATTACK_DAMAGE)
-						- AttributeHelper.getAttackDamage(player.getHeldItemMainhand().getItem()));
-		attackDamage -= 1;
+				+ NBTHelper.getSharpnessDamage(player)
+				+ (player.getAttributeValue(Attributes.ATTACK_DAMAGE)
+						- AttributeHelper.getAttackDamage(player.getHeldItemMainhand().getItem())
+						- AttributeHelper.getStrengthEffect(player)
+						- player.getBaseAttributeValue(Attributes.ATTACK_DAMAGE));
 		attackDamage = MathUtils.roundNearestPlace(attackDamage, -1);
 		return attackDamage;
 	}
