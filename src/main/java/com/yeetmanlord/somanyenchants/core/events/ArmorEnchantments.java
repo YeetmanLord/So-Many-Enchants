@@ -59,21 +59,20 @@ public class ArmorEnchantments {
 					boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", head);
 					if (!flag) {
 						AttributeHelper.newAttribute(head, Attributes.ARMOR, "Armor Modifier",
-								getArmorVal(head, EquipmentSlotType.HEAD) + (1.0D * ench), true, false, true, player,
+								getArmorVal(head, EquipmentSlotType.HEAD) + (1.0D * ench), true, player,
 								EquipmentSlotType.HEAD, HeadSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", head);
 						if (flag1) {
 							AttributeHelper.changeAttribute(head, Attributes.ARMOR,
-									getArmorVal(head, EquipmentSlotType.HEAD) + ench * 1.0D, "Armor Modifier", false,
-									false, player, EquipmentSlotType.HEAD);
+									getArmorVal(head, EquipmentSlotType.HEAD) + ench * 1.0D, "Armor Modifier", player, EquipmentSlotType.HEAD);
 						}
 					}
 				} else {
 					boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", head);
 					if (flag) {
 						AttributeHelper.changeAttribute(head, Attributes.ARMOR,
-								getArmorVal(head, EquipmentSlotType.HEAD), "Armor Modifier", false, false, player,
+								getArmorVal(head, EquipmentSlotType.HEAD), "Armor Modifier", player,
 								EquipmentSlotType.HEAD);
 					}
 				}
@@ -81,7 +80,7 @@ public class ArmorEnchantments {
 				boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", head);
 				if (flag) {
 					AttributeHelper.changeAttribute(head, Attributes.ARMOR, getArmorVal(head, EquipmentSlotType.HEAD),
-							"Armor Modifier", false, false, player, EquipmentSlotType.HEAD);
+							"Armor Modifier", player, EquipmentSlotType.HEAD);
 				}
 			}
 			if (chest.isEnchanted()) {
@@ -93,21 +92,20 @@ public class ArmorEnchantments {
 					boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", chest);
 					if (!flag) {
 						AttributeHelper.newAttribute(chest, Attributes.ARMOR, "Armor Modifier",
-								getArmorVal(chest, EquipmentSlotType.CHEST) + (1.0D * ench), true, false, true, player,
+								getArmorVal(chest, EquipmentSlotType.CHEST) + (1.0D * ench), true, player,
 								EquipmentSlotType.CHEST, ChestSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", chest);
 						if (flag1) {
 							AttributeHelper.changeAttribute(chest, Attributes.ARMOR,
-									getArmorVal(chest, EquipmentSlotType.CHEST) + ench * 1.0D, "Armor Modifier", false,
-									false, player, EquipmentSlotType.CHEST);
+									getArmorVal(chest, EquipmentSlotType.CHEST) + ench * 1.0D, "Armor Modifier", player, EquipmentSlotType.CHEST);
 						}
 					}
 				} else {
 					boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", chest);
 					if (flag) {
 						AttributeHelper.changeAttribute(chest, Attributes.ARMOR,
-								getArmorVal(chest, EquipmentSlotType.CHEST), "Armor Modifier", false, false, player,
+								getArmorVal(chest, EquipmentSlotType.CHEST), "Armor Modifier", player,
 								EquipmentSlotType.CHEST);
 					}
 				}
@@ -115,7 +113,7 @@ public class ArmorEnchantments {
 				boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", chest);
 				if (flag) {
 					AttributeHelper.changeAttribute(chest, Attributes.ARMOR,
-							getArmorVal(chest, EquipmentSlotType.CHEST), "Armor Modifier", false, false, player,
+							getArmorVal(chest, EquipmentSlotType.CHEST), "Armor Modifier", player,
 							EquipmentSlotType.CHEST);
 				}
 			}
@@ -128,21 +126,20 @@ public class ArmorEnchantments {
 					boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", legs);
 					if (!flag) {
 						AttributeHelper.newAttribute(legs, Attributes.ARMOR, "Armor Modifier",
-								getArmorVal(legs, EquipmentSlotType.LEGS) + (1.0D * ench), true, false, true, player,
+								getArmorVal(legs, EquipmentSlotType.LEGS) + (1.0D * ench), true, player,
 								EquipmentSlotType.LEGS, LegSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", legs);
 						if (flag1) {
 							AttributeHelper.changeAttribute(legs, Attributes.ARMOR,
-									getArmorVal(legs, EquipmentSlotType.LEGS) + ench * 1.0D, "Armor Modifier", false,
-									false, player, EquipmentSlotType.LEGS);
+									getArmorVal(legs, EquipmentSlotType.LEGS) + ench * 1.0D, "Armor Modifier", player, EquipmentSlotType.LEGS);
 						}
 					}
 				} else {
 					boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", legs);
 					if (flag) {
 						AttributeHelper.changeAttribute(legs, Attributes.ARMOR,
-								getArmorVal(legs, EquipmentSlotType.LEGS), "Armor Modifier", false, false, player,
+								getArmorVal(legs, EquipmentSlotType.LEGS), "Armor Modifier", player,
 								EquipmentSlotType.LEGS);
 					}
 				}
@@ -150,7 +147,7 @@ public class ArmorEnchantments {
 				boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", legs);
 				if (flag) {
 					AttributeHelper.changeAttribute(legs, Attributes.ARMOR, getArmorVal(legs, EquipmentSlotType.LEGS),
-							"Armor Modifier", false, false, player, EquipmentSlotType.LEGS);
+							"Armor Modifier", player, EquipmentSlotType.LEGS);
 				}
 			}
 			if (feet.isEnchanted()) {
@@ -162,21 +159,20 @@ public class ArmorEnchantments {
 					boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", feet);
 					if (!flag) {
 						AttributeHelper.newAttribute(feet, Attributes.ARMOR, "Armor Modifier",
-								getArmorVal(feet, EquipmentSlotType.FEET) + (1.0D * (double) ench), true, false, true,
+								getArmorVal(feet, EquipmentSlotType.FEET) + (1.0D * (double) ench), true,
 								player, EquipmentSlotType.FEET, FootSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", feet);
 						if (flag1) {
 							AttributeHelper.changeAttribute(feet, Attributes.ARMOR,
-									getArmorVal(feet, EquipmentSlotType.FEET) + ench * 1.0D, "Armor Modifier", false,
-									false, player, EquipmentSlotType.FEET);
+									getArmorVal(feet, EquipmentSlotType.FEET) + ench * 1.0D, "Armor Modifier", player, EquipmentSlotType.FEET);
 						}
 					}
 				} else {
 					boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", feet);
 					if (flag) {
 						AttributeHelper.changeAttribute(feet, Attributes.ARMOR,
-								getArmorVal(feet, EquipmentSlotType.FEET), "Armor Modifier", false, false, player,
+								getArmorVal(feet, EquipmentSlotType.FEET), "Armor Modifier", player,
 								EquipmentSlotType.FEET);
 					}
 				}
@@ -184,7 +180,7 @@ public class ArmorEnchantments {
 				boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR, "Armor Modifier", feet);
 				if (flag) {
 					AttributeHelper.changeAttribute(feet, Attributes.ARMOR, getArmorVal(feet, EquipmentSlotType.FEET),
-							"Armor Modifier", false, false, player, EquipmentSlotType.FEET);
+							"Armor Modifier", player, EquipmentSlotType.FEET);
 				}
 			}
 		}
@@ -224,14 +220,14 @@ public class ArmorEnchantments {
 							head);
 					if (!flag) {
 						AttributeHelper.newAttribute(head, Attributes.ARMOR_TOUGHNESS, "Armor Modifier",
-								getArmorVal(head) + (0.5D * ench), true, false, true, player, EquipmentSlotType.HEAD,
+								getArmorVal(head) + (0.5D * ench), true, player, EquipmentSlotType.HEAD,
 								HeadSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier",
 								head);
 						if (flag1) {
 							AttributeHelper.changeAttribute(head, Attributes.ARMOR_TOUGHNESS,
-									getArmorVal(head) + ench * 0.5D, "Armor Modifier", false, false, player,
+									getArmorVal(head) + ench * 0.5D, "Armor Modifier", player,
 									EquipmentSlotType.HEAD);
 						}
 					}
@@ -240,14 +236,14 @@ public class ArmorEnchantments {
 							head);
 					if (flag) {
 						AttributeHelper.changeAttribute(head, Attributes.ARMOR_TOUGHNESS, getArmorVal(head),
-								"Armor Modifier", false, false, player, EquipmentSlotType.HEAD);
+								"Armor Modifier", player, EquipmentSlotType.HEAD);
 					}
 				}
 			} else {
 				boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", head);
 				if (flag) {
 					AttributeHelper.changeAttribute(head, Attributes.ARMOR_TOUGHNESS, getArmorVal(head),
-							"Armor Modifier", false, false, player, EquipmentSlotType.HEAD);
+							"Armor Modifier", player, EquipmentSlotType.HEAD);
 				}
 			}
 			if (chest.isEnchanted()) {
@@ -260,14 +256,14 @@ public class ArmorEnchantments {
 							chest);
 					if (!flag) {
 						AttributeHelper.newAttribute(chest, Attributes.ARMOR_TOUGHNESS, "Armor Modifier",
-								getArmorVal(chest) + (0.5D * ench), true, false, true, player, EquipmentSlotType.CHEST,
+								getArmorVal(chest) + (0.5D * ench), true, player, EquipmentSlotType.CHEST,
 								ChestSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier",
 								chest);
 						if (flag1) {
 							AttributeHelper.changeAttribute(chest, Attributes.ARMOR_TOUGHNESS,
-									getArmorVal(chest) + ench * 0.5D, "Armor Modifier", false, false, player,
+									getArmorVal(chest) + ench * 0.5D, "Armor Modifier", player,
 									EquipmentSlotType.CHEST);
 						}
 					}
@@ -276,14 +272,14 @@ public class ArmorEnchantments {
 							chest);
 					if (flag) {
 						AttributeHelper.changeAttribute(chest, Attributes.ARMOR_TOUGHNESS, getArmorVal(chest),
-								"Armor Modifier", false, false, player, EquipmentSlotType.CHEST);
+								"Armor Modifier", player, EquipmentSlotType.CHEST);
 					}
 				}
 			} else {
 				boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", chest);
 				if (flag) {
 					AttributeHelper.changeAttribute(chest, Attributes.ARMOR_TOUGHNESS, getArmorVal(chest),
-							"Armor Modifier", false, false, player, EquipmentSlotType.CHEST);
+							"Armor Modifier", player, EquipmentSlotType.CHEST);
 				}
 			}
 			if (legs.isEnchanted()) {
@@ -296,14 +292,14 @@ public class ArmorEnchantments {
 							legs);
 					if (!flag) {
 						AttributeHelper.newAttribute(legs, Attributes.ARMOR_TOUGHNESS, "Armor Modifier",
-								getArmorVal(legs) + (0.5D * ench), true, false, true, player, EquipmentSlotType.LEGS,
+								getArmorVal(legs) + (0.5D * ench), true, player, EquipmentSlotType.LEGS,
 								LegSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier",
 								legs);
 						if (flag1) {
 							AttributeHelper.changeAttribute(legs, Attributes.ARMOR_TOUGHNESS,
-									getArmorVal(legs) + ench * 0.5D, "Armor Modifier", false, false, player,
+									getArmorVal(legs) + ench * 0.5D, "Armor Modifier", player,
 									EquipmentSlotType.LEGS);
 						}
 					}
@@ -312,14 +308,14 @@ public class ArmorEnchantments {
 							legs);
 					if (flag) {
 						AttributeHelper.changeAttribute(legs, Attributes.ARMOR_TOUGHNESS, getArmorVal(legs),
-								"Armor Modifier", false, false, player, EquipmentSlotType.LEGS);
+								"Armor Modifier", player, EquipmentSlotType.LEGS);
 					}
 				}
 			} else {
 				boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", legs);
 				if (flag) {
 					AttributeHelper.changeAttribute(legs, Attributes.ARMOR_TOUGHNESS, getArmorVal(legs),
-							"Armor Modifier", false, false, player, EquipmentSlotType.LEGS);
+							"Armor Modifier", player, EquipmentSlotType.LEGS);
 				}
 			}
 			if (feet.isEnchanted()) {
@@ -332,14 +328,14 @@ public class ArmorEnchantments {
 							feet);
 					if (!flag) {
 						AttributeHelper.newAttribute(feet, Attributes.ARMOR_TOUGHNESS, "Armor Modifier",
-								getArmorVal(feet) + (0.5D * (double) ench), true, false, true, player,
+								getArmorVal(feet) + (0.5D * (double) ench), true, player,
 								EquipmentSlotType.FEET, FootSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier",
 								feet);
 						if (flag1) {
 							AttributeHelper.changeAttribute(feet, Attributes.ARMOR_TOUGHNESS,
-									getArmorVal(feet) + ench * 0.5D, "Armor Modifier", false, false, player,
+									getArmorVal(feet) + ench * 0.5D, "Armor Modifier", player,
 									EquipmentSlotType.FEET);
 						}
 					}
@@ -348,14 +344,14 @@ public class ArmorEnchantments {
 							feet);
 					if (flag) {
 						AttributeHelper.changeAttribute(feet, Attributes.ARMOR_TOUGHNESS, getArmorVal(feet),
-								"Armor Modifier", false, false, player, EquipmentSlotType.FEET);
+								"Armor Modifier", player, EquipmentSlotType.FEET);
 					}
 				}
 			} else {
 				boolean flag = AttributeHelper.isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", feet);
 				if (flag) {
 					AttributeHelper.changeAttribute(feet, Attributes.ARMOR_TOUGHNESS, getArmorVal(feet),
-							"Armor Modifier", false, false, player, EquipmentSlotType.FEET);
+							"Armor Modifier", player, EquipmentSlotType.FEET);
 				}
 			}
 		}
@@ -1119,14 +1115,14 @@ public class ArmorEnchantments {
 							head);
 					if (!flag) {
 						AttributeHelper.newAttribute(head, Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier",
-								getKBVal(head) + (0.05D * ench), true, false, true, player, EquipmentSlotType.HEAD,
+								getKBVal(head) + (0.05D * ench), true, player, EquipmentSlotType.HEAD,
 								HeadSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE,
 								"Armor Modifier", head);
 						if (flag1) {
 							AttributeHelper.changeAttribute(head, Attributes.KNOCKBACK_RESISTANCE,
-									getKBVal(head) + ench * 0.05D, "Armor Modifier", false, false, player,
+									getKBVal(head) + ench * 0.05D, "Armor Modifier", player,
 									EquipmentSlotType.HEAD);
 						}
 					}
@@ -1135,7 +1131,7 @@ public class ArmorEnchantments {
 							head);
 					if (flag) {
 						AttributeHelper.changeAttribute(head, Attributes.KNOCKBACK_RESISTANCE, getKBVal(head),
-								"Armor Modifier", false, false, player, EquipmentSlotType.HEAD);
+								"Armor Modifier", player, EquipmentSlotType.HEAD);
 					}
 				}
 			} else {
@@ -1143,7 +1139,7 @@ public class ArmorEnchantments {
 						head);
 				if (flag) {
 					AttributeHelper.changeAttribute(head, Attributes.KNOCKBACK_RESISTANCE, getKBVal(head),
-							"Armor Modifier", false, false, player, EquipmentSlotType.HEAD);
+							"Armor Modifier", player, EquipmentSlotType.HEAD);
 				}
 			}
 			if (chest.isEnchanted()) {
@@ -1156,14 +1152,14 @@ public class ArmorEnchantments {
 							chest);
 					if (!flag) {
 						AttributeHelper.newAttribute(chest, Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier",
-								getKBVal(chest) + (0.05D * ench), true, false, true, player, EquipmentSlotType.CHEST,
+								getKBVal(chest) + (0.05D * ench), true, player, EquipmentSlotType.CHEST,
 								ChestSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE,
 								"Armor Modifier", chest);
 						if (flag1) {
 							AttributeHelper.changeAttribute(chest, Attributes.KNOCKBACK_RESISTANCE,
-									getKBVal(chest) + ench * 0.05D, "Armor Modifier", false, false, player,
+									getKBVal(chest) + ench * 0.05D, "Armor Modifier", player,
 									EquipmentSlotType.CHEST);
 						}
 					}
@@ -1172,7 +1168,7 @@ public class ArmorEnchantments {
 							chest);
 					if (flag) {
 						AttributeHelper.changeAttribute(chest, Attributes.KNOCKBACK_RESISTANCE, getKBVal(chest),
-								"Armor Modifier", false, false, player, EquipmentSlotType.CHEST);
+								"Armor Modifier", player, EquipmentSlotType.CHEST);
 					}
 				}
 			} else {
@@ -1180,7 +1176,7 @@ public class ArmorEnchantments {
 						chest);
 				if (flag) {
 					AttributeHelper.changeAttribute(chest, Attributes.KNOCKBACK_RESISTANCE, getKBVal(chest),
-							"Armor Modifier", false, false, player, EquipmentSlotType.CHEST);
+							"Armor Modifier", player, EquipmentSlotType.CHEST);
 				}
 			}
 			if (legs.isEnchanted()) {
@@ -1193,14 +1189,14 @@ public class ArmorEnchantments {
 							legs);
 					if (!flag) {
 						AttributeHelper.newAttribute(legs, Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier",
-								getKBVal(legs) + (0.05D * ench), true, false, true, player, EquipmentSlotType.LEGS,
+								getKBVal(legs) + (0.05D * ench), true, player, EquipmentSlotType.LEGS,
 								LegSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE,
 								"Armor Modifier", legs);
 						if (flag1) {
 							AttributeHelper.changeAttribute(legs, Attributes.KNOCKBACK_RESISTANCE,
-									getKBVal(legs) + ench * 0.05D, "Armor Modifier", false, false, player,
+									getKBVal(legs) + ench * 0.05D, "Armor Modifier", player,
 									EquipmentSlotType.LEGS);
 						}
 					}
@@ -1209,7 +1205,7 @@ public class ArmorEnchantments {
 							legs);
 					if (flag) {
 						AttributeHelper.changeAttribute(legs, Attributes.KNOCKBACK_RESISTANCE, getKBVal(legs),
-								"Armor Modifier", false, false, player, EquipmentSlotType.LEGS);
+								"Armor Modifier", player, EquipmentSlotType.LEGS);
 					}
 				}
 			} else {
@@ -1217,7 +1213,7 @@ public class ArmorEnchantments {
 						legs);
 				if (flag) {
 					AttributeHelper.changeAttribute(legs, Attributes.KNOCKBACK_RESISTANCE, getKBVal(legs),
-							"Armor Modifier", false, false, player, EquipmentSlotType.LEGS);
+							"Armor Modifier", player, EquipmentSlotType.LEGS);
 				}
 			}
 			if (feet.isEnchanted()) {
@@ -1230,14 +1226,14 @@ public class ArmorEnchantments {
 							feet);
 					if (!flag) {
 						AttributeHelper.newAttribute(feet, Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier",
-								getKBVal(feet) + (0.05D * (double) ench), true, false, true, player,
+								getKBVal(feet) + (0.05D * (double) ench), true, player,
 								EquipmentSlotType.FEET, FootSlot);
 					} else {
 						boolean flag1 = AttributeHelper.isAttributePresent(Attributes.KNOCKBACK_RESISTANCE,
 								"Armor Modifier", feet);
 						if (flag1) {
 							AttributeHelper.changeAttribute(feet, Attributes.KNOCKBACK_RESISTANCE,
-									getKBVal(feet) + ench * 0.05D, "Armor Modifier", false, false, player,
+									getKBVal(feet) + ench * 0.05D, "Armor Modifier", player,
 									EquipmentSlotType.FEET);
 						}
 					}
@@ -1246,7 +1242,7 @@ public class ArmorEnchantments {
 							feet);
 					if (flag) {
 						AttributeHelper.changeAttribute(feet, Attributes.KNOCKBACK_RESISTANCE, getKBVal(feet),
-								"Armor Modifier", false, false, player, EquipmentSlotType.FEET);
+								"Armor Modifier", player, EquipmentSlotType.FEET);
 					}
 				}
 			} else {
@@ -1254,7 +1250,7 @@ public class ArmorEnchantments {
 						feet);
 				if (flag) {
 					AttributeHelper.changeAttribute(feet, Attributes.KNOCKBACK_RESISTANCE, getKBVal(feet),
-							"Armor Modifier", false, false, player, EquipmentSlotType.FEET);
+							"Armor Modifier", player, EquipmentSlotType.FEET);
 				}
 			}
 		}

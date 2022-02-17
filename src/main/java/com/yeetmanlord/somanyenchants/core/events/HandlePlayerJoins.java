@@ -1,6 +1,7 @@
 package com.yeetmanlord.somanyenchants.core.events;
 
 import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.core.util.PlayerAttributeHandler;
 import com.yeetmanlord.somanyenchants.core.util.PlayerUtilities;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,6 +20,7 @@ public class HandlePlayerJoins
 		{
 			PlayerEntity player = (PlayerEntity)event.getEntity();
 			PlayerUtilities util = Main.getPlayerUtil(player);
+			PlayerAttributeHandler.reset(player);
 		}
 	}
 }
