@@ -34,12 +34,12 @@ public class WeaponAttributes
 					if (value == -1) {
 						value = -0.9;
 					}
-					PlayerAttributeHandler.addToAttributeBase(player, Attributes.ATTACK_SPEED, value);
+					PlayerAttributeHandler.addToAttributeBase(player, Attributes.ATTACK_SPEED, value, to);
 					return;
 				}
 				level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.HEAVY_BLADE.get(), from);
 				if (level > 0) {
-					PlayerAttributeHandler.removeAttribute(player, Attributes.ATTACK_SPEED);
+					PlayerAttributeHandler.removeAttribute(player, Attributes.ATTACK_SPEED, from);
 					return;
 				}
 
@@ -47,12 +47,12 @@ public class WeaponAttributes
 				if (level > 0)
 				{
 					double value = level * 0.5;
-					PlayerAttributeHandler.addToAttributeBase(player, Attributes.ATTACK_SPEED, value);
+					PlayerAttributeHandler.addToAttributeBase(player, Attributes.ATTACK_SPEED, value, to);
 					return;
 				}
 				level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.LIGHT_BLADE.get(), from);
 				if (level > 0) {
-					PlayerAttributeHandler.removeAttribute(player, Attributes.ATTACK_SPEED);
+					PlayerAttributeHandler.removeAttribute(player, Attributes.ATTACK_SPEED, from);
 					return;
 				}
 			}

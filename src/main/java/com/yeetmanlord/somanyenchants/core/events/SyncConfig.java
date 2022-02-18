@@ -13,8 +13,8 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 public class SyncConfig {
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	public static void syncConfig(final EntityJoinWorldEvent event) {
+	public static void syncConfig(final PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ClientPlayerEntity) {
 			NetworkHandler.CHANNEL.sendToServer(new ConfigSetPacket(0));
 		}
@@ -32,7 +32,7 @@ public class SyncConfig {
 
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	public static void syncConfig(final EntityLeaveWorldEvent event) {
+	public static void syncConfig(final PlayerLoggedOutEvent event) {
 		if (event.getEntity() instanceof PlayerEntity) {
 			PlayerEntity player = (PlayerEntity) event.getEntity();
 			if (!player.getShouldBeDead()) {

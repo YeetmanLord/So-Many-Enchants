@@ -46,12 +46,12 @@ public class ReachEnchantments
 					if (level > 0)
 					{
 						double value = level * 1.5;
-						PlayerAttributeHandler.addToAttributeBase(player, AttributeInit.ATTACK_DISTANCE.get(), value);
+						PlayerAttributeHandler.addToAttributeBase(player, AttributeInit.ATTACK_DISTANCE.get(), value, to);
 						return;
 					}
 					level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.ATTACK_REACH.get(), from);
 					if (level > 0) {
-						PlayerAttributeHandler.removeAttribute(player, AttributeInit.ATTACK_DISTANCE.get());
+						PlayerAttributeHandler.removeAttribute(player, AttributeInit.ATTACK_DISTANCE.get(), from);
 					}
 				}
 			}
@@ -73,12 +73,12 @@ public class ReachEnchantments
 					if (level > 0)
 					{
 						double value = level * 1.5;
-						PlayerAttributeHandler.addToAttributeBase(player, ForgeMod.REACH_DISTANCE.get(), value);
+						PlayerAttributeHandler.addToAttributeBase(player, ForgeMod.REACH_DISTANCE.get(), value, to);
 						return;
 					}
 					level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.BLOCK_REACH.get(), from);
 					if (level > 0) {
-						PlayerAttributeHandler.removeAttribute(player, ForgeMod.REACH_DISTANCE.get());
+						PlayerAttributeHandler.removeAttribute(player, ForgeMod.REACH_DISTANCE.get(), from);
 					}
 				}
 			}

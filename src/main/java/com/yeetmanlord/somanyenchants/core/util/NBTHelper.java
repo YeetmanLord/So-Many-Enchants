@@ -1,7 +1,10 @@
 package com.yeetmanlord.somanyenchants.core.util;
 
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 
 public class NBTHelper
 {
@@ -35,6 +38,27 @@ public class NBTHelper
 		}
 
 		return 0;
+	}
+	
+	public static double getAttributeValue(ItemStack stack, Attribute attr) {
+		if (stack.hasTag()) {
+			CompoundNBT tag = stack.getTag();
+			if (tag.contains("AttributeData")) {
+				CompoundNBT data = tag.getCompound("AttributeData");
+				return data.getDouble(attr.getAttributeName());
+			}
+		}
+		return 0d;
+	}
+	
+	public static void writeAttributeValue(ItemStack stack, double value, Attribute attr) {
+		CompoundNBT nbt = stack.getTag();
+		CompoundNBT tag = new CompoundNBT();
+		if(nbt.contains("AttributeData")) {
+			tag = nbt.getCompound("AttributeData");
+		}
+		tag.putDouble(attr.getAttributeName(), value);
+		nbt.put("AttributeData", tag);
 	}
 
 }

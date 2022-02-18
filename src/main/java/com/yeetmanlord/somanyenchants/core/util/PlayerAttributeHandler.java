@@ -26,6 +26,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
@@ -38,6 +39,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -48,37 +50,38 @@ public class PlayerAttributeHandler {
 	protected static final UUID ATTACK_DAMAGE_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
 	protected static final UUID ATTACK_SPEED_MODIFIER = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
 
-	public static void addToAttributeBase(PlayerEntity player, Attribute attr, double addon) {
+	public static void addToAttributeBase(PlayerEntity player, Attribute attr, double addon, ItemStack stack) {
 		PlayerUtilities util = Main.getPlayerUtil(player);
-		util.updatePrevAttributesBases();
+		NBTHelper.writeAttributeValue(stack, addon, attr);
 		player.getAttributeManager().createInstanceIfAbsent(attr)
 				.setBaseValue(player.getBaseAttributeValue(attr) + addon);
 	}
 
-	public static void setAttributeBase(PlayerEntity player, Attribute attr, double value) {
+	public static void removeAttribute(PlayerEntity player, Attribute attr, ItemStack stack) {
 		PlayerUtilities util = Main.getPlayerUtil(player);
-		util.updatePrevAttributesBases();
-		player.getAttributeManager().createInstanceIfAbsent(attr).setBaseValue(value);
-	}
-
-	public static void removeAttribute(PlayerEntity player, Attribute attr) {
-		PlayerUtilities util = Main.getPlayerUtil(player);
-		double prevValue = util.getPrevAttribute(attr);
-		player.getAttributeManager().createInstanceIfAbsent(attr).setBaseValue(prevValue);
+		double value = NBTHelper.getAttributeValue(stack, attr);
+		player.getAttributeManager().createInstanceIfAbsent(attr)
+				.setBaseValue(player.getBaseAttributeValue(attr) - value);
 	}
 
 	public static void reset(PlayerEntity player) {
-		PlayerUtilities util = Main.getPlayerUtil(player);
-		player.getAttributeManager().createInstanceIfAbsent(Attributes.ATTACK_SPEED).setBaseValue(4);
-		player.getAttributeManager().createInstanceIfAbsent(Attributes.ATTACK_DAMAGE).setBaseValue(1);
-		player.getAttributeManager().createInstanceIfAbsent(AttributeInit.ATTACK_DISTANCE.get()).setBaseValue(3);
-		player.getAttributeManager().createInstanceIfAbsent(ForgeMod.REACH_DISTANCE.get()).setBaseValue(5);
-		util.resetPrevAttributes();
+		Attribute[] attr = new Attribute[] { Attributes.ARMOR, Attributes.ARMOR_TOUGHNESS, Attributes.ATTACK_SPEED,
+				Attributes.ATTACK_SPEED, Attributes.MAX_HEALTH, Attributes.KNOCKBACK_RESISTANCE,
+				AttributeInit.ATTACK_DISTANCE.get(), ForgeMod.REACH_DISTANCE.get() };
+		for (ItemStack armorPiece : player.inventory.armorInventory) {
+			for (Attribute x : attr) {
+				removeAttribute(player, x, armorPiece);
+			}
+		}
+
+		for (Attribute x : attr) {
+			removeAttribute(player, x, player.getHeldItemMainhand());
+		}
 	}
 
 	@EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE, value = Dist.CLIENT)
 	public static class TooltipUpdate {
-		@SubscribeEvent
+		@SubscribeEvent(priority = EventPriority.HIGHEST)
 		public static void updateTooltip(final ItemTooltipEvent event) {
 			ItemStack stack = event.getItemStack();
 			PlayerEntity playerIn = event.getPlayer();
@@ -89,6 +92,8 @@ public class PlayerAttributeHandler {
 			}
 
 			List<ITextComponent> list = new ArrayList<>();
+			List<ITextComponent> list1 = new ArrayList<>();
+			List<ITextComponent> list2 = new ArrayList<>();
 
 			int i = func_242393_J(stack);
 
@@ -134,33 +139,134 @@ public class PlayerAttributeHandler {
 														new TranslationTextComponent(
 																entry.getKey().getAttributeName())))
 												.mergeStyle(TextFormatting.DARK_GREEN));
+							} else if (d0 > 0.0D) {
+								list1.add((new TranslationTextComponent(
+										"attribute.modifier.plus." + attributemodifier.getOperation().getId(),
+										ItemStack.DECIMALFORMAT.format(d1),
+										new TranslationTextComponent(entry.getKey().getAttributeName())))
+												.mergeStyle(TextFormatting.BLUE));
+							} else if (d0 < 0.0D) {
+								d1 = d1 * -1.0D;
+								list1.add((new TranslationTextComponent(
+										"attribute.modifier.take." + attributemodifier.getOperation().getId(),
+										ItemStack.DECIMALFORMAT.format(d1),
+										new TranslationTextComponent(entry.getKey().getAttributeName())))
+												.mergeStyle(TextFormatting.RED));
 							}
 						}
 					}
 				}
-			}
 
-			if (list.size() > 0) {
-				int x = map.get(list.get(list.size() - 1));
-				if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.ATTACK_REACH.get(), stack)) {
-					event.getToolTip().add(x,
-							(new StringTextComponent(" " + String.valueOf(ItemStack.DECIMALFORMAT
-									.format(playerIn.getBaseAttributeValue(AttributeInit.ATTACK_DISTANCE.get()))) + " ")
-											.appendSibling(new TranslationTextComponent(
-													AttributeInit.ATTACK_DISTANCE.get().getAttributeName()))
-															.mergeStyle(TextFormatting.DARK_GREEN)));
+				if (list.size() > 0) {
+					int x = map.get(list.get(list.size() - 1));
+					if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.ATTACK_REACH.get(), stack)) {
+						event.getToolTip().add(x,
+								(new StringTextComponent(" "
+										+ String.valueOf(ItemStack.DECIMALFORMAT.format(
+												playerIn.getBaseAttributeValue(AttributeInit.ATTACK_DISTANCE.get())))
+										+ " ").appendSibling(
+												new TranslationTextComponent(
+														AttributeInit.ATTACK_DISTANCE.get().getAttributeName()))
+												.mergeStyle(TextFormatting.DARK_GREEN)));
+					}
+
+					if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.BLOCK_REACH.get(), stack)) {
+						event.getToolTip().add(x,
+								(new StringTextComponent(" "
+										+ String.valueOf(ItemStack.DECIMALFORMAT
+												.format(playerIn.getBaseAttributeValue(ForgeMod.REACH_DISTANCE.get())))
+										+ " Block reach distance")).mergeStyle(TextFormatting.DARK_GREEN));
+					}
 				}
 
-				if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.BLOCK_REACH.get(), stack)) {
-					event.getToolTip().add(x,
-							(new StringTextComponent(" "
-									+ String.valueOf(ItemStack.DECIMALFORMAT
-											.format(playerIn.getBaseAttributeValue(ForgeMod.REACH_DISTANCE.get())))
-									+ " Block reach distance")).mergeStyle(TextFormatting.DARK_GREEN));
+				else if (list1.size() > 0) {
+					if (stack.getItem() instanceof ArmorItem) {
+						for (EquipmentSlotType equipmentslottype : EquipmentSlotType.values()) {
+							Multimap<Attribute, AttributeModifier> multimap = stack
+									.getAttributeModifiers(equipmentslottype);
+							if (!multimap.isEmpty()) {
+								for (Entry<Attribute, AttributeModifier> entry : multimap.entries()) {
+									AttributeModifier attributemodifier = entry.getValue();
+									double d0 = attributemodifier.getAmount();
+									boolean flag = false;
+									if (playerIn != null) {
+										if (attributemodifier.getID().equals(ATTACK_DAMAGE_MODIFIER)) {
+											d0 = d0 + playerIn.getBaseAttributeValue(Attributes.ATTACK_DAMAGE);
+											d0 = d0 + (double) EnchantmentHelper.getModifierForCreature(stack,
+													CreatureAttribute.UNDEFINED);
+											flag = true;
+										} else if (attributemodifier.getID().equals(ATTACK_SPEED_MODIFIER)) {
+											d0 += playerIn.getBaseAttributeValue(Attributes.ATTACK_SPEED);
+											flag = true;
+										}
+									}
+
+									double d1;
+									if (attributemodifier.getOperation() != AttributeModifier.Operation.MULTIPLY_BASE
+											&& attributemodifier
+													.getOperation() != AttributeModifier.Operation.MULTIPLY_TOTAL) {
+										if (entry.getKey().equals(Attributes.KNOCKBACK_RESISTANCE)) {
+											d1 = d0 * 10.0D;
+										} else {
+											d1 = d0;
+										}
+									} else {
+										d1 = d0 * 100.0D;
+									}
+									double addon = 0d;
+									if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.HEAVY.get(), stack)
+											&& entry.getKey().getAttributeName()
+													.equals(Attributes.KNOCKBACK_RESISTANCE.getAttributeName())) {
+										addon += ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.HEAVY.get(),
+												stack);
+									} else if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.TEMPER.get(), stack)
+											&& entry.getKey().getAttributeName()
+													.equals(Attributes.ARMOR_TOUGHNESS.getAttributeName())) {
+										addon += ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.TEMPER.get(),
+												stack);
+									} else if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.REINFORCEMENT.get(),
+											stack)
+											&& entry.getKey().getAttributeName()
+													.equals(Attributes.ARMOR.getAttributeName())) {
+										addon += ModEnchantmentHelper
+												.getEnchantmentLevel(EnchantmentInit.REINFORCEMENT.get(), stack) * 2d;
+									}
+									if (d0 > 0.0D && !flag) {
+										list2.add((new TranslationTextComponent(
+												"attribute.modifier.plus." + attributemodifier.getOperation().getId(),
+												ItemStack.DECIMALFORMAT.format(d1 + addon),
+												new TranslationTextComponent(entry.getKey().getAttributeName())))
+														.mergeStyle(TextFormatting.BLUE));
+									} else if (d0 < 0.0D && !flag) {
+										d1 = d1 * -1.0D;
+										list2.add((new TranslationTextComponent(
+												"attribute.modifier.take." + attributemodifier.getOperation().getId(),
+												ItemStack.DECIMALFORMAT.format(d1 + addon),
+												new TranslationTextComponent(entry.getKey().getAttributeName())))
+														.mergeStyle(TextFormatting.RED));
+									}
+								}
+							}
+						}
+						int y = 0;
+						for (ITextComponent x : list1) {
+							int z = map.get(x);
+							event.getToolTip().set(z, list2.get(y));
+							y++;
+						}
+						i = map.get(list1.get(list1.size() - 1));
+						int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.HEALTH_BOOST.get(), stack);
+						if (level > 0) {
+							event.getToolTip().add(i, (new TranslationTextComponent(
+									"attribute.modifier.plus.0",
+									ItemStack.DECIMALFORMAT.format(level * 2d),
+									new TranslationTextComponent(Attributes.MAX_HEALTH.getAttributeName())
+											)).mergeStyle(TextFormatting.BLUE));
+						}
+					}
 				}
 			}
 		}
-
 	}
 
 	@OnlyIn(Dist.CLIENT)
