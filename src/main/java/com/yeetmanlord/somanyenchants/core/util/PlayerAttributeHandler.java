@@ -257,11 +257,11 @@ public class PlayerAttributeHandler {
 						i = map.get(list1.get(list1.size() - 1));
 						int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.HEALTH_BOOST.get(), stack);
 						if (level > 0) {
-							event.getToolTip().add(i, (new TranslationTextComponent(
-									"attribute.modifier.plus.0",
-									ItemStack.DECIMALFORMAT.format(level * 2d),
-									new TranslationTextComponent(Attributes.MAX_HEALTH.getAttributeName())
-											)).mergeStyle(TextFormatting.BLUE));
+							event.getToolTip().add(i,
+									(new TranslationTextComponent("attribute.modifier.plus.0",
+											ItemStack.DECIMALFORMAT.format(level * 2d),
+											new TranslationTextComponent(Attributes.MAX_HEALTH.getAttributeName())))
+													.mergeStyle(TextFormatting.BLUE));
 						}
 					}
 				}

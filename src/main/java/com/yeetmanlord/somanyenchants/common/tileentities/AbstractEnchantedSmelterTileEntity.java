@@ -283,7 +283,8 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 		compound.put("Enchantments", enchantmentNBT);
 		return compound;
 	}
-
+	
+	@Override
 	public void tick()
 	{
 		boolean flag = this.isBurning();
