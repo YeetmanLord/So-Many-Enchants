@@ -5,10 +5,10 @@ import java.util.function.Supplier;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
 
 public class ConfigSetPacket {
 	public int id;
@@ -23,12 +23,12 @@ public class ConfigSetPacket {
 		this.id = id;
 	}
 	
-	public static void encode(ConfigSetPacket msg, PacketBuffer buff) 
+	public static void encode(ConfigSetPacket msg, FriendlyByteBuf buff) 
 	{
 		buff.writeInt(msg.id);
 	}
 	
-	public static ConfigSetPacket decode(PacketBuffer buff) 
+	public static ConfigSetPacket decode(FriendlyByteBuf buff) 
 	{
 		return new ConfigSetPacket(buff.readInt());
 	}
@@ -38,7 +38,7 @@ public class ConfigSetPacket {
 		NetworkEvent.Context context = contextSup.get();
 		
 		context.enqueueWork(() -> {
-			ServerPlayerEntity player = context.getSender();
+			ServerPlayer player = context.getSender();
 			MinecraftServer server = player.getServer();
 			if(server.isDedicatedServer())
 			{	

@@ -3,22 +3,22 @@ package com.yeetmanlord.somanyenchants.common.enchantments.blocks;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentTypesInit;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 public class FastSmeltEnchant extends Enchantment
 {
 
-	public FastSmeltEnchant(Rarity rarityIn, EquipmentSlotType... slots)
+	public FastSmeltEnchant(Rarity rarityIn, EquipmentSlot... slots)
 	{
 		super(rarityIn, EnchantmentTypesInit.SMELTER, slots);
 	}
 
 	@Override
-	public boolean canApply(ItemStack stack)
+	public boolean canEnchant(ItemStack stack)
 	{
-		return EnchantmentTypesInit.SMELTER.canEnchantItem(stack.getItem());
+		return EnchantmentTypesInit.SMELTER.canEnchant(stack.getItem());
 	}
 
 	@Override
@@ -28,15 +28,15 @@ public class FastSmeltEnchant extends Enchantment
 	}
 
 	@Override
-	public int getMinEnchantability(int enchantmentLevel)
+	public int getMinCost(int enchantmentLevel)
 	{
 		return 15;
 	}
 
 	@Override
-	public int getMaxEnchantability(int enchantmentLevel)
+	public int getMaxCost(int enchantmentLevel)
 	{
-		return this.getMinEnchantability(enchantmentLevel) + 40;
+		return this.getMinCost(enchantmentLevel) + 40;
 	}
 
 	@Override

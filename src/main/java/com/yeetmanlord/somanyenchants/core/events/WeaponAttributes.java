@@ -5,10 +5,10 @@ import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 import com.yeetmanlord.somanyenchants.core.util.PlayerAttributeHandler;
 
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -21,12 +21,12 @@ public class WeaponAttributes
 	@SubscribeEvent
 	public static void mainhand(final LivingEquipmentChangeEvent event)
 	{
-		if (event.getEntityLiving() instanceof PlayerEntity) {
-			PlayerEntity player = (PlayerEntity)event.getEntityLiving();
+		if (event.getEntityLiving() instanceof Player) {
+			Player player = (Player)event.getEntityLiving();
 			ItemStack to = event.getTo();
 			ItemStack from = event.getFrom();
-			EquipmentSlotType slot = event.getSlot();
-			if(slot == EquipmentSlotType.MAINHAND) {
+			EquipmentSlot slot = event.getSlot();
+			if(slot == EquipmentSlot.MAINHAND) {
 				int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.HEAVY_BLADE.get(), to);
 				if (level > 0)
 				{
@@ -35,12 +35,10 @@ public class WeaponAttributes
 						value = -0.9;
 					}
 					PlayerAttributeHandler.addToAttributeBase(player, Attributes.ATTACK_SPEED, value, to);
-					return;
 				}
 				level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.HEAVY_BLADE.get(), from);
 				if (level > 0) {
 					PlayerAttributeHandler.removeAttribute(player, Attributes.ATTACK_SPEED, from);
-					return;
 				}
 
 				level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.LIGHT_BLADE.get(), to);
@@ -48,12 +46,10 @@ public class WeaponAttributes
 				{
 					double value = level * 0.5;
 					PlayerAttributeHandler.addToAttributeBase(player, Attributes.ATTACK_SPEED, value, to);
-					return;
 				}
 				level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.LIGHT_BLADE.get(), from);
 				if (level > 0) {
 					PlayerAttributeHandler.removeAttribute(player, Attributes.ATTACK_SPEED, from);
-					return;
 				}
 			}
 		}

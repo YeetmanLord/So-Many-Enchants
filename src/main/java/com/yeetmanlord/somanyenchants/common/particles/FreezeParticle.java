@@ -3,117 +3,120 @@ package com.yeetmanlord.somanyenchants.common.particles;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.particle.IAnimatedSprite;
-import net.minecraft.client.particle.IParticleFactory;
-import net.minecraft.client.particle.IParticleRenderType;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.SpriteTexturedParticle;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class FreezeParticle extends SpriteTexturedParticle {
-   private FreezeParticle(ClientWorld world, double x, double y, double z, double motionX, double motionY, double motionZ) {
+public class FreezeParticle extends TextureSheetParticle {
+   private FreezeParticle(ClientLevel world, double x, double y, double z, double motionX, double motionY, double motionZ) {
       super(world, x, y, z, 0.0D, 0.0D, 0.0D);
-      this.motionX *= (double)0.1F;
-      this.motionY *= (double)0.1F;
-      this.motionZ *= (double)0.1F;
-      this.motionX += motionX * 0.4D;
-      this.motionY += motionY * 0.4D;
-      this.motionZ += motionZ * 0.4D;
+      this.xd *= (double)0.1F;
+      this.yd *= (double)0.1F;
+      this.zd *= (double)0.1F;
+      this.xd += motionX * 0.4D;
+      this.yd += motionY * 0.4D;
+      this.zd += motionZ * 0.4D;
       float f = (float)(Math.random() * (double)0.3F + (double)0.6F);
-      this.particleRed = f;
-      this.particleGreen = f;
-      this.particleBlue = f;
-      this.particleScale *= 0.75F;
-      this.maxAge = Math.max((int)(6.0D / (Math.random() * 0.8D + 0.6D)), 1);
-      this.canCollide = false;
+      this.rCol = f;
+      this.gCol = f;
+      this.bCol = f;
+      this.quadSize *= 0.75F;
+      this.lifetime = Math.max((int)(6.0D / (Math.random() * 0.8D + 0.6D)), 1);
+      this.hasPhysics = false;
       this.tick();
    }
 
-   public float getScale(float scaleFactor) {
-      return this.particleScale * MathHelper.clamp(((float)this.age + scaleFactor) / (float)this.maxAge * 32.0F, 0.0F, 1.0F);
+   @Override
+public float getQuadSize(float scaleFactor) {
+      return this.quadSize * Mth.clamp(((float)this.age + scaleFactor) / (float)this.lifetime * 32.0F, 0.0F, 1.0F);
    }
 
-   public void tick() {
-      this.prevPosX = this.posX;
-      this.prevPosY = this.posY;
-      this.prevPosZ = this.posZ;
-      if (this.age++ >= this.maxAge) {
-         this.setExpired();
+   @Override
+public void tick() {
+      this.xo = this.x;
+      this.yo = this.y;
+      this.zo = this.z;
+      if (this.age++ >= this.lifetime) {
+         this.remove();
       } else {
-         this.move(this.motionX, this.motionY, this.motionZ);
-         this.particleGreen = (float)((double)this.particleGreen * 0.96D);
-         this.particleBlue = (float)((double)this.particleBlue * 0.9D);
-         this.motionX *= (double)0.7F;
-         this.motionY *= (double)0.7F;
-         this.motionZ *= (double)0.7F;
-         this.motionY -= (double)0.02F;
+         this.move(this.xd, this.yd, this.zd);
+         this.gCol = (float)((double)this.gCol * 0.96D);
+         this.bCol = (float)((double)this.bCol * 0.9D);
+         this.xd *= (double)0.7F;
+         this.yd *= (double)0.7F;
+         this.zd *= (double)0.7F;
+         this.yd -= (double)0.02F;
          if (this.onGround) {
-            this.motionX *= (double)0.7F;
-            this.motionZ *= (double)0.7F;
+            this.xd *= (double)0.7F;
+            this.zd *= (double)0.7F;
          }
 
       }
    }
 
-   public IParticleRenderType getRenderType() {
-      return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
+   @Override
+public ParticleRenderType getRenderType() {
+      return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
    }
 
    @OnlyIn(Dist.CLIENT)
-   public static class DamageIndicatorFactory implements IParticleFactory<BasicParticleType> {
-      private final IAnimatedSprite spriteSet;
+   public static class DamageIndicatorFactory implements ParticleProvider<SimpleParticleType> {
+      private final SpriteSet spriteSet;
 
-      public DamageIndicatorFactory(IAnimatedSprite spriteSet) {
+      public DamageIndicatorFactory(SpriteSet spriteSet) {
          this.spriteSet = spriteSet;
       }
       
       @Nullable
       @Override
-      public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+      public Particle createParticle(SimpleParticleType typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
          FreezeParticle freezeparticle = new FreezeParticle(worldIn, x, y, z, xSpeed, ySpeed + 1.0D, zSpeed);
-         freezeparticle.setMaxAge(20);
-         freezeparticle.selectSpriteRandomly(this.spriteSet);
+         freezeparticle.setLifetime(20);
+         freezeparticle.pickSprite(this.spriteSet);
          return freezeparticle;
       }
    }
 
    @OnlyIn(Dist.CLIENT)
-   public static class Factory implements IParticleFactory<BasicParticleType> {
-      private final IAnimatedSprite spriteSet;
+   public static class Factory implements ParticleProvider<SimpleParticleType> {
+      private final SpriteSet spriteSet;
 
-      public Factory(IAnimatedSprite spriteSet) {
+      public Factory(SpriteSet spriteSet) {
          this.spriteSet = spriteSet;
       }
       
       @Nullable
       @Override
-      public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+      public Particle createParticle(SimpleParticleType typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
          FreezeParticle freezeparticle = new FreezeParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
-         freezeparticle.selectSpriteRandomly(this.spriteSet);
+         freezeparticle.pickSprite(this.spriteSet);
          return freezeparticle;
       }
    }
 
    @OnlyIn(Dist.CLIENT)
-   public static class MagicFactory implements IParticleFactory<BasicParticleType> {
-      private final IAnimatedSprite spriteSet;
+   public static class MagicFactory implements ParticleProvider<SimpleParticleType> {
+      private final SpriteSet spriteSet;
 
-      public MagicFactory(IAnimatedSprite spriteSet) {
+      public MagicFactory(SpriteSet spriteSet) {
          this.spriteSet = spriteSet;
       }
       
       @Nullable
       @Override
-      public Particle makeParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+      public Particle createParticle(SimpleParticleType typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
          FreezeParticle freezeparticle = new FreezeParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
-         freezeparticle.particleRed *= 0.3F;
-         freezeparticle.particleGreen *= 0.8F;
-         freezeparticle.selectSpriteRandomly(this.spriteSet);
+         freezeparticle.rCol *= 0.3F;
+         freezeparticle.gCol *= 0.8F;
+         freezeparticle.pickSprite(this.spriteSet);
          return freezeparticle;
       }
    }

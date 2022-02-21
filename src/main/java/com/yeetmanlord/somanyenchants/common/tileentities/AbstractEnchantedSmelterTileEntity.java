@@ -8,136 +8,127 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.yeetmanlord.somanyenchants.common.blocks.smelters.AbstractEnchantedSmelterBlock;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 import com.yeetmanlord.somanyenchants.core.util.interfaces.IEnchantableBlock;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IRecipeHelperPopulator;
-import net.minecraft.inventory.IRecipeHolder;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.AbstractCookingRecipe;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeItemHelper;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tags.ITag;
+import net.minecraft.SharedConstants;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.LockableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SharedConstants;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.tags.Tag;
+import net.minecraft.util.Mth;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.RecipeHolder;
+import net.minecraft.world.inventory.StackedContentsCompatible;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 @SuppressWarnings("unchecked")
-public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEntity
-		implements ISidedInventory, IRecipeHolder, IRecipeHelperPopulator, ITickableTileEntity, IEnchantableBlock
-{
-	private static final int[] SLOTS_UP = new int[]
-	{ 0 };
-	private static final int[] SLOTS_DOWN = new int[]
-	{ 2, 1 };
-	private static final int[] SLOTS_HORIZONTAL = new int[]
-	{ 1 };
+public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBlockEntity
+		implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, IEnchantableBlock {
+	private static final int[] SLOTS_UP = new int[] { 0 };
+	private static final int[] SLOTS_DOWN = new int[] { 2, 1 };
+	private static final int[] SLOTS_HORIZONTAL = new int[] { 1 };
 	protected NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
-	protected ListNBT enchantmentNBT;
+	protected ListTag enchantmentNBT;
 	private float burnTimeMult;
 	private float cookTimeMult;
 	private float experienceMult;
-	private int burnTime;
-	private int burnTimeTotal;
-	private int cookTime;
-	private int cookTimeTotal;
-	protected final IIntArray furnaceData = new IIntArray()
-	{
-		public int get(int index)
-		{
+	private int litTime;
+	private int litDuration;
+	private int cookingProgress;
+	private int cookingTotalTime;
+	protected final ContainerData furnaceData = new ContainerData() {
+		@Override
+		public int get(int index) {
 
-			switch (index)
-			{
-				case 0:
-					return AbstractEnchantedSmelterTileEntity.this.burnTime;
+			switch (index) {
+			case 0:
+				return AbstractEnchantedSmelterTileEntity.this.litTime;
 
-				case 1:
-					return AbstractEnchantedSmelterTileEntity.this.burnTimeTotal;
+			case 1:
+				return AbstractEnchantedSmelterTileEntity.this.litDuration;
 
-				case 2:
-					return AbstractEnchantedSmelterTileEntity.this.cookTime;
+			case 2:
+				return AbstractEnchantedSmelterTileEntity.this.cookingProgress;
 
-				case 3:
-					return AbstractEnchantedSmelterTileEntity.this.cookTimeTotal;
+			case 3:
+				return AbstractEnchantedSmelterTileEntity.this.cookingTotalTime;
 
-				default:
-					return 0;
+			default:
+				return 0;
 			}
 
 		}
 
-		public void set(int index, int value)
-		{
+		@Override
+		public void set(int index, int value) {
 
-			switch (index)
-			{
-				case 0:
-					AbstractEnchantedSmelterTileEntity.this.burnTime = value;
-					break;
+			switch (index) {
+			case 0:
+				AbstractEnchantedSmelterTileEntity.this.litTime = value;
+				break;
 
-				case 1:
-					AbstractEnchantedSmelterTileEntity.this.burnTimeTotal = value;
-					break;
+			case 1:
+				AbstractEnchantedSmelterTileEntity.this.litDuration = value;
+				break;
 
-				case 2:
-					AbstractEnchantedSmelterTileEntity.this.cookTime = value;
-					break;
+			case 2:
+				AbstractEnchantedSmelterTileEntity.this.cookingProgress = value;
+				break;
 
-				case 3:
-					AbstractEnchantedSmelterTileEntity.this.cookTimeTotal = value;
+			case 3:
+				AbstractEnchantedSmelterTileEntity.this.cookingTotalTime = value;
 			}
 
 		}
 
-		public int size()
-		{
+		@Override
+		public int getCount() {
 			return 4;
 		}
 	};
 	private final Object2IntOpenHashMap<ResourceLocation> recipes = new Object2IntOpenHashMap<>();
-	protected final IRecipeType<? extends AbstractCookingRecipe> recipeType;
+	protected final RecipeType<? extends AbstractCookingRecipe> recipeType;
 
-	protected AbstractEnchantedSmelterTileEntity(TileEntityType<?> tileTypeIn,
-			IRecipeType<? extends AbstractCookingRecipe> recipeTypeIn)
-	{
-		super(tileTypeIn);
+	protected AbstractEnchantedSmelterTileEntity(BlockEntityType<?> tileTypeIn,
+			RecipeType<? extends AbstractCookingRecipe> recipeTypeIn, BlockPos pos, BlockState state) {
+		super(tileTypeIn, pos, state);
 		this.recipeType = recipeTypeIn;
-		this.enchantmentNBT = new ListNBT();
+		this.enchantmentNBT = new ListTag();
 		this.burnTimeMult = 1;
 		this.cookTimeMult = 1;
 		this.experienceMult = 1;
 	}
 
 	@Deprecated // Forge - get burn times by calling ForgeHooks#getBurnTime(ItemStack)
-	public static Map<Item, Integer> getBurnTimes()
-	{
+	public static Map<Item, Integer> getBurnTimes() {
 		Map<Item, Integer> map = Maps.newLinkedHashMap();
 		addItemBurnTime(map, Items.LAVA_BUCKET, 20000);
 		addItemBurnTime(map, Blocks.COAL_BLOCK, 16000);
@@ -202,19 +193,15 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 		return map;
 	}
 
-	private static boolean isNonFlammable(Item item)
-	{
+	private static boolean isNonFlammable(Item item) {
 		return ItemTags.NON_FLAMMABLE_WOOD.contains(item);
 	}
 
-	private static void addItemTagBurnTime(Map<Item, Integer> map, ITag<Item> itemTag, int burnTimeIn)
-	{
+	private static void addItemTagBurnTime(Map<Item, Integer> map, Tag<Item> itemTag, int burnTimeIn) {
 
-		for (Item item : itemTag.getAllElements())
-		{
+		for (Item item : itemTag.getValues()) {
 
-			if (!isNonFlammable(item))
-			{
+			if (!isNonFlammable(item)) {
 				map.put(item, burnTimeIn);
 			}
 
@@ -222,241 +209,180 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 
 	}
 
-	private static void addItemBurnTime(Map<Item, Integer> map, IItemProvider itemProvider, int burnTimeIn)
-	{
+	private static void addItemBurnTime(Map<Item, Integer> map, ItemLike itemProvider, int burnTimeIn) {
 		Item item = itemProvider.asItem();
 
-		if (isNonFlammable(item))
-		{
+		if (isNonFlammable(item)) {
 
-			if (SharedConstants.developmentMode)
-			{
-				throw (IllegalStateException) Util.pauseDevMode(
+			if (SharedConstants.IS_RUNNING_IN_IDE) {
+				throw (IllegalStateException) Util.pauseInIde(
 						new IllegalStateException("A developer tried to explicitly make fire resistant item "
-								+ item.getDisplayName((ItemStack) null).getString()
-								+ " a furnace fuel. That will not work!"));
+								+ item.getName((ItemStack) null).getString() + " a furnace fuel. That will not work!"));
 			}
 
-		}
-		else
-		{
+		} else {
 			map.put(item, burnTimeIn);
 		}
 
 	}
 
-	private boolean isBurning()
-	{ return this.burnTime > 0; }
+	private boolean isLit() {
+		return this.litTime > 0;
+	}
 
-	public void read(BlockState state, CompoundNBT nbt)
-	{
-		super.read(state, nbt);
-		this.items = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
-		ItemStackHelper.loadAllItems(nbt, this.items);
-		this.burnTime = nbt.getInt("BurnTime");
-		this.cookTime = nbt.getInt("CookTime");
-		this.cookTimeTotal = nbt.getInt("CookTimeTotal");
-		this.burnTimeTotal = this.getBurnTime(this.items.get(1));
-		CompoundNBT compoundnbt = nbt.getCompound("RecipesUsed");
+	@Override
+	public void load(CompoundTag nbt) {
+		super.load(nbt);
+		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(nbt, this.items);
+		this.litTime = nbt.getInt("BurnTime");
+		this.cookingProgress = nbt.getInt("CookTime");
+		this.cookingTotalTime = nbt.getInt("CookTimeTotal");
+		this.litDuration = this.getBurnDuration(this.items.get(1));
+		CompoundTag compoundnbt = nbt.getCompound("RecipesUsed");
 
-		for (String s : compoundnbt.keySet())
-		{
+		for (String s : compoundnbt.getAllKeys()) {
 			this.recipes.put(new ResourceLocation(s), compoundnbt.getInt(s));
 		}
 
 		this.enchantmentNBT = nbt.getList("Enchantments", 10);
 	}
 
-	public CompoundNBT write(CompoundNBT compound)
-	{
-		super.write(compound);
-		compound.putInt("BurnTime", this.burnTime);
-		compound.putInt("CookTime", this.cookTime);
-		compound.putInt("CookTimeTotal", this.cookTimeTotal);
-		ItemStackHelper.saveAllItems(compound, this.items);
-		CompoundNBT compoundnbt = new CompoundNBT();
-		this.recipes.forEach((recipeId, craftedAmount) ->
-		{
+	@Override
+	public void saveAdditional(CompoundTag compound) {
+		super.saveAdditional(compound);
+		compound.putInt("BurnTime", this.litTime);
+		compound.putInt("CookTime", this.cookingProgress);
+		compound.putInt("CookTimeTotal", this.cookingTotalTime);
+		ContainerHelper.saveAllItems(compound, this.items);
+		CompoundTag compoundnbt = new CompoundTag();
+		this.recipes.forEach((recipeId, craftedAmount) -> {
 			compoundnbt.putInt(recipeId.toString(), craftedAmount);
 		});
 		compound.put("RecipesUsed", compoundnbt);
 		compound.put("Enchantments", enchantmentNBT);
-		return compound;
 	}
-	
-	@Override
-	public void tick()
-	{
-		boolean flag = this.isBurning();
-		boolean flag1 = false;
 
-		if (this.isBurning())
-		{
-			--this.burnTime;
+	public static void serverTick(Level world, BlockPos pos, BlockState state,
+			AbstractEnchantedSmelterTileEntity smelter) {
+		boolean flag = smelter.isLit();
+		boolean flag1 = false;
+		if (smelter.isLit()) {
+			--smelter.litTime;
 		}
 
-		if (!this.world.isRemote)
-		{
-			ItemStack itemstack = this.items.get(1);
-
-			if (this.isBurning() || !itemstack.isEmpty() && !this.items.get(0).isEmpty())
-			{
-				IRecipe<?> irecipe = this.world.getRecipeManager()
-						.getRecipe((IRecipeType<AbstractCookingRecipe>) this.recipeType, this, this.world).orElse(null);
-
-				if (!this.isBurning() && this.canSmelt(irecipe))
-				{
-					this.burnTimeMult = makeNonNegative(ModEnchantmentHelper.getEnchantmentLevel(this.enchantmentNBT,
-							EnchantmentInit.FUEL_EFFICIENT.get())) + 1;
-					this.burnTime = (int) (this.getBurnTime(itemstack));
-					this.burnTimeTotal = this.burnTime;
-
-					if (this.isBurning())
-					{
-						flag1 = true;
-						if (itemstack.hasContainerItem())
-							this.items.set(1, itemstack.getContainerItem());
-						else if (!itemstack.isEmpty())
-						{
-							Item item = itemstack.getItem();
-							itemstack.shrink(1);
-
-							if (itemstack.isEmpty())
-							{
-								this.items.set(1, itemstack.getContainerItem());
-							}
-
+		ItemStack itemstack = smelter.items.get(1);
+		if (smelter.isLit() || !itemstack.isEmpty() && !smelter.items.get(0).isEmpty()) {
+			Recipe<?> recipe = world.getRecipeManager()
+					.getRecipeFor((RecipeType<AbstractCookingRecipe>) smelter.recipeType, smelter, world).orElse(null);
+			int i = smelter.getMaxStackSize();
+			if (!smelter.isLit() && smelter.canBurn(recipe, smelter.items, i)) {
+				smelter.litTime = smelter.getBurnDuration(itemstack);
+				smelter.litDuration = smelter.litTime;
+				if (smelter.isLit()) {
+					flag1 = true;
+					if (itemstack.hasContainerItem())
+						smelter.items.set(1, itemstack.getContainerItem());
+					else if (!itemstack.isEmpty()) {
+						Item item = itemstack.getItem();
+						itemstack.shrink(1);
+						if (itemstack.isEmpty()) {
+							smelter.items.set(1, itemstack.getContainerItem());
 						}
 					}
-
 				}
+			}
 
-				if (this.isBurning() && this.canSmelt(irecipe))
-				{
-					++this.cookTime;
-
-					if (this.cookTime == this.cookTimeTotal)
-					{
-						this.cookTime = 0;
-						this.cookTimeTotal = this.getCookTime();
-						this.smelt(irecipe);
-						flag1 = true;
+			if (smelter.isLit() && smelter.canBurn(recipe, smelter.items, i)) {
+				++smelter.cookingProgress;
+				if (smelter.cookingProgress == smelter.cookingTotalTime) {
+					smelter.cookingProgress = 0;
+					smelter.cookingTotalTime = smelter.getTotalCookTime();
+					if (smelter.burn(recipe, smelter.items, i)) {
+						smelter.setRecipeUsed(recipe);
 					}
 
 				}
-				else
-				{
-					this.cookTime = 0;
-				}
-
+			} else {
+				smelter.cookingProgress = 0;
 			}
-			else if (!this.isBurning() && this.cookTime > 0)
-			{
-				this.cookTime = MathHelper.clamp(this.cookTime - 2, 0, this.cookTimeTotal);
-			}
-
-			if (flag != this.isBurning())
-			{
-				flag1 = true;
-				this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(AbstractFurnaceBlock.LIT,
-						Boolean.valueOf(this.isBurning())), 3);
-			}
-
+		} else if (!smelter.isLit() && smelter.cookingProgress > 0) {
+			smelter.cookingProgress = Mth.clamp(smelter.cookingProgress - 2, 0, smelter.cookingTotalTime);
 		}
 
-		if (flag1)
-		{
-			this.markDirty();
+		if (flag != smelter.isLit()) {
+			flag1 = true;
+			state = state.setValue(AbstractEnchantedSmelterBlock.LIT, Boolean.valueOf(smelter.isLit()));
+			world.setBlock(pos, state, 3);
 		}
 
+		if (flag1) {
+			setChanged(world, pos, state);
+		}
 	}
 
-	protected boolean canSmelt(@Nullable IRecipe<?> recipeIn)
-	{
-
-		if (!this.items.get(0).isEmpty() && recipeIn != null)
-		{
-			ItemStack itemstack = ((IRecipe<ISidedInventory>) recipeIn).getCraftingResult(this);
-
-			if (itemstack.isEmpty())
-			{
+	private boolean canBurn(@Nullable Recipe<?> recipe, NonNullList<ItemStack> items, int maxStackSize) {
+		if (!items.get(0).isEmpty() && recipe != null) {
+			ItemStack itemstack = ((Recipe<WorldlyContainer>) recipe).assemble(this);
+			if (itemstack.isEmpty()) {
 				return false;
-			}
-			else
-			{
-				ItemStack itemstack1 = this.items.get(2);
-
-				if (itemstack1.isEmpty())
-				{
+			} else {
+				ItemStack itemstack1 = items.get(2);
+				if (itemstack1.isEmpty()) {
 					return true;
-				}
-				else if (!itemstack1.isItemEqual(itemstack))
-				{
+				} else if (!itemstack1.sameItem(itemstack)) {
 					return false;
-				}
-				else if (itemstack1.getCount() + itemstack.getCount() <= this.getInventoryStackLimit()
-						&& itemstack1.getCount() + itemstack.getCount() <= itemstack1.getMaxStackSize())
-				{
+				} else if (itemstack1.getCount() + itemstack.getCount() <= maxStackSize
+						&& itemstack1.getCount() + itemstack.getCount() <= itemstack1.getMaxStackSize()) { // Forge fix:
+																											// make
+																											// furnace
+																											// respect
+																											// stack
+																											// sizes in
+																											// furnace
+																											// recipes
 					return true;
+				} else {
+					return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize(); // Forge fix:
+																										// make furnace
+																										// respect stack
+																										// sizes in
+																										// furnace
+																										// recipes
 				}
-				else
-				{
-					return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize();
-				}
-
 			}
-
-		}
-		else
-		{
+		} else {
 			return false;
 		}
-
 	}
 
-	private void smelt(@Nullable IRecipe<?> recipe)
-	{
-
-		if (recipe != null && this.canSmelt(recipe))
-		{
-			ItemStack itemstack = this.items.get(0);
-			ItemStack itemstack1 = ((IRecipe<ISidedInventory>) recipe).getCraftingResult(this);
-			ItemStack itemstack2 = this.items.get(2);
-
-			if (itemstack2.isEmpty())
-			{
-				this.items.set(2, itemstack1.copy());
-			}
-			else if (itemstack2.getItem() == itemstack1.getItem())
-			{
+	private boolean burn(@Nullable Recipe<?> recipe, NonNullList<ItemStack> items, int stackSize) {
+		if (recipe != null && this.canBurn(recipe, items, stackSize)) {
+			ItemStack itemstack = items.get(0);
+			ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble(this);
+			ItemStack itemstack2 = items.get(2);
+			if (itemstack2.isEmpty()) {
+				items.set(2, itemstack1.copy());
+			} else if (itemstack2.is(itemstack1.getItem())) {
 				itemstack2.grow(itemstack1.getCount());
 			}
 
-			if (!this.world.isRemote)
-			{
-				this.setRecipeUsed(recipe);
-			}
-
-			if (itemstack.getItem() == Blocks.WET_SPONGE.asItem() && !this.items.get(1).isEmpty()
-					&& this.items.get(1).getItem() == Items.BUCKET)
-			{
-				this.items.set(1, new ItemStack(Items.WATER_BUCKET));
+			if (itemstack.is(Blocks.WET_SPONGE.asItem()) && !items.get(1).isEmpty() && items.get(1).is(Items.BUCKET)) {
+				items.set(1, new ItemStack(Items.WATER_BUCKET));
 			}
 
 			itemstack.shrink(1);
+			return true;
+		} else {
+			return false;
 		}
-
 	}
 
-	protected int getBurnTime(ItemStack fuel)
-	{
+	protected int getBurnDuration(ItemStack fuel) {
 
-		if (fuel.isEmpty())
-		{
+		if (fuel.isEmpty()) {
 			return 0;
-		}
-		else
-		{
+		} else {
 			Item item = fuel.getItem();
 			this.burnTimeMult = makeNonNegative(
 					ModEnchantmentHelper.getEnchantmentLevel(this.enchantmentNBT, EnchantmentInit.FUEL_EFFICIENT.get()))
@@ -466,46 +392,39 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 
 	}
 
-	protected int getCookTime()
-	{
+	protected int getTotalCookTime() {
 		this.cookTimeMult = (makeNonNegative(
 				ModEnchantmentHelper.getEnchantmentLevel(enchantmentNBT, EnchantmentInit.FAST_SMELT.get())) + 1);
 		return getCookTimeWithMult();
 	}
 
-	public static boolean isFuel(ItemStack stack)
-	{
+	public static boolean isFuel(ItemStack stack) {
 		return net.minecraftforge.common.ForgeHooks.getBurnTime(stack, null) > 0;
 	}
 
-	public int[] getSlotsForFace(Direction side)
-	{
+	@Override
+	public int[] getSlotsForFace(Direction side) {
 
-		if (side == Direction.DOWN)
-		{
+		if (side == Direction.DOWN) {
 			return SLOTS_DOWN;
-		}
-		else
-		{
+		} else {
 			return side == Direction.UP ? SLOTS_UP : SLOTS_HORIZONTAL;
 		}
 
 	}
 
-	public boolean canInsertItem(int index, ItemStack itemStackIn, @Nullable Direction direction)
-	{
-		return this.isItemValidForSlot(index, itemStackIn);
+	@Override
+	public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
+		return this.canPlaceItem(index, itemStackIn);
 	}
 
-	public boolean canExtractItem(int index, ItemStack stack, Direction direction)
-	{
+	@Override
+	public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
 
-		if (direction == Direction.DOWN && index == 1)
-		{
+		if (direction == Direction.DOWN && index == 1) {
 			Item item = stack.getItem();
 
-			if (item != Items.WATER_BUCKET && item != Items.BUCKET)
-			{
+			if (item != Items.WATER_BUCKET && item != Items.BUCKET) {
 				return false;
 			}
 
@@ -514,17 +433,17 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 		return true;
 	}
 
-	public int getSizeInventory()
-	{ return this.items.size(); }
+	@Override
+	public int getContainerSize() {
+		return this.items.size();
+	}
 
-	public boolean isEmpty()
-	{
+	@Override
+	public boolean isEmpty() {
 
-		for (ItemStack itemstack : this.items)
-		{
+		for (ItemStack itemstack : this.items) {
 
-			if (!itemstack.isEmpty())
-			{
+			if (!itemstack.isEmpty()) {
 				return false;
 			}
 
@@ -536,8 +455,8 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 	/**
 	 * Returns the stack in the given slot.
 	 */
-	public ItemStack getStackInSlot(int index)
-	{
+	@Override
+	public ItemStack getItem(int index) {
 		return this.items.get(index);
 	}
 
@@ -545,40 +464,37 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 	 * Removes up to a specified number of items from an inventory slot and returns
 	 * them in a new stack.
 	 */
-	public ItemStack decrStackSize(int index, int count)
-	{
-		return ItemStackHelper.getAndSplit(this.items, index, count);
+	@Override
+	public ItemStack removeItem(int index, int count) {
+		return ContainerHelper.removeItem(this.items, index, count);
 	}
 
 	/**
 	 * Removes a stack from the given slot and returns it.
 	 */
-	public ItemStack removeStackFromSlot(int index)
-	{
-		return ItemStackHelper.getAndRemove(this.items, index);
+	@Override
+	public ItemStack removeItemNoUpdate(int index) {
+		return ContainerHelper.takeItem(this.items, index);
 	}
 
 	/**
 	 * Sets the given item stack to the specified slot in the inventory (can be
 	 * crafting or armor sections).
 	 */
-	public void setInventorySlotContents(int index, ItemStack stack)
-	{
+	@Override
+	public void setItem(int index, ItemStack stack) {
 		ItemStack itemstack = this.items.get(index);
-		boolean flag = !stack.isEmpty() && stack.isItemEqual(itemstack)
-				&& ItemStack.areItemStackTagsEqual(stack, itemstack);
+		boolean flag = !stack.isEmpty() && stack.sameItem(itemstack) && ItemStack.tagMatches(stack, itemstack);
 		this.items.set(index, stack);
 
-		if (stack.getCount() > this.getInventoryStackLimit())
-		{
-			stack.setCount(this.getInventoryStackLimit());
+		if (stack.getCount() > this.getMaxStackSize()) {
+			stack.setCount(this.getMaxStackSize());
 		}
 
-		if (index == 0 && !flag)
-		{
-			this.cookTimeTotal = this.getCookTime();
-			this.cookTime = 0;
-			this.markDirty();
+		if (index == 0 && !flag) {
+			this.cookingTotalTime = this.getTotalCookTime();
+			this.cookingProgress = 0;
+			this.setChanged();
 		}
 
 	}
@@ -586,17 +502,14 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 	/**
 	 * Don't rename this method to canInteractWith due to conflicts with Container
 	 */
-	public boolean isUsableByPlayer(PlayerEntity player)
-	{
+	@Override
+	public boolean stillValid(Player player) {
 
-		if (this.world.getTileEntity(this.pos) != this)
-		{
+		if (this.level.getBlockEntity(this.worldPosition) != this) {
 			return false;
-		}
-		else
-		{
-			return player.getDistanceSq((double) this.pos.getX() + 0.5D, (double) this.pos.getY() + 0.5D,
-					(double) this.pos.getZ() + 0.5D) <= 64.0D;
+		} else {
+			return player.distanceToSqr((double) this.worldPosition.getX() + 0.5D,
+					(double) this.worldPosition.getY() + 0.5D, (double) this.worldPosition.getZ() + 0.5D) <= 64.0D;
 		}
 
 	}
@@ -605,19 +518,14 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 	 * Returns true if automation is allowed to insert the given stack (ignoring
 	 * stack size) into the given slot. For guis use Slot.isItemValid
 	 */
-	public boolean isItemValidForSlot(int index, ItemStack stack)
-	{
+	@Override
+	public boolean canPlaceItem(int index, ItemStack stack) {
 
-		if (index == 2)
-		{
+		if (index == 2) {
 			return false;
-		}
-		else if (index != 1)
-		{
+		} else if (index != 1) {
 			return true;
-		}
-		else
-		{
+		} else {
 			ItemStack itemstack = this.items.get(1);
 			return net.minecraftforge.common.ForgeHooks.getBurnTime(stack, this.recipeType) > 0
 					|| stack.getItem() == Items.BUCKET && itemstack.getItem() != Items.BUCKET;
@@ -625,47 +533,44 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 
 	}
 
-	public void clear()
-	{
+	@Override
+	public void clearContent() {
 		this.items.clear();
 	}
 
-	public void setRecipeUsed(@Nullable IRecipe<?> recipe)
-	{
+	@Override
+	public void setRecipeUsed(@Nullable Recipe<?> recipe) {
 
-		if (recipe != null)
-		{
+		if (recipe != null) {
 			ResourceLocation resourcelocation = recipe.getId();
 			this.recipes.addTo(resourcelocation, 1);
 		}
 
 	}
 
+	@Override
 	@Nullable
-	public IRecipe<?> getRecipeUsed()
-	{ return null; }
-
-	public void onCrafting(PlayerEntity player)
-	{
+	public Recipe<?> getRecipeUsed() {
+		return null;
 	}
 
-	public void unlockRecipes(PlayerEntity player)
-	{
-		List<IRecipe<?>> list = this.grantStoredRecipeExperience(player.world, player.getPositionVec());
-		player.unlockRecipes(list);
+	@Override
+	public void awardUsedRecipes(Player player) {
+	}
+
+	public void unlockRecipes(Player player) {
+		List<Recipe<?>> list = this.grantStoredRecipeExperience(player.level, player.position());
+		player.awardRecipes(list);
 		this.recipes.clear();
 	}
 
-	public List<IRecipe<?>> grantStoredRecipeExperience(World world, Vector3d pos)
-	{
-		List<IRecipe<?>> list = Lists.newArrayList();
-		this.experienceMult = makeNonNegative(ModEnchantmentHelper.getEnchantmentLevel(enchantmentNBT,
-				EnchantmentInit.EXTRA_EXPERIENCE.get()) + 1);
+	public List<Recipe<?>> grantStoredRecipeExperience(Level world, Vec3 pos) {
+		List<Recipe<?>> list = Lists.newArrayList();
+		this.experienceMult = makeNonNegative(
+				ModEnchantmentHelper.getEnchantmentLevel(enchantmentNBT, EnchantmentInit.EXTRA_EXPERIENCE.get()) + 1);
 
-		for (Entry<ResourceLocation> entry : this.recipes.object2IntEntrySet())
-		{
-			world.getRecipeManager().getRecipe(entry.getKey()).ifPresent((recipe) ->
-			{
+		for (Entry<ResourceLocation> entry : this.recipes.object2IntEntrySet()) {
+			world.getRecipeManager().byKey(entry.getKey()).ifPresent((recipe) -> {
 				list.add(recipe);
 				splitAndSpawnExperience(world, pos, entry.getIntValue(),
 						((AbstractCookingRecipe) recipe).getExperience() * experienceMult);
@@ -675,30 +580,26 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 		return list;
 	}
 
-	private static void splitAndSpawnExperience(World world, Vector3d pos, int craftedAmount, float experience)
-	{
-		int i = MathHelper.floor((float) craftedAmount * experience);
-		float f = MathHelper.frac((float) craftedAmount * experience);
+	private static void splitAndSpawnExperience(Level world, Vec3 pos, int craftedAmount, float experience) {
+		int i = Mth.floor((float) craftedAmount * experience);
+		float f = Mth.frac((float) craftedAmount * experience);
 
-		if (f != 0.0F && Math.random() < (double) f)
-		{
+		if (f != 0.0F && Math.random() < (double) f) {
 			++i;
 		}
 
-		while (i > 0)
-		{
-			int j = ExperienceOrbEntity.getXPSplit(i);
+		while (i > 0) {
+			int j = ExperienceOrb.getExperienceValue(i);
 			i -= j;
-			world.addEntity(new ExperienceOrbEntity(world, pos.x, pos.y, pos.z, j));
+			world.addFreshEntity(new ExperienceOrb(world, pos.x, pos.y, pos.z, j));
 		}
 
 	}
 
-	public void fillStackedContents(RecipeItemHelper helper)
-	{
+	@Override
+	public void fillStackedContents(StackedContents helper) {
 
-		for (ItemStack itemstack : this.items)
-		{
+		for (ItemStack itemstack : this.items) {
 			helper.accountStack(itemstack);
 		}
 
@@ -709,12 +610,10 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 
 	@Override
 	public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(
-			net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing)
-	{
+			net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
 
-		if (!this.removed && facing != null
-				&& capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-		{
+		if (!this.remove && facing != null
+				&& capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			if (facing == Direction.UP)
 				return handlers[0].cast();
 			else if (facing == Direction.DOWN)
@@ -727,51 +626,45 @@ public abstract class AbstractEnchantedSmelterTileEntity extends LockableTileEnt
 	}
 
 	@Override
-	protected void invalidateCaps()
-	{
+	public void invalidateCaps() {
 		super.invalidateCaps();
 		for (int x = 0; x < handlers.length; x++)
 			handlers[x].invalidate();
 	}
 
 	@Override
-	public void addEnchantment(Enchantment ench, short lvl)
-	{
-		CompoundNBT nbt = new CompoundNBT();
+	public void addEnchantment(Enchantment ench, short lvl) {
+		CompoundTag nbt = new CompoundTag();
 		nbt.putString("id", ench.getRegistryName().toString());
 		nbt.putShort("lvl", lvl);
 		this.enchantmentNBT.add(nbt);
-		CompoundNBT writeNBT = new CompoundNBT();
-		this.write(writeNBT);
+		CompoundTag writeNBT = new CompoundTag();
+		this.saveAdditional(writeNBT);
 	}
 
 	@Override
-	public ListNBT getEnchantments()
-	{ return enchantmentNBT; }
+	public ListTag getEnchantments() {
+		return enchantmentNBT;
+	}
 
-	private float makeNonNegative(float value)
-	{
+	private float makeNonNegative(float value) {
 
-		if (value < 0)
-		{
+		if (value < 0) {
 			return 0;
 		}
 
 		return value;
 	}
 
-	private int getCookTimeWithMult()
-	{
-		Optional<AbstractCookingRecipe> recipe = this.world.getRecipeManager()
-				.getRecipe((IRecipeType<AbstractCookingRecipe>) this.recipeType, this, this.world);
+	private int getCookTimeWithMult() {
+		Optional<AbstractCookingRecipe> recipe = this.level.getRecipeManager()
+				.getRecipeFor((RecipeType<AbstractCookingRecipe>) this.recipeType, this, this.level);
 
-		if (recipe != null)
-		{
+		if (recipe != null) {
 			AbstractCookingRecipe recipeObject = recipe.get();
 
-			if (recipeObject != null)
-			{
-				return (int) (recipeObject.getCookTime() / cookTimeMult);
+			if (recipeObject != null) {
+				return (int) (recipeObject.getCookingTime() / cookTimeMult);
 			}
 
 		}

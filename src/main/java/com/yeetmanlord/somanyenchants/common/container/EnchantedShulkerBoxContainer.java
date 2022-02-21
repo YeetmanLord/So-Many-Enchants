@@ -3,26 +3,26 @@ package com.yeetmanlord.somanyenchants.common.container;
 import com.yeetmanlord.somanyenchants.common.container.slots.EnchantedShulkerBoxSlot;
 import com.yeetmanlord.somanyenchants.core.init.ContainerTypeInit;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
-public class EnchantedShulkerBoxContainer extends Container {
-	private final IInventory inventory;
+public class EnchantedShulkerBoxContainer extends AbstractContainerMenu {
+	private final Container inventory;
 
-	public EnchantedShulkerBoxContainer(int id, PlayerInventory playerInventory) {
-	      this(id, playerInventory, new Inventory(36));
+	public EnchantedShulkerBoxContainer(int id, Inventory playerInventory) {
+	      this(id, playerInventory, new SimpleContainer(36));
 	   }
 
-	public EnchantedShulkerBoxContainer(int id, PlayerInventory playerInventory, IInventory inventory) {
+	public EnchantedShulkerBoxContainer(int id, Inventory playerInventory, Container inventory) {
 	      super(ContainerTypeInit.ENCHANTED_SHULKER_BOX.get(), id);
-	      assertInventorySize(inventory, 36);
+	      checkContainerSize(inventory, 36);
 	      this.inventory = inventory;
-	      inventory.openInventory(playerInventory.player);
+	      inventory.startOpen(playerInventory.player);
 
 	      for(int k = 0; k < 4; ++k) {
 	         for(int l = 0; l < 9; ++l) {
@@ -45,33 +45,35 @@ public class EnchantedShulkerBoxContainer extends Container {
 	/**
 	 * Determines whether supplied player can use this container
 	 */
-	public boolean canInteractWith(PlayerEntity playerIn) {
-		return this.inventory.isUsableByPlayer(playerIn);
+	@Override
+	public boolean stillValid(Player playerIn) {
+		return this.inventory.stillValid(playerIn);
 	}
 
 	/**
 	 * Handle when the stack in slot {@code index} is shift-clicked. Normally this
 	 * moves the stack between the player inventory and the other inventory(s).
 	 */
-	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+	@Override
+	public ItemStack quickMoveStack(Player playerIn, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = this.inventorySlots.get(index);
-		if (slot != null && slot.getHasStack()) {
-			ItemStack itemstack1 = slot.getStack();
+		Slot slot = this.slots.get(index);
+		if (slot != null && slot.hasItem()) {
+			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
-			if (index < this.inventory.getSizeInventory()) {
-				if (!this.mergeItemStack(itemstack1, this.inventory.getSizeInventory(), this.inventorySlots.size(),
+			if (index < this.inventory.getContainerSize()) {
+				if (!this.moveItemStackTo(itemstack1, this.inventory.getContainerSize(), this.slots.size(),
 						true)) {
 					return ItemStack.EMPTY;
 				}
-			} else if (!this.mergeItemStack(itemstack1, 0, this.inventory.getSizeInventory(), false)) {
+			} else if (!this.moveItemStackTo(itemstack1, 0, this.inventory.getContainerSize(), false)) {
 				return ItemStack.EMPTY;
 			}
 
 			if (itemstack1.isEmpty()) {
-				slot.putStack(ItemStack.EMPTY);
+				slot.set(ItemStack.EMPTY);
 			} else {
-				slot.onSlotChanged();
+				slot.setChanged();
 			}
 		}
 
@@ -81,8 +83,9 @@ public class EnchantedShulkerBoxContainer extends Container {
 	/**
 	 * Called when the container is closed.
 	 */
-	public void onContainerClosed(PlayerEntity playerIn) {
-		super.onContainerClosed(playerIn);
-		this.inventory.closeInventory(playerIn);
+	@Override
+	public void removed(Player playerIn) {
+		super.removed(playerIn);
+		this.inventory.stopOpen(playerIn);
 	}
 }

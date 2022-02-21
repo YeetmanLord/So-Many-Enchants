@@ -10,14 +10,14 @@ import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 import com.yeetmanlord.somanyenchants.core.util.PlayerAttributeHandler;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent.ClickInputEvent;
@@ -36,12 +36,12 @@ public class ReachEnchantments
 	{
 		if (Config.attackReach.isEnabled.get() == true)
 		{
-			if (event.getEntityLiving() instanceof PlayerEntity) {
-				PlayerEntity player = (PlayerEntity)event.getEntityLiving();
+			if (event.getEntityLiving() instanceof Player) {
+				Player player = (Player)event.getEntityLiving();
 				ItemStack to = event.getTo();
 				ItemStack from = event.getFrom();
-				EquipmentSlotType slot = event.getSlot();
-				if(slot == EquipmentSlotType.MAINHAND) {
+				EquipmentSlot slot = event.getSlot();
+				if(slot == EquipmentSlot.MAINHAND) {
 					int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.ATTACK_REACH.get(), to);
 					if (level > 0)
 					{
@@ -63,12 +63,12 @@ public class ReachEnchantments
 	{
 		if (Config.blockReach.isEnabled.get() == true)
 		{
-			if (event.getEntityLiving() instanceof PlayerEntity) {
-				PlayerEntity player = (PlayerEntity)event.getEntityLiving();
+			if (event.getEntityLiving() instanceof Player) {
+				Player player = (Player)event.getEntityLiving();
 				ItemStack to = event.getTo();
 				ItemStack from = event.getFrom();
-				EquipmentSlotType slot = event.getSlot();
-				if(slot == EquipmentSlotType.MAINHAND) {
+				EquipmentSlot slot = event.getSlot();
+				if(slot == EquipmentSlot.MAINHAND) {
 					int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.BLOCK_REACH.get(), to);
 					if (level > 0)
 					{
@@ -91,28 +91,28 @@ public class ReachEnchantments
 	public static void extraReach(final ClickInputEvent click)
 	{
 		Minecraft mc = Minecraft.getInstance();
-		PlayerEntity player = mc.player;
+		Player player = mc.player;
 
 		if (click.isAttack() && player != null)
 		{
 			// Handles raytracing
 			double reachDist = 4.0D;
 
-			if (player.getAttributeManager().hasAttributeInstance(AttributeInit.ATTACK_DISTANCE.get()))
+			if (player.getAttributes().hasAttribute(AttributeInit.ATTACK_DISTANCE.get()))
 			{
 				reachDist = player.getAttribute(AttributeInit.ATTACK_DISTANCE.get()).getValue();
 			}
 
-			Vector3d startVector = player.getEyePosition(1.0F);
-			Vector3d lookVector = player.getLook(1.0F);
-			Vector3d endVector = startVector.add(lookVector.x * reachDist, lookVector.y * reachDist,
+			Vec3 startVector = player.getEyePosition(1.0F);
+			Vec3 lookVector = player.getViewVector(1.0F);
+			Vec3 endVector = startVector.add(lookVector.x * reachDist, lookVector.y * reachDist,
 					lookVector.z * reachDist);
-			AxisAlignedBB axisalignedbb = player.getBoundingBox().expand(lookVector.scale(reachDist)).grow(1.0D, 1.0D,
+			AABB axisalignedbb = player.getBoundingBox().expandTowards(lookVector.scale(reachDist)).inflate(1.0D, 1.0D,
 					1.0D);
-			EntityRayTraceResult entityRayTrace = ProjectileHelper.rayTraceEntities(player, startVector, endVector,
+			EntityHitResult entityRayTrace = ProjectileUtil.getEntityHitResult(player, startVector, endVector,
 					axisalignedbb, (p_215312_0_) ->
 					{
-						return !p_215312_0_.isSpectator() && p_215312_0_.canBeCollidedWith();
+						return !p_215312_0_.isSpectator() && p_215312_0_.isPickable();
 					}, reachDist * reachDist);
 
 			if (entityRayTrace != null)
@@ -120,15 +120,15 @@ public class ReachEnchantments
 				// Gets entity
 				Entity tracedEntity = entityRayTrace.getEntity();
 
-				if (player.getDistanceSq(tracedEntity) > 9.0D
-						&& player.getDistanceSq(tracedEntity) <= Math.pow(reachDist, 2.0D) && !player.isCreative())
+				if (player.distanceToSqr(tracedEntity) > 9.0D
+						&& player.distanceToSqr(tracedEntity) <= Math.pow(reachDist, 2.0D) && !player.isCreative())
 				{
-					NetworkHandler.CHANNEL.sendToServer(new AttackPacket(tracedEntity.getEntityId()));
+					NetworkHandler.CHANNEL.sendToServer(new AttackPacket(tracedEntity.getId()));
 				}
-				else if (player.getDistanceSq(tracedEntity) > 36.0D
-						&& player.getDistanceSq(tracedEntity) <= Math.pow(reachDist, 2.0D) && player.isCreative())
+				else if (player.distanceToSqr(tracedEntity) > 36.0D
+						&& player.distanceToSqr(tracedEntity) <= Math.pow(reachDist, 2.0D) && player.isCreative())
 				{
-					NetworkHandler.CHANNEL.sendToServer(new AttackPacket(tracedEntity.getEntityId()));
+					NetworkHandler.CHANNEL.sendToServer(new AttackPacket(tracedEntity.getId()));
 				}
 
 				return;

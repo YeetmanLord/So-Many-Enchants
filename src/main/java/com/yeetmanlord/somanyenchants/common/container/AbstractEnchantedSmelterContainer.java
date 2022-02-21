@@ -3,195 +3,194 @@ package com.yeetmanlord.somanyenchants.common.container;
 import com.yeetmanlord.somanyenchants.common.container.slots.EnchantedSmelterFuelSlot;
 import com.yeetmanlord.somanyenchants.common.container.slots.EnchantedSmelterResultSlot;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.IRecipeHelperPopulator;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.RecipeBookContainer;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.AbstractCookingRecipe;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeBookCategory;
-import net.minecraft.item.crafting.RecipeItemHelper;
-import net.minecraft.item.crafting.ServerRecipePlacerFurnace;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.IntArray;
-import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.RecipeBookMenu;
+import net.minecraft.world.inventory.RecipeBookType;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.StackedContentsCompatible;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 
-@SuppressWarnings({"unchecked", "rawtypes"})
-public class AbstractEnchantedSmelterContainer extends RecipeBookContainer<IInventory> {
-	private final IInventory furnaceInventory;
-	private final IIntArray furnaceData;
-	protected final World world;
-	private final IRecipeType<? extends AbstractCookingRecipe> recipeType;
-	private final RecipeBookCategory bookCategory;
+@SuppressWarnings( "unchecked" )
+public class AbstractEnchantedSmelterContainer extends RecipeBookMenu<Container> {
+	private final Container container;
+	private final ContainerData data;
+	protected final Level level;
+	private final RecipeType<? extends AbstractCookingRecipe> recipeType;
+	private final RecipeBookType recipeBookType;
 
-	protected AbstractEnchantedSmelterContainer(ContainerType<?> type, IRecipeType<? extends AbstractCookingRecipe> recipeType, RecipeBookCategory bookCat, int id, PlayerInventory playerInv) {
-	      this(type, recipeType, bookCat, id, playerInv, new Inventory(3), new IntArray(4));
-	   }
+	protected AbstractEnchantedSmelterContainer(MenuType<?> type,
+			RecipeType<? extends AbstractCookingRecipe> recipeType, RecipeBookType bookCat, int id,
+			Inventory playerInv) {
+		this(type, recipeType, bookCat, id, playerInv, new SimpleContainer(3), new SimpleContainerData(4));
+	}
 
-	protected AbstractEnchantedSmelterContainer(ContainerType<?> type, IRecipeType<? extends AbstractCookingRecipe> recipeType, RecipeBookCategory bookCat, int id, PlayerInventory playerInv, IInventory furnaceInv, IIntArray furnaceData) {
-	      super(type, id);
-	      this.recipeType = recipeType;
-	      this.bookCategory = bookCat;
-	      assertInventorySize(furnaceInv, 3);
-	      assertIntArraySize(furnaceData, 4);
-	      this.furnaceInventory = furnaceInv;
-	      this.furnaceData = furnaceData;
-	      this.world = playerInv.player.world;
-	      this.addSlot(new Slot(furnaceInv, 0, 56, 17));
-	      this.addSlot(new EnchantedSmelterFuelSlot(this, furnaceInv, 1, 56, 53));
-	      this.addSlot(new EnchantedSmelterResultSlot(playerInv.player, furnaceInv, 2, 116, 35));
+	protected AbstractEnchantedSmelterContainer(MenuType<?> type,
+			RecipeType<? extends AbstractCookingRecipe> recipeType, RecipeBookType bookCat, int id, Inventory playerInv,
+			Container furnaceInv, ContainerData furnaceData) {
+		super(type, id);
+		this.recipeType = recipeType;
+		this.recipeBookType = bookCat;
+		checkContainerSize(furnaceInv, 3);
+		checkContainerDataCount(furnaceData, 4);
+		this.container = furnaceInv;
+		this.data = furnaceData;
+		this.level = playerInv.player.level;
+		this.addSlot(new Slot(furnaceInv, 0, 56, 17));
+		this.addSlot(new EnchantedSmelterFuelSlot(this, furnaceInv, 1, 56, 53));
+		this.addSlot(new EnchantedSmelterResultSlot(playerInv.player, furnaceInv, 2, 116, 35));
 
-	      for(int i = 0; i < 3; ++i) {
-	         for(int j = 0; j < 9; ++j) {
-	            this.addSlot(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-	         }
-	      }
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 9; ++j) {
+				this.addSlot(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+			}
+		}
 
-	      for(int k = 0; k < 9; ++k) {
-	         this.addSlot(new Slot(playerInv, k, 8 + k * 18, 142));
-	      }
+		for (int k = 0; k < 9; ++k) {
+			this.addSlot(new Slot(playerInv, k, 8 + k * 18, 142));
+		}
 
-	      this.trackIntArray(furnaceData);
-	   }
+		this.addDataSlots(furnaceData);
+	}
 
-	public void fillStackedContents(RecipeItemHelper itemHelperIn) {
-		if (this.furnaceInventory instanceof IRecipeHelperPopulator) {
-			((IRecipeHelperPopulator) this.furnaceInventory).fillStackedContents(itemHelperIn);
+	@Override
+	public void fillCraftSlotsStackedContents(StackedContents p_38976_) {
+		if (this.container instanceof StackedContentsCompatible) {
+			((StackedContentsCompatible) this.container).fillStackedContents(p_38976_);
 		}
 
 	}
 
-	public void clear() {
-		this.furnaceInventory.clear();
+	@Override
+	public void clearCraftingContent() {
+		this.getSlot(0).set(ItemStack.EMPTY);
+		this.getSlot(2).set(ItemStack.EMPTY);
 	}
 
-	public void func_217056_a(boolean p_217056_1_, IRecipe<?> p_217056_2_, ServerPlayerEntity player) {
-		(new ServerRecipePlacerFurnace<>(this)).place(player, (IRecipe<IInventory>) p_217056_2_, p_217056_1_);
+	@Override
+	public boolean recipeMatches(Recipe<? super Container> p_38980_) {
+		return p_38980_.matches(this.container, this.level);
 	}
 
-	public boolean matches(IRecipe<? super IInventory> recipeIn) {
-		return recipeIn.matches(this.furnaceInventory, this.world);
-	}
-
-	public int getOutputSlot() {
+	@Override
+	public int getResultSlotIndex() {
 		return 2;
 	}
 
-	public int getWidth() {
+	@Override
+	public int getGridWidth() {
 		return 1;
 	}
 
-	public int getHeight() {
+	@Override
+	public int getGridHeight() {
 		return 1;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Override
 	public int getSize() {
 		return 3;
 	}
 
-	/**
-	 * Determines whether supplied player can use this container
-	 */
-	public boolean canInteractWith(PlayerEntity playerIn) {
-		return this.furnaceInventory.isUsableByPlayer(playerIn);
+	@Override
+	public boolean stillValid(Player p_38974_) {
+		return this.container.stillValid(p_38974_);
 	}
 
-	/**
-	 * Handle when the stack in slot {@code index} is shift-clicked. Normally this
-	 * moves the stack between the player inventory and the other inventory(s).
-	 */
-	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+	@Override
+	public ItemStack quickMoveStack(Player p_38986_, int p_38987_) {
 		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = this.inventorySlots.get(index);
-		if (slot != null && slot.getHasStack()) {
-			ItemStack itemstack1 = slot.getStack();
+		Slot slot = this.slots.get(p_38987_);
+		if (slot != null && slot.hasItem()) {
+			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
-			if (index == 2) {
-				if (!this.mergeItemStack(itemstack1, 3, 39, true)) {
+			if (p_38987_ == 2) {
+				if (!this.moveItemStackTo(itemstack1, 3, 39, true)) {
 					return ItemStack.EMPTY;
 				}
 
-				slot.onSlotChange(itemstack1, itemstack);
-			} else if (index != 1 && index != 0) {
-				if (this.hasRecipe(itemstack1)) {
-					if (!this.mergeItemStack(itemstack1, 0, 1, false)) {
+				slot.onQuickCraft(itemstack1, itemstack);
+			} else if (p_38987_ != 1 && p_38987_ != 0) {
+				if (this.canSmelt(itemstack1)) {
+					if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
 						return ItemStack.EMPTY;
 					}
 				} else if (this.isFuel(itemstack1)) {
-					if (!this.mergeItemStack(itemstack1, 1, 2, false)) {
+					if (!this.moveItemStackTo(itemstack1, 1, 2, false)) {
 						return ItemStack.EMPTY;
 					}
-				} else if (index >= 3 && index < 30) {
-					if (!this.mergeItemStack(itemstack1, 30, 39, false)) {
+				} else if (p_38987_ >= 3 && p_38987_ < 30) {
+					if (!this.moveItemStackTo(itemstack1, 30, 39, false)) {
 						return ItemStack.EMPTY;
 					}
-				} else if (index >= 30 && index < 39 && !this.mergeItemStack(itemstack1, 3, 30, false)) {
+				} else if (p_38987_ >= 30 && p_38987_ < 39 && !this.moveItemStackTo(itemstack1, 3, 30, false)) {
 					return ItemStack.EMPTY;
 				}
-			} else if (!this.mergeItemStack(itemstack1, 3, 39, false)) {
+			} else if (!this.moveItemStackTo(itemstack1, 3, 39, false)) {
 				return ItemStack.EMPTY;
 			}
 
 			if (itemstack1.isEmpty()) {
-				slot.putStack(ItemStack.EMPTY);
+				slot.set(ItemStack.EMPTY);
 			} else {
-				slot.onSlotChanged();
+				slot.setChanged();
 			}
 
 			if (itemstack1.getCount() == itemstack.getCount()) {
 				return ItemStack.EMPTY;
 			}
 
-			slot.onTake(playerIn, itemstack1);
+			slot.onTake(p_38986_, itemstack1);
 		}
 
 		return itemstack;
 	}
-	
-	
-	protected boolean hasRecipe(ItemStack stack) {
-		return this.world.getRecipeManager().getRecipe((IRecipeType) this.recipeType, new Inventory(stack), this.world)
-				.isPresent();
+
+	protected boolean canSmelt(ItemStack p_38978_) {
+		return this.level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.recipeType,
+				new SimpleContainer(p_38978_), this.level).isPresent();
 	}
 
-	public boolean isFuel(ItemStack stack) {
-		return net.minecraftforge.common.ForgeHooks.getBurnTime(stack, this.recipeType) > 0;
+	public boolean isFuel(ItemStack p_38989_) {
+		return net.minecraftforge.common.ForgeHooks.getBurnTime(p_38989_, this.recipeType) > 0;
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	public int getCookProgressionScaled() {
-		int i = this.furnaceData.get(2);
-		int j = this.furnaceData.get(3);
+	public int getBurnProgress() {
+		int i = this.data.get(2);
+		int j = this.data.get(3);
 		return j != 0 && i != 0 ? i * 24 / j : 0;
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	public int getBurnLeftScaled() {
-		int i = this.furnaceData.get(1);
+	public int getLitProgress() {
+		int i = this.data.get(1);
 		if (i == 0) {
 			i = 200;
 		}
 
-		return this.furnaceData.get(0) * 13 / i;
+		return this.data.get(0) * 13 / i;
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	public boolean isBurning() {
-		return this.furnaceData.get(0) > 0;
+	public boolean isLit() {
+		return this.data.get(0) > 0;
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	public RecipeBookCategory func_241850_m() {
-		return this.bookCategory;
+	@Override
+	public RecipeBookType getRecipeBookType() {
+		return this.recipeBookType;
+	}
+
+	@Override
+	public boolean shouldMoveToInventory(int p_150463_) {
+		return p_150463_ != 1;
 	}
 }

@@ -3,10 +3,10 @@ package com.yeetmanlord.somanyenchants.client.smelters;
 import com.yeetmanlord.somanyenchants.client.AbstractEnchantedSmelterScreen;
 import com.yeetmanlord.somanyenchants.common.blocks.smelters.furnace.EnchantedFurnaceContainer;
 
-import net.minecraft.client.gui.recipebook.FurnaceRecipeGui;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.recipebook.SmeltingRecipeBookComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -16,10 +16,10 @@ public class EnchantedFurnaceScreen extends AbstractEnchantedSmelterScreen<Encha
 	private static final ResourceLocation FURNACE_GUI_TEXTURES = new ResourceLocation(
 			"textures/gui/container/furnace.png");
 
-	public EnchantedFurnaceScreen(EnchantedFurnaceContainer screenContainer, PlayerInventory inv,
-			ITextComponent titleIn)
+	public EnchantedFurnaceScreen(EnchantedFurnaceContainer screenContainer, Inventory inv,
+			Component titleIn)
 	{
-		super(screenContainer, new FurnaceRecipeGui(), inv, titleIn, FURNACE_GUI_TEXTURES);
+		super(screenContainer, new SmeltingRecipeBookComponent(), inv, titleIn, FURNACE_GUI_TEXTURES);
 	}
 
 }

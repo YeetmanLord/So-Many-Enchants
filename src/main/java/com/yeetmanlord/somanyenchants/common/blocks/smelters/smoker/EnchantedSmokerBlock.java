@@ -3,53 +3,58 @@ package com.yeetmanlord.somanyenchants.common.blocks.smelters.smoker;
 import java.util.Random;
 
 import com.yeetmanlord.somanyenchants.common.blocks.smelters.AbstractEnchantedSmelterBlock;
+import com.yeetmanlord.somanyenchants.core.init.TileEntityTypeInit;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class EnchantedSmokerBlock extends AbstractEnchantedSmelterBlock
 {
-	public EnchantedSmokerBlock(AbstractBlock.Properties properties)
+	public EnchantedSmokerBlock(BlockBehaviour.Properties properties)
 	{
 		super(properties);
 	}
 
-	public TileEntity createNewTileEntity(IBlockReader worldIn)
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state)
 	{
-		return new EnchantedSmokerTileEntity();
+		return new EnchantedSmokerTileEntity(pos, state);
 	}
 
-	protected void interactWith(World worldIn, BlockPos pos, PlayerEntity player)
+	@Override
+	protected void interactWith(Level worldIn, BlockPos pos, Player player)
 	{
-		TileEntity tileentity = worldIn.getTileEntity(pos);
+		BlockEntity tileentity = worldIn.getBlockEntity(pos);
 
 		if (tileentity instanceof EnchantedSmokerTileEntity)
 		{
-			player.openContainer((INamedContainerProvider) tileentity);
-			player.addStat(Stats.INTERACT_WITH_SMOKER);
+			player.openMenu((MenuProvider) tileentity);
+			player.awardStat(Stats.INTERACT_WITH_SMOKER);
 		}
 
 	}
 
+	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand)
+	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand)
 	{
 
-		if (stateIn.get(LIT))
+		if (stateIn.getValue(LIT))
 		{
 			double d0 = (double) pos.getX() + 0.5D;
 			double d1 = (double) pos.getY();
@@ -57,7 +62,7 @@ public class EnchantedSmokerBlock extends AbstractEnchantedSmelterBlock
 
 			if (rand.nextDouble() < 0.1D)
 			{
-				worldIn.playSound(d0, d1, d2, SoundEvents.BLOCK_SMOKER_SMOKE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+				worldIn.playLocalSound(d0, d1, d2, SoundEvents.SMOKER_SMOKE, SoundSource.BLOCKS, 1.0F, 1.0F, false);
 			}
 
 			worldIn.addParticle(ParticleTypes.SMOKE, d0, d1 + 1.1D, d2, 0.0D, 0.0D, 0.0D);
@@ -69,4 +74,10 @@ public class EnchantedSmokerBlock extends AbstractEnchantedSmelterBlock
 	public Block getUnenchantedBlock()
 	{ return Blocks.SMOKER; }
 
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state,
+			BlockEntityType<T> type) {
+		return createFurnaceTicker(world, type, TileEntityTypeInit.ENCHANTED_SMOKER.get());
+	}
+	
 }

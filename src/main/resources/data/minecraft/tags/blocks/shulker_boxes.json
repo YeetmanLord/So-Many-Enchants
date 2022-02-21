@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "so_many_enchants:enchanted_shulker_box",
+    "so_many_enchants:enchanted_black_shulker_box",
+    "so_many_enchants:enchanted_blue_shulker_box",
+    "so_many_enchants:enchanted_brown_shulker_box",
+    "so_many_enchants:enchanted_cyan_shulker_box",
+    "so_many_enchants:enchanted_gray_shulker_box",
+    "so_many_enchants:enchanted_green_shulker_box",
+    "so_many_enchants:enchanted_light_blue_shulker_box",
+    "so_many_enchants:enchanted_light_gray_shulker_box",
+    "so_many_enchants:enchanted_lime_shulker_box",
+    "so_many_enchants:enchanted_magenta_shulker_box",
+    "so_many_enchants:enchanted_orange_shulker_box",
+    "so_many_enchants:enchanted_pink_shulker_box",
+    "so_many_enchants:enchanted_purple_shulker_box",
+    "so_many_enchants:enchanted_red_shulker_box",
+    "so_many_enchants:enchanted_white_shulker_box",
+    "so_many_enchants:enchanted_yellow_shulker_box"
+  ]
+}

@@ -2,150 +2,192 @@ package com.yeetmanlord.somanyenchants.client.renderer.tileentity;
 
 import java.util.Calendar;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedChestBlock;
 import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedChestTileEntity;
+import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedTrappedChestTileEntity;
+import com.yeetmanlord.somanyenchants.core.init.BlockInit;
 
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.Atlases;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.tileentity.DualBrightnessCallback;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.state.properties.ChestType;
-import net.minecraft.tileentity.IChestLid;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityMerger;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.World;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BrightnessCombiner;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DoubleBlockCombiner;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.LidBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class EnchantedChestTileEntityRenderer<T extends TileEntity & IChestLid> extends TileEntityRenderer<T> {
-	protected final ModelRenderer singleLid;
-	protected final ModelRenderer singleBottom;
-	protected final ModelRenderer singleLatch;
-	protected final ModelRenderer rightLid;
-	protected final ModelRenderer rightBottom;
-	protected final ModelRenderer rightLatch;
-	protected final ModelRenderer leftLid;
-	protected final ModelRenderer leftBottom;
-	protected final ModelRenderer leftLatch;
-	protected boolean isChristmas;
+public class EnchantedChestTileEntityRenderer<T extends BlockEntity & LidBlockEntity>
+		implements BlockEntityRenderer<T> {
+	private final ModelPart lid;
+	private final ModelPart bottom;
+	private final ModelPart lock;
+	private final ModelPart doubleLeftLid;
+	private final ModelPart doubleLeftBottom;
+	private final ModelPart doubleLeftLock;
+	private final ModelPart doubleRightLid;
+	private final ModelPart doubleRightBottom;
+	private final ModelPart doubleRightLock;
+	private boolean xmasTextures;
 
-	public EnchantedChestTileEntityRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
-		Calendar calendar = Calendar.getInstance();
-		if (calendar.get(2) + 1 == 12 && calendar.get(5) >= 24 && calendar.get(5) <= 26) {
-			this.isChristmas = true;
+	public EnchantedChestTileEntityRenderer(BlockEntityRendererProvider.Context p_173607_) {
+	      Calendar calendar = Calendar.getInstance();
+	      if (calendar.get(2) + 1 == 12 && calendar.get(5) >= 24 && calendar.get(5) <= 26) {
+	         this.xmasTextures = true;
+	      }
 
-		}
+	      ModelPart modelpart = p_173607_.bakeLayer(ModelLayers.CHEST);
+	      this.bottom = modelpart.getChild("bottom");
+	      this.lid = modelpart.getChild("lid");
+	      this.lock = modelpart.getChild("lock");
+	      ModelPart modelpart1 = p_173607_.bakeLayer(ModelLayers.DOUBLE_CHEST_LEFT);
+	      this.doubleLeftBottom = modelpart1.getChild("bottom");
+	      this.doubleLeftLid = modelpart1.getChild("lid");
+	      this.doubleLeftLock = modelpart1.getChild("lock");
+	      ModelPart modelpart2 = p_173607_.bakeLayer(ModelLayers.DOUBLE_CHEST_RIGHT);
+	      this.doubleRightBottom = modelpart2.getChild("bottom");
+	      this.doubleRightLid = modelpart2.getChild("lid");
+	      this.doubleRightLock = modelpart2.getChild("lock");
+	   }
 
-		this.singleBottom = new ModelRenderer(64, 64, 0, 19);
-		this.singleBottom.addBox(1.0F, 0.0F, 1.0F, 14.0F, 10.0F, 14.0F, 0.0F);
-		this.singleLid = new ModelRenderer(64, 64, 0, 0);
-		this.singleLid.addBox(1.0F, 0.0F, 0.0F, 14.0F, 5.0F, 14.0F, 0.0F);
-		this.singleLid.rotationPointY = 9.0F;
-		this.singleLid.rotationPointZ = 1.0F;
-		this.singleLatch = new ModelRenderer(64, 64, 0, 0);
-		this.singleLatch.addBox(7.0F, -1.0F, 15.0F, 2.0F, 4.0F, 1.0F, 0.0F);
-		this.singleLatch.rotationPointY = 8.0F;
-		this.rightBottom = new ModelRenderer(64, 64, 0, 19);
-		this.rightBottom.addBox(1.0F, 0.0F, 1.0F, 15.0F, 10.0F, 14.0F, 0.0F);
-		this.rightLid = new ModelRenderer(64, 64, 0, 0);
-		this.rightLid.addBox(1.0F, 0.0F, 0.0F, 15.0F, 5.0F, 14.0F, 0.0F);
-		this.rightLid.rotationPointY = 9.0F;
-		this.rightLid.rotationPointZ = 1.0F;
-		this.rightLatch = new ModelRenderer(64, 64, 0, 0);
-		this.rightLatch.addBox(15.0F, -1.0F, 15.0F, 1.0F, 4.0F, 1.0F, 0.0F);
-		this.rightLatch.rotationPointY = 8.0F;
-		this.leftBottom = new ModelRenderer(64, 64, 0, 19);
-		this.leftBottom.addBox(0.0F, 0.0F, 1.0F, 15.0F, 10.0F, 14.0F, 0.0F);
-		this.leftLid = new ModelRenderer(64, 64, 0, 0);
-		this.leftLid.addBox(0.0F, 0.0F, 0.0F, 15.0F, 5.0F, 14.0F, 0.0F);
-		this.leftLid.rotationPointY = 9.0F;
-		this.leftLid.rotationPointZ = 1.0F;
-		this.leftLatch = new ModelRenderer(64, 64, 0, 0);
-		this.leftLatch.addBox(0.0F, -1.0F, 15.0F, 1.0F, 4.0F, 1.0F, 0.0F);
-		this.leftLatch.rotationPointY = 8.0F;
+	public static LayerDefinition createSingleBodyLayer() {
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
+		partdefinition.addOrReplaceChild("bottom",
+				CubeListBuilder.create().texOffs(0, 19).addBox(1.0F, 0.0F, 1.0F, 14.0F, 10.0F, 14.0F), PartPose.ZERO);
+		partdefinition.addOrReplaceChild("lid",
+				CubeListBuilder.create().texOffs(0, 0).addBox(1.0F, 0.0F, 0.0F, 14.0F, 5.0F, 14.0F),
+				PartPose.offset(0.0F, 9.0F, 1.0F));
+		partdefinition.addOrReplaceChild("lock",
+				CubeListBuilder.create().texOffs(0, 0).addBox(7.0F, -1.0F, 15.0F, 2.0F, 4.0F, 1.0F),
+				PartPose.offset(0.0F, 8.0F, 0.0F));
+		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
-	public void render(T tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
-			int combinedLightIn, int combinedOverlayIn) {
-		World world = tileEntityIn.getWorld();
-		boolean flag = world != null;
-		BlockState blockstate = flag ? tileEntityIn.getBlockState()
-				: Blocks.CHEST.getDefaultState().with(EnchantedChestBlock.FACING, Direction.SOUTH);
-		ChestType chesttype = blockstate.hasProperty(EnchantedChestBlock.TYPE)
-				? blockstate.get(EnchantedChestBlock.TYPE)
+	public static LayerDefinition createDoubleBodyRightLayer() {
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
+		partdefinition.addOrReplaceChild("bottom",
+				CubeListBuilder.create().texOffs(0, 19).addBox(1.0F, 0.0F, 1.0F, 15.0F, 10.0F, 14.0F), PartPose.ZERO);
+		partdefinition.addOrReplaceChild("lid",
+				CubeListBuilder.create().texOffs(0, 0).addBox(1.0F, 0.0F, 0.0F, 15.0F, 5.0F, 14.0F),
+				PartPose.offset(0.0F, 9.0F, 1.0F));
+		partdefinition.addOrReplaceChild("lock",
+				CubeListBuilder.create().texOffs(0, 0).addBox(15.0F, -1.0F, 15.0F, 1.0F, 4.0F, 1.0F),
+				PartPose.offset(0.0F, 8.0F, 0.0F));
+		return LayerDefinition.create(meshdefinition, 64, 64);
+	}
+
+	public static LayerDefinition createDoubleBodyLeftLayer() {
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
+		partdefinition.addOrReplaceChild("bottom",
+				CubeListBuilder.create().texOffs(0, 19).addBox(0.0F, 0.0F, 1.0F, 15.0F, 10.0F, 14.0F), PartPose.ZERO);
+		partdefinition.addOrReplaceChild("lid",
+				CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 15.0F, 5.0F, 14.0F),
+				PartPose.offset(0.0F, 9.0F, 1.0F));
+		partdefinition.addOrReplaceChild("lock",
+				CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, -1.0F, 15.0F, 1.0F, 4.0F, 1.0F),
+				PartPose.offset(0.0F, 8.0F, 0.0F));
+		return LayerDefinition.create(meshdefinition, 64, 64);
+	}
+
+	@Override
+	public void render(T p_112363_, float p_112364_, PoseStack p_112365_, MultiBufferSource p_112366_, int p_112367_,
+			int p_112368_) {
+		Level level = p_112363_.getLevel();
+		boolean flag = level != null;
+		BlockState blockstate = flag ? p_112363_.getBlockState()
+				: BlockInit.ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedChestBlock.FACING, Direction.SOUTH);
+		ChestType chesttype = blockstate.hasProperty(EnchantedChestBlock.TYPE) ? blockstate.getValue(EnchantedChestBlock.TYPE)
 				: ChestType.SINGLE;
 		Block block = blockstate.getBlock();
 		if (block instanceof EnchantedChestBlock) {
-			EnchantedChestBlock enchantedChestBlock = (EnchantedChestBlock) block;
+			EnchantedChestBlock abstractchestblock = (EnchantedChestBlock) block;
 			boolean flag1 = chesttype != ChestType.SINGLE;
-			matrixStackIn.push();
-			float f = blockstate.get(EnchantedChestBlock.FACING).getHorizontalAngle();
-			matrixStackIn.translate(0.5D, 0.5D, 0.5D);
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-f));
-			matrixStackIn.translate(-0.5D, -0.5D, -0.5D);
-			TileEntityMerger.ICallbackWrapper<? extends EnchantedChestTileEntity> icallbackwrapper;
+			p_112365_.pushPose();
+			float f = blockstate.getValue(EnchantedChestBlock.FACING).toYRot();
+			p_112365_.translate(0.5D, 0.5D, 0.5D);
+			p_112365_.mulPose(Vector3f.YP.rotationDegrees(-f));
+			p_112365_.translate(-0.5D, -0.5D, -0.5D);
+			DoubleBlockCombiner.NeighborCombineResult<? extends EnchantedChestTileEntity> neighborcombineresult;
 			if (flag) {
-				icallbackwrapper = enchantedChestBlock.combine(blockstate, world, tileEntityIn.getPos(), true);
+				neighborcombineresult = abstractchestblock.combine(blockstate, level, p_112363_.getBlockPos(), true);
 			} else {
-				icallbackwrapper = TileEntityMerger.ICallback::func_225537_b_;
+				neighborcombineresult = DoubleBlockCombiner.Combiner::acceptNone;
 			}
 
-			float f1 = icallbackwrapper
-					.<Float2FloatFunction>apply(EnchantedChestBlock.getLidRotationCallback(tileEntityIn))
-					.get(partialTicks);
+			float f1 = neighborcombineresult.<Float2FloatFunction>apply(EnchantedChestBlock.opennessCombiner(p_112363_))
+					.get(p_112364_);
 			f1 = 1.0F - f1;
 			f1 = 1.0F - f1 * f1 * f1;
-			int i = icallbackwrapper.<Int2IntFunction>apply(new DualBrightnessCallback<>()).applyAsInt(combinedLightIn);
-			RenderMaterial rendermaterial = this.getMaterial(tileEntityIn, chesttype);
-			IVertexBuilder ivertexbuilder = rendermaterial.getBuffer(bufferIn, RenderType::getEntityCutout);
+			int i = neighborcombineresult.<Int2IntFunction>apply(new BrightnessCombiner<>()).applyAsInt(p_112367_);
+			Material material = this.getMaterial(p_112363_, chesttype);
+			VertexConsumer vertexconsumer = material.buffer(p_112366_, RenderType::entityCutout);
 			if (flag1) {
 				if (chesttype == ChestType.LEFT) {
-					this.renderModels(matrixStackIn, ivertexbuilder, this.leftLid, this.leftLatch, this.leftBottom, f1,
-							i, combinedOverlayIn);
+					this.render(p_112365_, vertexconsumer, this.doubleLeftLid, this.doubleLeftLock,
+							this.doubleLeftBottom, f1, i, p_112368_);
 				} else {
-					this.renderModels(matrixStackIn, ivertexbuilder, this.rightLid, this.rightLatch, this.rightBottom,
-							f1, i, combinedOverlayIn);
+					this.render(p_112365_, vertexconsumer, this.doubleRightLid, this.doubleRightLock,
+							this.doubleRightBottom, f1, i, p_112368_);
 				}
 			} else {
-				this.renderModels(matrixStackIn, ivertexbuilder, this.singleLid, this.singleLatch, this.singleBottom,
-						f1, i, combinedOverlayIn);
+				this.render(p_112365_, vertexconsumer, this.lid, this.lock, this.bottom, f1, i, p_112368_);
 			}
 
-			matrixStackIn.pop();
+			p_112365_.popPose();
 		}
 	}
 
-	private void renderModels(MatrixStack matrixStackIn, IVertexBuilder bufferIn, ModelRenderer chestLid,
-			ModelRenderer chestLatch, ModelRenderer chestBottom, float lidAngle, int combinedLightIn,
-			int combinedOverlayIn) {
-		chestLid.rotateAngleX = -(lidAngle * ((float) Math.PI / 2F));
-		chestLatch.rotateAngleX = chestLid.rotateAngleX;
-		chestLid.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-		chestLatch.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-		chestBottom.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-	}
-	
-	protected RenderMaterial getMaterial(T tileEntity, ChestType chestType) {
-		return Atlases.getChestMaterial(tileEntity, chestType, this.isChristmas);
+	private void render(PoseStack p_112370_, VertexConsumer p_112371_, ModelPart p_112372_, ModelPart p_112373_,
+			ModelPart p_112374_, float p_112375_, int p_112376_, int p_112377_) {
+		p_112372_.xRot = -(p_112375_ * ((float) Math.PI / 2F));
+		p_112373_.xRot = p_112372_.xRot;
+		p_112372_.render(p_112370_, p_112371_, p_112376_, p_112377_);
+		p_112373_.render(p_112370_, p_112371_, p_112376_, p_112377_);
+		p_112374_.render(p_112370_, p_112371_, p_112376_, p_112377_);
 	}
 
-	protected static RenderMaterial getChestMaterial(ChestType chestType, RenderMaterial doubleMaterial,
-			RenderMaterial leftMaterial, RenderMaterial rightMaterial) {
+	protected Material getMaterial(T tileEntity, ChestType chestType) {
+		return chooseMaterial(tileEntity, chestType, this.xmasTextures);
+	}
+
+	public static Material chooseMaterial(BlockEntity blockEntity, ChestType type, boolean christmas) {
+		if (christmas) {
+			return chooseMaterial(type, Sheets.CHEST_XMAS_LOCATION, Sheets.CHEST_XMAS_LOCATION_LEFT,
+					Sheets.CHEST_XMAS_LOCATION_RIGHT);
+		} else if (blockEntity instanceof EnchantedTrappedChestTileEntity) {
+			return chooseMaterial(type, Sheets.CHEST_TRAP_LOCATION, Sheets.CHEST_TRAP_LOCATION_LEFT,
+					Sheets.CHEST_TRAP_LOCATION_RIGHT);
+		} else {
+			return chooseMaterial(type, Sheets.CHEST_LOCATION, Sheets.CHEST_LOCATION_LEFT, Sheets.CHEST_LOCATION_RIGHT);
+		}
+	}
+
+	protected static Material chooseMaterial(ChestType chestType, Material doubleMaterial, Material leftMaterial,
+			Material rightMaterial) {
 		switch (chestType) {
 		case LEFT:
 			return leftMaterial;

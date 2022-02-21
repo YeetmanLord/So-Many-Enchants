@@ -3,24 +3,24 @@ package com.yeetmanlord.somanyenchants.core.init;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
 import com.yeetmanlord.somanyenchants.common.blocks.smelters.AbstractEnchantedSmelterBlock;
 
-import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 public class EnchantmentTypesInit {
 
-	public static final EnchantmentType HOPPER = EnchantmentType.create("hopper", item -> item.equals(Items.HOPPER));
+	public static final EnchantmentCategory HOPPER = EnchantmentCategory.create("hopper", item -> item.equals(Items.HOPPER));
 
-	public static final EnchantmentType TRAPPED_CHEST = EnchantmentType.create("trapped_chest",
+	public static final EnchantmentCategory TRAPPED_CHEST = EnchantmentCategory.create("trapped_chest",
 			item -> item.equals(Items.TRAPPED_CHEST));
 
-	public static final EnchantmentType STORAGE = EnchantmentType.create("storage_blocks", item -> isStorage(item));
+	public static final EnchantmentCategory STORAGE = EnchantmentCategory.create("storage_blocks", item -> isStorage(item));
 
-	public static final EnchantmentType SMELTER = EnchantmentType.create("smelting_blocks", item -> isSmelter(item));
+	public static final EnchantmentCategory SMELTER = EnchantmentCategory.create("smelting_blocks", item -> isSmelter(item));
 
 	public static boolean isStorage(Item item) {
 		if (item instanceof BlockItem) {
@@ -47,8 +47,8 @@ public class EnchantmentTypesInit {
 	}
 
 	public static boolean isModdedEnchantable(Item item) {
-		return (EnchantmentTypesInit.HOPPER.canEnchantItem(item) || EnchantmentTypesInit.STORAGE.canEnchantItem(item)
-				|| EnchantmentTypesInit.TRAPPED_CHEST.canEnchantItem(item)) && item != Items.AIR;
+		return (EnchantmentTypesInit.HOPPER.canEnchant(item) || EnchantmentTypesInit.STORAGE.canEnchant(item)
+				|| EnchantmentTypesInit.TRAPPED_CHEST.canEnchant(item)) && item != Items.AIR;
 	}
 
 }

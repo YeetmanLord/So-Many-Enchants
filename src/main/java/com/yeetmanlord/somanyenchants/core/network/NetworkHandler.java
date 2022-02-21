@@ -5,13 +5,13 @@ import com.yeetmanlord.somanyenchants.core.network.message.AttackPacket;
 import com.yeetmanlord.somanyenchants.core.network.message.ConfigSetPacket;
 import com.yeetmanlord.somanyenchants.core.network.message.FlyingPacket;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 public class NetworkHandler {
 
-	public static final String NETWORK_VERSION = "SME-MAIN-1.0.1";
+	public static final String NETWORK_VERSION = "SME-MAIN-1.1.0";
 	
 	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(Main.MOD_ID, "packet_handler"), 
 			() -> NETWORK_VERSION, version -> version.equals(NETWORK_VERSION), version -> version.equals(NETWORK_VERSION));

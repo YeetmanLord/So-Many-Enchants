@@ -2,27 +2,27 @@ package com.yeetmanlord.somanyenchants.common.enchantments.armor;
 
 import com.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 public class FlightEnchant extends Enchantment 
 {
-	public FlightEnchant(Rarity rarityIn, EquipmentSlotType... slots)
+	public FlightEnchant(Rarity rarityIn, EquipmentSlot... slots)
 	{
-		super(rarityIn, EnchantmentType.ARMOR_FEET, slots);
+		super(rarityIn, EnchantmentCategory.ARMOR_FEET, slots);
 	}
 	
 	@Override
-	public boolean canVillagerTrade()
+	public boolean isTradeable()
 	{
 		return false;
 	}
 	
 	@Override
-	public boolean isTreasureEnchantment() 
+	public boolean isTreasureOnly() 
 	{
 		return true;
 		
@@ -35,24 +35,27 @@ public class FlightEnchant extends Enchantment
 	}
 	
 	@Override
-	public boolean canApply(ItemStack stack) 
+	public boolean canEnchant(ItemStack stack) 
 	{
-		return EnchantmentType.ARMOR_FEET.canEnchantItem(stack.getItem());
+		return EnchantmentCategory.ARMOR_FEET.canEnchant(stack.getItem());
 	}
 	
-	public boolean canApplyTogether(Enchantment ench)
+	@Override
+	public boolean checkCompatibility(Enchantment ench)
 	{
-	      return super.canApplyTogether(ench) && ench != Enchantments.SOUL_SPEED;
+	      return super.checkCompatibility(ench) && ench != Enchantments.SOUL_SPEED;
 	} 
 	
-	public int getMinEnchantability(int enchantmentLevel) 
+	@Override
+	public int getMinCost(int enchantmentLevel) 
 	{
 		return enchantmentLevel * 10;
 	}
 
-	public int getMaxEnchantability(int enchantmentLevel) 
+	@Override
+	public int getMaxCost(int enchantmentLevel) 
 	{
-		return this.getMinEnchantability(enchantmentLevel) + 15;
+		return this.getMinCost(enchantmentLevel) + 15;
 	}
 	
 	@Override
@@ -66,7 +69,7 @@ public class FlightEnchant extends Enchantment
 	}
 	
 	@Override
-	public boolean canGenerateInLoot() 
+	public boolean isDiscoverable() 
 	{
 		return false;
 	}

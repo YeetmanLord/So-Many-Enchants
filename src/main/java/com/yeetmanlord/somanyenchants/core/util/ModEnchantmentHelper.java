@@ -5,16 +5,16 @@ import java.util.HashMap;
 import com.yeetmanlord.somanyenchants.common.tileentities.AbstractEnchantedSmelterTileEntity;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.core.Registry;
 
 public class ModEnchantmentHelper 
 {
@@ -23,11 +23,11 @@ public class ModEnchantmentHelper
 		return getEnchantmentLevel(enchant, stack) > 0;
 	}
 	
-	public static boolean hasCamouflage(ListNBT nbt) {
+	public static boolean hasCamouflage(ListTag nbt) {
 		return getEnchantmentLevel(nbt, EnchantmentInit.CAMOUFLAGE.get()) > 0;
 	}
 	
-	public static boolean isCavernousStorage(ListNBT nbt) {
+	public static boolean isCavernousStorage(ListTag nbt) {
 		return getEnchantmentLevel(nbt, EnchantmentInit.CAVERNOUS_STORAGE.get()) > 0;
 	}
 	
@@ -88,7 +88,7 @@ public class ModEnchantmentHelper
 	
 	public static int getMaxEnchantmentLevel(Enchantment enchantmentIn, LivingEntity entityIn) 
 	{
-	      Iterable<ItemStack> iterable = enchantmentIn.getEntityEquipment(entityIn).values();
+	      Iterable<ItemStack> iterable = enchantmentIn.getSlotItems(entityIn).values();
 	      if (iterable == null) {
 	         return 0;
 	      } else {
@@ -107,13 +107,13 @@ public class ModEnchantmentHelper
 	
 	public static int getMaxEnchantmentLevelArmor(Enchantment enchantmentIn, LivingEntity entityIn, int armorSlot) 
 	{
-	      if(entityIn instanceof PlayerEntity)
+	      if(entityIn instanceof Player)
 	      {
 	    	  if(armorSlot >= 4)
 	    	  {
 	    		  armorSlot = 3;
 	    	  }
-	    	  ItemStack stack = ((PlayerEntity)entityIn).inventory.armorInventory.get(armorSlot);
+	    	  ItemStack stack = ((Player)entityIn).inventory.armor.get(armorSlot);
 	    	  if(stack.isEnchanted())
 	    	  {
 	    		  return getEnchantmentLevel(enchantmentIn, stack);
@@ -129,13 +129,13 @@ public class ModEnchantmentHelper
 	         return 0;
 	      } else {
 	         ResourceLocation resourcelocation = Registry.ENCHANTMENT.getKey(enchID);
-	         ListNBT listnbt = stack.getEnchantmentTagList();
+	         ListTag listnbt = stack.getEnchantmentTags();
 
 	         for(int i = 0; i < listnbt.size(); ++i) {
-	            CompoundNBT compoundnbt = listnbt.getCompound(i);
-	            ResourceLocation resourcelocation1 = ResourceLocation.tryCreate(compoundnbt.getString("id"));
+	            CompoundTag compoundnbt = listnbt.getCompound(i);
+	            ResourceLocation resourcelocation1 = ResourceLocation.tryParse(compoundnbt.getString("id"));
 	            if (resourcelocation1 != null && resourcelocation1.equals(resourcelocation)) {
-	               return MathHelper.clamp(compoundnbt.getInt("lvl"), 0, 255);
+	               return Mth.clamp(compoundnbt.getInt("lvl"), 0, 255);
 	            }
 	         }
 
@@ -143,14 +143,14 @@ public class ModEnchantmentHelper
 	      }
 	}
 	
-	public static int getEnchantmentLevel(ListNBT nbt, Enchantment ench)
+	public static int getEnchantmentLevel(ListTag nbt, Enchantment ench)
 	{
 		ResourceLocation resourcelocation = Registry.ENCHANTMENT.getKey(ench);
 		for(int i = 0; i < nbt.size(); ++i) {
-            CompoundNBT compoundnbt = nbt.getCompound(i);
-            ResourceLocation resourcelocation1 = ResourceLocation.tryCreate(compoundnbt.getString("id"));
+            CompoundTag compoundnbt = nbt.getCompound(i);
+            ResourceLocation resourcelocation1 = ResourceLocation.tryParse(compoundnbt.getString("id"));
             if (resourcelocation1 != null && resourcelocation1.equals(resourcelocation)) {
-               return MathHelper.clamp(compoundnbt.getInt("lvl"), 0, 255);
+               return Mth.clamp(compoundnbt.getInt("lvl"), 0, 255);
             }
          }
 		return 0;

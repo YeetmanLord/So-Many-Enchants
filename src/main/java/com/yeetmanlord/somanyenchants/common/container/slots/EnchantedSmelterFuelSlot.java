@@ -2,15 +2,15 @@ package com.yeetmanlord.somanyenchants.common.container.slots;
 
 import com.yeetmanlord.somanyenchants.common.container.AbstractEnchantedSmelterContainer;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class EnchantedSmelterFuelSlot extends Slot {
 	private final AbstractEnchantedSmelterContainer smelterContainer;
 
-	public EnchantedSmelterFuelSlot(AbstractEnchantedSmelterContainer smelterContainer, IInventory smelterInventory,
+	public EnchantedSmelterFuelSlot(AbstractEnchantedSmelterContainer smelterContainer, Container smelterInventory,
 			int index, int xPos, int yPos) {
 		super(smelterInventory, index, xPos, yPos);
 		this.smelterContainer = smelterContainer;
@@ -20,12 +20,14 @@ public class EnchantedSmelterFuelSlot extends Slot {
 	 * Check if the stack is allowed to be placed in this slot, used for armor slots
 	 * as well as furnace fuel.
 	 */
-	public boolean isItemValid(ItemStack stack) {
+	@Override
+	public boolean mayPlace(ItemStack stack) {
 		return this.smelterContainer.isFuel(stack) || isBucket(stack);
 	}
 
-	public int getItemStackLimit(ItemStack stack) {
-		return isBucket(stack) ? 1 : super.getItemStackLimit(stack);
+	@Override
+	public int getMaxStackSize(ItemStack stack) {
+		return isBucket(stack) ? 1 : super.getMaxStackSize(stack);
 	}
 
 	public static boolean isBucket(ItemStack stack) {

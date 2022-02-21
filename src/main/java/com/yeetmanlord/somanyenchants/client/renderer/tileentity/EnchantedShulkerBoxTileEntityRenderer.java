@@ -1,64 +1,65 @@
 package com.yeetmanlord.somanyenchants.client.renderer.tileentity;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
 import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedShulkerBoxTileEntity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.Atlases;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.model.ShulkerModel;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.model.ShulkerModel;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.item.DyeColor;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class EnchantedShulkerBoxTileEntityRenderer extends TileEntityRenderer<EnchantedShulkerBoxTileEntity> {
+public class EnchantedShulkerBoxTileEntityRenderer implements BlockEntityRenderer<EnchantedShulkerBoxTileEntity> {
 	private final ShulkerModel<?> model;
 
 	@SuppressWarnings("rawtypes")
-	public EnchantedShulkerBoxTileEntityRenderer(TileEntityRendererDispatcher p_i226013_2_) {
-		super(p_i226013_2_);
-		this.model = new ShulkerModel();
+	public EnchantedShulkerBoxTileEntityRenderer(BlockEntityRendererProvider.Context p_173626_) {
+		this.model = new ShulkerModel(p_173626_.bakeLayer(ModelLayers.SHULKER));
 	}
 
-	public void render(EnchantedShulkerBoxTileEntity tileEntityIn, float partialTicks, MatrixStack matrixStackIn,
-			IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	@Override
+	public void render(EnchantedShulkerBoxTileEntity p_112478_, float p_112479_, PoseStack p_112480_,
+			MultiBufferSource p_112481_, int p_112482_, int p_112483_) {
 		Direction direction = Direction.UP;
-		if (tileEntityIn.hasWorld()) {
-			BlockState blockstate = tileEntityIn.getWorld().getBlockState(tileEntityIn.getPos());
+		if (p_112478_.hasLevel()) {
+			BlockState blockstate = p_112478_.getLevel().getBlockState(p_112478_.getBlockPos());
 			if (blockstate.getBlock() instanceof EnchantedShulkerBoxBlock) {
-				direction = blockstate.get(EnchantedShulkerBoxBlock.FACING);
+				direction = blockstate.getValue(EnchantedShulkerBoxBlock.FACING);
 			}
 		}
 
-		DyeColor dyecolor = tileEntityIn.getColor();
-		RenderMaterial rendermaterial;
+		DyeColor dyecolor = p_112478_.getColor();
+		Material material;
 		if (dyecolor == null) {
-			rendermaterial = Atlases.DEFAULT_SHULKER_TEXTURE;
+			material = Sheets.DEFAULT_SHULKER_TEXTURE_LOCATION;
 		} else {
-			rendermaterial = Atlases.SHULKER_TEXTURES.get(dyecolor.getId());
+			material = Sheets.SHULKER_TEXTURE_LOCATION.get(dyecolor.getId());
 		}
 
-		matrixStackIn.push();
-		matrixStackIn.translate(0.5D, 0.5D, 0.5D);
+		p_112480_.pushPose();
+		p_112480_.translate(0.5D, 0.5D, 0.5D);
 		float f = 0.9995F;
-		matrixStackIn.scale(0.9995F, 0.9995F, 0.9995F);
-		matrixStackIn.rotate(direction.getRotation());
-		matrixStackIn.scale(1.0F, -1.0F, -1.0F);
-		matrixStackIn.translate(0.0D, -1.0D, 0.0D);
-		IVertexBuilder ivertexbuilder = rendermaterial.getBuffer(bufferIn, RenderType::getEntityCutoutNoCull);
-		this.model.getBase().render(matrixStackIn, ivertexbuilder, combinedLightIn, combinedOverlayIn);
-		matrixStackIn.translate(0.0D, (double) (-tileEntityIn.getProgress(partialTicks) * 0.5F), 0.0D);
-		matrixStackIn.rotate(Vector3f.YP.rotationDegrees(270.0F * tileEntityIn.getProgress(partialTicks)));
-		this.model.getLid().render(matrixStackIn, ivertexbuilder, combinedLightIn, combinedOverlayIn);
-		matrixStackIn.pop();
+		p_112480_.scale(0.9995F, 0.9995F, 0.9995F);
+		p_112480_.mulPose(direction.getRotation());
+		p_112480_.scale(1.0F, -1.0F, -1.0F);
+		p_112480_.translate(0.0D, -1.0D, 0.0D);
+		ModelPart modelpart = this.model.getLid();
+		modelpart.setPos(0.0F, 24.0F - p_112478_.getProgress(p_112479_) * 0.5F * 16.0F, 0.0F);
+		modelpart.yRot = 270.0F * p_112478_.getProgress(p_112479_) * ((float) Math.PI / 180F);
+		VertexConsumer vertexconsumer = material.buffer(p_112481_, RenderType::entityCutoutNoCull);
+		this.model.renderToBuffer(p_112480_, vertexconsumer, p_112482_, p_112483_, 1.0F, 1.0F, 1.0F, 1.0F);
+		p_112480_.popPose();
 	}
 }

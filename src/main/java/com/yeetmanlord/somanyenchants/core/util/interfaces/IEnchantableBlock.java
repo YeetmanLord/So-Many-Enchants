@@ -1,10 +1,10 @@
 package com.yeetmanlord.somanyenchants.core.util.interfaces;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.nbt.ListTag;
 
 public interface IEnchantableBlock
 {
-	ListNBT getEnchantments();
+	ListTag getEnchantments();
 	void addEnchantment(Enchantment ench, short lvl);
 }

@@ -10,7 +10,7 @@ import com.yeetmanlord.somanyenchants.client.smelters.EnchantedFurnaceScreen;
 import com.yeetmanlord.somanyenchants.client.smelters.EnchantedSmokerScreen;
 import com.yeetmanlord.somanyenchants.core.init.ContainerTypeInit;
 
-import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -23,16 +23,16 @@ public class ScreenHandler
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent event)
 	{
-		ScreenManager.registerFactory(ContainerTypeInit.ENCHANTED_HOPPER.get(), EnchantedHopperScreen::new);
-		ScreenManager.registerFactory(ContainerTypeInit.GENERIC_9X8.get(), EnchantedChestScreen::new);
-		ScreenManager.registerFactory(ContainerTypeInit.GENERIC_9X4.get(), EnchantedChestScreen::new);
-		ScreenManager.registerFactory(ContainerTypeInit.GENERIC_9X3.get(), EnchantedChestScreen::new);
-		ScreenManager.registerFactory(ContainerTypeInit.GENERIC_9X6.get(), EnchantedChestScreen::new);
-		ScreenManager.registerFactory(ContainerTypeInit.ENCHANTED_SHULKER_BOX.get(), EnchantedShulkerBoxScreen::new);
-		ScreenManager.registerFactory(ContainerTypeInit.ENCHANTED_FURNACE.get(), EnchantedFurnaceScreen::new);
-		ScreenManager.registerFactory(ContainerTypeInit.ENCHANTED_BLAST_FURNACE.get(),
+		MenuScreens.register(ContainerTypeInit.ENCHANTED_HOPPER.get(), EnchantedHopperScreen::new);
+		MenuScreens.register(ContainerTypeInit.GENERIC_9X8.get(), EnchantedChestScreen::new);
+		MenuScreens.register(ContainerTypeInit.GENERIC_9X4.get(), EnchantedChestScreen::new);
+		MenuScreens.register(ContainerTypeInit.GENERIC_9X3.get(), EnchantedChestScreen::new);
+		MenuScreens.register(ContainerTypeInit.GENERIC_9X6.get(), EnchantedChestScreen::new);
+		MenuScreens.register(ContainerTypeInit.ENCHANTED_SHULKER_BOX.get(), EnchantedShulkerBoxScreen::new);
+		MenuScreens.register(ContainerTypeInit.ENCHANTED_FURNACE.get(), EnchantedFurnaceScreen::new);
+		MenuScreens.register(ContainerTypeInit.ENCHANTED_BLAST_FURNACE.get(),
 				EnchantedBlastFurnaceScreen::new);
-		ScreenManager.registerFactory(ContainerTypeInit.ENCHANTED_SMOKER.get(), EnchantedSmokerScreen::new);
+		MenuScreens.register(ContainerTypeInit.ENCHANTED_SMOKER.get(), EnchantedSmokerScreen::new);
 	}
 
 }

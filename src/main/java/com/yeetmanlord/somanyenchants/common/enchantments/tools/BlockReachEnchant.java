@@ -3,28 +3,28 @@ package com.yeetmanlord.somanyenchants.common.enchantments.tools;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 public class BlockReachEnchant extends Enchantment
 {
-	public BlockReachEnchant(Rarity rarityIn, EquipmentSlotType... slots)
+	public BlockReachEnchant(Rarity rarityIn, EquipmentSlot... slots)
 	{
-		super(rarityIn, EnchantmentType.DIGGER, slots);
+		super(rarityIn, EnchantmentCategory.DIGGER, slots);
 	}
 	
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack) 
 	{
-		return EnchantmentType.DIGGER.canEnchantItem(stack.getItem());
+		return EnchantmentCategory.DIGGER.canEnchant(stack.getItem());
 	}
 	
 	@Override
-	public boolean canApply(ItemStack stack) 
+	public boolean canEnchant(ItemStack stack) 
 	{
-		return EnchantmentType.DIGGER.canEnchantItem(stack.getItem());
+		return EnchantmentCategory.DIGGER.canEnchant(stack.getItem());
 	}
 	
 	@Override
@@ -38,20 +38,20 @@ public class BlockReachEnchant extends Enchantment
 	}
 	
 	@Override
-	public int getMinEnchantability(int enchantmentLevel)
+	public int getMinCost(int enchantmentLevel)
 	{
 		return 10 + (enchantmentLevel - 1) * 10;
 	}
 	
 	@Override
-	public int getMaxEnchantability(int enchantmentLevel)
+	public int getMaxCost(int enchantmentLevel)
 	{
-		return this.getMinEnchantability(enchantmentLevel) + 15;
+		return this.getMinCost(enchantmentLevel) + 15;
 	}
 	
 	@Override
-	protected boolean canApplyTogether(Enchantment ench) 
+	protected boolean checkCompatibility(Enchantment ench) 
 	{
-		return super.canApplyTogether(ench) && ench != EnchantmentInit.ATTACK_REACH.get();
+		return super.checkCompatibility(ench) && ench != EnchantmentInit.ATTACK_REACH.get();
 	}
 }

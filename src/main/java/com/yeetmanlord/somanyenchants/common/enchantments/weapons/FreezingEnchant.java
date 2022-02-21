@@ -3,32 +3,33 @@ package com.yeetmanlord.somanyenchants.common.enchantments.weapons;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.TridentItem;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TridentItem;
 
 public class FreezingEnchant extends Enchantment {
 
-	public FreezingEnchant(Rarity rarityIn, EquipmentSlotType... slots) 
+	public FreezingEnchant(Rarity rarityIn, EquipmentSlot... slots) 
 	{
-		super(rarityIn, EnchantmentType.WEAPON, slots);
+		super(rarityIn, EnchantmentCategory.WEAPON, slots);
 	}
 	
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack)
 	{
-		return EnchantmentType.WEAPON.canEnchantItem(stack.getItem());
-	}
-	
-	public boolean canApply(ItemStack stack) {
-		  return stack.getItem() instanceof TridentItem ? true : super.canApply(stack);
+		return EnchantmentCategory.WEAPON.canEnchant(stack.getItem());
 	}
 	
 	@Override
-	public boolean canVillagerTrade() 
+	public boolean canEnchant(ItemStack stack) {
+		  return stack.getItem() instanceof TridentItem ? true : super.canEnchant(stack);
+	}
+	
+	@Override
+	public boolean isTradeable() 
 	{
 		return true;
 	}
@@ -39,12 +40,14 @@ public class FreezingEnchant extends Enchantment {
 		return true;
 	}
 	
-	public int getMinEnchantability(int enchantmentLevel) {
+	@Override
+	public int getMinCost(int enchantmentLevel) {
 		return 15 + (enchantmentLevel - 1) * 9;
 	   }
 
-	   public int getMaxEnchantability(int enchantmentLevel) {
-	      return super.getMinEnchantability(enchantmentLevel) + 50;
+	   @Override
+	public int getMaxCost(int enchantmentLevel) {
+	      return super.getMinCost(enchantmentLevel) + 50;
 	   }
 	   
 	 @Override
@@ -58,13 +61,13 @@ public class FreezingEnchant extends Enchantment {
 	}
 	 
 	 @Override
-	public boolean canGenerateInLoot() {
+	public boolean isDiscoverable() {
 		return true;
 	}
 	 
 	 @Override
-	protected boolean canApplyTogether(Enchantment ench) 
+	protected boolean checkCompatibility(Enchantment ench) 
 	{
-		return super.canApplyTogether(ench) && ench != Enchantments.SWEEPING && ench != EnchantmentInit.CRITICAL.get();
+		return super.checkCompatibility(ench) && ench != Enchantments.SWEEPING_EDGE && ench != EnchantmentInit.CRITICAL.get();
 	}
 }

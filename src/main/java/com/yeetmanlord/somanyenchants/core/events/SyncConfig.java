@@ -9,8 +9,8 @@ import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.network.NetworkHandler;
 import com.yeetmanlord.somanyenchants.core.network.message.ConfigSetPacket;
 
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
@@ -25,7 +25,7 @@ public class SyncConfig {
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public static void syncConfig(final PlayerLoggedInEvent event) {
-		if (event.getEntity() instanceof ClientPlayerEntity) {
+		if (event.getEntity() instanceof LocalPlayer) {
 			NetworkHandler.CHANNEL.sendToServer(new ConfigSetPacket(0));
 		}
 	}
@@ -33,9 +33,9 @@ public class SyncConfig {
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public static void syncConfig(final PlayerLoggedOutEvent event) {
-		if (event.getEntity() instanceof PlayerEntity) {
-			PlayerEntity player = (PlayerEntity) event.getEntity();
-			if (!player.getShouldBeDead()) {
+		if (event.getEntity() instanceof Player) {
+			Player player = (Player) event.getEntity();
+			if (!player.isDeadOrDying()) {
 				final CommentedFileConfig file = CommentedFileConfig
 						.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString()))
 						.sync().autosave().writingMode(WritingMode.REPLACE).build();

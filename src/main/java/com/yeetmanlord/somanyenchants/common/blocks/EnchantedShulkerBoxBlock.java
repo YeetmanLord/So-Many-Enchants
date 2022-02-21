@@ -7,72 +7,86 @@ import javax.annotation.Nullable;
 import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedShulkerBoxTileEntity;
 import com.yeetmanlord.somanyenchants.core.enums.EnchantedShulkerAnimationStatuses;
 import com.yeetmanlord.somanyenchants.core.init.BlockInit;
+import com.yeetmanlord.somanyenchants.core.init.TileEntityTypeInit;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ContainerBlock;
-import net.minecraft.block.DirectionalBlock;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.material.PushReaction;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.monster.piglin.PiglinTasks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.StateContainer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.ShulkerAABBHelper;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.entity.monster.piglin.PiglinAi;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class EnchantedShulkerBoxBlock extends ContainerBlock {
+public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 	public static final EnumProperty<Direction> FACING = DirectionalBlock.FACING;
 	public static final ResourceLocation CONTENTS = new ResourceLocation("contents");
 	@Nullable
 	private final DyeColor color;
 
-	public EnchantedShulkerBoxBlock(@Nullable DyeColor color, AbstractBlock.Properties properties) {
-	      super(properties);
-	      this.color = color;
-	      this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.UP));
-	   }
-
-	public TileEntity createNewTileEntity(IBlockReader worldIn) {
-		return new EnchantedShulkerBoxTileEntity(this.color);
+	public EnchantedShulkerBoxBlock(@Nullable DyeColor color, BlockBehaviour.Properties properties) {
+		super(properties);
+		this.color = color;
+		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.UP));
 	}
+
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new EnchantedShulkerBoxTileEntity(this.color, pos, state);
+	}
+
+	@Override
+	@Nullable
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_154543_, BlockState p_154544_,
+			BlockEntityType<T> p_154545_) {
+		return createTickerHelper(p_154545_, TileEntityTypeInit.ENCHANTED_SHULKER_BOX.get(), EnchantedShulkerBoxTileEntity::tick);
+	}
+	
+	
 
 	/**
 	 * The type of render function called. MODEL for mixed tesr and static model,
@@ -82,46 +96,53 @@ public class EnchantedShulkerBoxBlock extends ContainerBlock {
 	 * @deprecated call via {@link IBlockState#getRenderType()} whenever possible.
 	 *             Implementing/overriding is fine.
 	 */
-	public BlockRenderType getRenderType(BlockState state) {
-		return BlockRenderType.ENTITYBLOCK_ANIMATED;
+	@Override
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
-			Hand handIn, BlockRayTraceResult hit) {
-		if (worldIn.isRemote) {
-			return ActionResultType.SUCCESS;
+	@Override
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
+			BlockHitResult hit) {
+		if (worldIn.isClientSide) {
+			return InteractionResult.SUCCESS;
 		} else if (player.isSpectator()) {
-			return ActionResultType.CONSUME;
+			return InteractionResult.CONSUME;
 		} else {
-			TileEntity tileentity = worldIn.getTileEntity(pos);
+			BlockEntity tileentity = worldIn.getBlockEntity(pos);
 			if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
 				EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) tileentity;
-				boolean flag;
-				if (EnchantedShulkerBoxTileEntity.getAnimationStatus() == EnchantedShulkerAnimationStatuses.CLOSED) {
-					Direction direction = state.get(FACING);
-					flag = worldIn.hasNoCollisions(ShulkerAABBHelper.getOpenedCollisionBox(pos, direction));
-				} else {
-					flag = true;
+				if (canOpen(state, worldIn, pos, EnchantedShulkerBoxTileEntity)) {
+					player.openMenu(EnchantedShulkerBoxTileEntity);
+					player.awardStat(Stats.OPEN_SHULKER_BOX);
+					PiglinAi.angerNearbyPiglins(player, true);
 				}
 
-				if (flag) {
-					player.openContainer(EnchantedShulkerBoxTileEntity);
-					player.addStat(Stats.OPEN_SHULKER_BOX);
-					PiglinTasks.func_234478_a_(player, true);
-				}
-
-				return ActionResultType.CONSUME;
+				return InteractionResult.CONSUME;
 			} else {
-				return ActionResultType.PASS;
+				return InteractionResult.PASS;
 			}
 		}
 	}
 
-	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		return this.getDefaultState().with(FACING, context.getFace());
+	private static boolean canOpen(BlockState p_154547_, Level p_154548_, BlockPos p_154549_,
+			EnchantedShulkerBoxTileEntity p_154550_) {
+		if (p_154550_.getAnimationStatus() != EnchantedShulkerAnimationStatuses.CLOSED) {
+			return true;
+		} else {
+			AABB aabb = Shulker.getProgressDeltaAabb(p_154547_.getValue(FACING), 0.0F, 0.5F).move(p_154549_)
+					.deflate(1.0E-6D);
+			return p_154548_.noCollision(aabb);
+		}
 	}
 
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return this.defaultBlockState().setValue(FACING, context.getClickedFace());
+	}
+
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
 
@@ -129,40 +150,42 @@ public class EnchantedShulkerBoxBlock extends ContainerBlock {
 	 * Called before the Block is set to air in the world. Called regardless of if
 	 * the player's tool can actually collect this block
 	 */
-	public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
-		TileEntity tileentity = worldIn.getTileEntity(pos);
+	@Override
+	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
+		BlockEntity tileentity = worldIn.getBlockEntity(pos);
 		if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
-			EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) tileentity;
-			if (!worldIn.isRemote && player.isCreative() && !EnchantedShulkerBoxTileEntity.isEmpty()) {
+			EnchantedShulkerBoxTileEntity enchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) tileentity;
+			if (!worldIn.isClientSide && player.isCreative() && !enchantedShulkerBoxTileEntity.isEmpty()) {
 				ItemStack itemstack = getColoredItemStack(this.getColor());
-				CompoundNBT compoundnbt = EnchantedShulkerBoxTileEntity.saveToNbt(new CompoundNBT());
+				CompoundTag compoundnbt = enchantedShulkerBoxTileEntity.saveToNbt(new CompoundTag());
 				if (!compoundnbt.isEmpty()) {
-					itemstack.setTagInfo("BlockEntityTag", compoundnbt);
+					itemstack.addTagElement("BlockEntityTag", compoundnbt);
 				}
 
-				if (EnchantedShulkerBoxTileEntity.hasCustomName()) {
-					itemstack.setDisplayName(EnchantedShulkerBoxTileEntity.getCustomName());
+				if (enchantedShulkerBoxTileEntity.hasCustomName()) {
+					itemstack.setHoverName(enchantedShulkerBoxTileEntity.getCustomName());
 				}
 
 				ItemEntity itementity = new ItemEntity(worldIn, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D,
 						(double) pos.getZ() + 0.5D, itemstack);
-				itementity.setDefaultPickupDelay();
-				worldIn.addEntity(itementity);
+				itementity.setDefaultPickUpDelay();
+				worldIn.addFreshEntity(itementity);
 			} else {
-				EnchantedShulkerBoxTileEntity.fillWithLoot(player);
+				enchantedShulkerBoxTileEntity.unpackLootTable(player);
 			}
 		}
 
-		super.onBlockHarvested(worldIn, pos, state, player);
+		super.playerWillDestroy(worldIn, pos, state, player);
 	}
 
+	@Override
 	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
-		TileEntity tileentity = builder.get(LootParameters.BLOCK_ENTITY);
+		BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
 		if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
 			EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) tileentity;
 			builder = builder.withDynamicDrop(CONTENTS, (context, stackConsumer) -> {
-				for (int i = 0; i < EnchantedShulkerBoxTileEntity.getSizeInventory(); ++i) {
-					stackConsumer.accept(EnchantedShulkerBoxTileEntity.getStackInSlot(i));
+				for (int i = 0; i < EnchantedShulkerBoxTileEntity.getContainerSize(); ++i) {
+					stackConsumer.accept(EnchantedShulkerBoxTileEntity.getItem(i));
 				}
 
 			});
@@ -175,40 +198,43 @@ public class EnchantedShulkerBoxBlock extends ContainerBlock {
 	 * Called by ItemBlocks after a block is set in the world, to allow post-place
 	 * logic
 	 */
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-		if (stack.hasDisplayName()) {
-			TileEntity tileentity = worldIn.getTileEntity(pos);
+	@Override
+	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+		if (stack.hasCustomHoverName()) {
+			BlockEntity tileentity = worldIn.getBlockEntity(pos);
 			if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
-				((EnchantedShulkerBoxTileEntity) tileentity).setCustomName(stack.getDisplayName());
+				((EnchantedShulkerBoxTileEntity) tileentity).setCustomName(stack.getHoverName());
 			}
 		}
 
 	}
 
-	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!state.matchesBlock(newState.getBlock())) {
-			TileEntity tileentity = worldIn.getTileEntity(pos);
+	@Override
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock())) {
+			BlockEntity tileentity = worldIn.getBlockEntity(pos);
 			if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
-				worldIn.updateComparatorOutputLevel(pos, state.getBlock());
+				worldIn.updateNeighbourForOutputSignal(pos, state.getBlock());
 			}
 
-			super.onReplaced(state, worldIn, pos, newState, isMoving);
+			super.onRemove(state, worldIn, pos, newState, isMoving);
 		}
 	}
 
+	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip,
-			ITooltipFlag flagIn) {
-		super.addInformation(stack, worldIn, tooltip, flagIn);
-		CompoundNBT compoundnbt = stack.getChildTag("BlockEntityTag");
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip,
+			TooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		CompoundTag compoundnbt = stack.getTagElement("BlockEntityTag");
 		if (compoundnbt != null) {
 			if (compoundnbt.contains("LootTable", 8)) {
-				tooltip.add(new StringTextComponent("???????"));
+				tooltip.add(new TextComponent("???????"));
 			}
 
 			if (compoundnbt.contains("Items", 9)) {
 				NonNullList<ItemStack> nonnulllist = NonNullList.withSize(27, ItemStack.EMPTY);
-				ItemStackHelper.loadAllItems(compoundnbt, nonnulllist);
+				ContainerHelper.loadAllItems(compoundnbt, nonnulllist);
 				int i = 0;
 				int j = 0;
 
@@ -217,17 +243,16 @@ public class EnchantedShulkerBoxBlock extends ContainerBlock {
 						++j;
 						if (i <= 4) {
 							++i;
-							IFormattableTextComponent iformattabletextcomponent = itemstack.getDisplayName().deepCopy();
-							iformattabletextcomponent.appendString(" x")
-									.appendString(String.valueOf(itemstack.getCount()));
+							MutableComponent iformattabletextcomponent = itemstack.getHoverName().copy();
+							iformattabletextcomponent.append(" x").append(String.valueOf(itemstack.getCount()));
 							tooltip.add(iformattabletextcomponent);
 						}
 					}
 				}
 
 				if (j - i > 0) {
-					tooltip.add((new TranslationTextComponent("container.shulkerBox.more", j - i))
-							.mergeStyle(TextFormatting.ITALIC));
+					tooltip.add((new TranslatableComponent("container.shulkerBox.more", j - i))
+							.withStyle(ChatFormatting.ITALIC));
 				}
 			}
 		}
@@ -238,22 +263,25 @@ public class EnchantedShulkerBoxBlock extends ContainerBlock {
 	 * @deprecated call via {@link IBlockState#getMobilityFlag()} whenever possible.
 	 *             Implementing/overriding is fine.
 	 */
-	public PushReaction getPushReaction(BlockState state) {
+	@Override
+	public PushReaction getPistonPushReaction(BlockState state) {
 		return PushReaction.DESTROY;
 	}
 
-	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-		TileEntity tileentity = worldIn.getTileEntity(pos);
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+		BlockEntity tileentity = worldIn.getBlockEntity(pos);
 		return tileentity instanceof EnchantedShulkerBoxTileEntity
-				? VoxelShapes.create(((EnchantedShulkerBoxTileEntity) tileentity).getBoundingBox(state))
-				: VoxelShapes.fullCube();
+				? Shapes.create(((EnchantedShulkerBoxTileEntity) tileentity).getBoundingBox(state))
+				: Shapes.block();
 	}
 
 	/**
 	 * @deprecated call via {@link IBlockState#hasComparatorInputOverride()}
 	 *             whenever possible. Implementing/overriding is fine.
 	 */
-	public boolean hasComparatorInputOverride(BlockState state) {
+	@Override
+	public boolean hasAnalogOutputSignal(BlockState state) {
 		return true;
 	}
 
@@ -262,16 +290,19 @@ public class EnchantedShulkerBoxBlock extends ContainerBlock {
 	 *             {@link IBlockState#getComparatorInputOverride(World,BlockPos)}
 	 *             whenever possible. Implementing/overriding is fine.
 	 */
-	public int getComparatorInputOverride(BlockState blockState, World worldIn, BlockPos pos) {
-		return Container.calcRedstoneFromInventory((IInventory) worldIn.getTileEntity(pos));
+	@Override
+	public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
+		return AbstractContainerMenu.getRedstoneSignalFromContainer((Container) worldIn.getBlockEntity(pos));
 	}
 
-	public ItemStack getItem(IBlockReader worldIn, BlockPos pos, BlockState state) {
-		ItemStack itemstack = super.getItem(worldIn, pos, state);
-		EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) worldIn.getTileEntity(pos);
-		CompoundNBT compoundnbt = EnchantedShulkerBoxTileEntity.saveToNbt(new CompoundNBT());
+	@Override
+	public ItemStack getCloneItemStack(BlockGetter worldIn, BlockPos pos, BlockState state) {
+		ItemStack itemstack = super.getCloneItemStack(worldIn, pos, state);
+		EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) worldIn
+				.getBlockEntity(pos);
+		CompoundTag compoundnbt = EnchantedShulkerBoxTileEntity.saveToNbt(new CompoundTag());
 		if (!compoundnbt.isEmpty()) {
-			itemstack.setTagInfo("BlockEntityTag", compoundnbt);
+			itemstack.addTagElement("BlockEntityTag", compoundnbt);
 		}
 
 		return itemstack;
@@ -280,7 +311,7 @@ public class EnchantedShulkerBoxBlock extends ContainerBlock {
 	@Nullable
 	@OnlyIn(Dist.CLIENT)
 	public static DyeColor getColorFromItem(Item itemIn) {
-		return getColorFromBlock(Block.getBlockFromItem(itemIn));
+		return getColorFromBlock(Block.byItem(itemIn));
 	}
 
 	@Nullable
@@ -347,8 +378,9 @@ public class EnchantedShulkerBoxBlock extends ContainerBlock {
 	 * @deprecated call via {@link IBlockState#withRotation(Rotation)} whenever
 	 *             possible. Implementing/overriding is fine.
 	 */
+	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
-		return state.with(FACING, rot.rotate(state.get(FACING)));
+		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
 	/**
@@ -358,7 +390,8 @@ public class EnchantedShulkerBoxBlock extends ContainerBlock {
 	 * @deprecated call via {@link IBlockState#withMirror(Mirror)} whenever
 	 *             possible. Implementing/overriding is fine.
 	 */
+	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
-		return state.rotate(mirrorIn.toRotation(state.get(FACING)));
+		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
 	}
 }

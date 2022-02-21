@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import com.yeetmanlord.somanyenchants.Main;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -12,13 +12,13 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 public class Scheduler {
 	
-	public PlayerEntity owner;
+	public Player owner;
 	private int timer;
 	private Runnable runnable;
 	private int scheduleTime;
 	public boolean hasTask;
 	
-	public Scheduler(PlayerEntity owner) 
+	public Scheduler(Player owner) 
 	{
 		this.owner = owner;
 		timer = 0;

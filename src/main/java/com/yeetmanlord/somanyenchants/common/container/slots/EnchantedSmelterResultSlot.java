@@ -2,53 +2,58 @@ package com.yeetmanlord.somanyenchants.common.container.slots;
 
 import com.yeetmanlord.somanyenchants.common.tileentities.AbstractEnchantedSmelterTileEntity;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.ForgeEventFactory;
 
 public class EnchantedSmelterResultSlot extends Slot {
 
-	private final PlayerEntity player;
+	private final Player player;
 	private int removeCount;
 
-	public EnchantedSmelterResultSlot(PlayerEntity player, IInventory inventoryIn, int slotIndex, int xPosition,
+	public EnchantedSmelterResultSlot(Player player, Container inventoryIn, int slotIndex, int xPosition,
 			int yPosition) {
 		super(inventoryIn, slotIndex, xPosition, yPosition);
 		this.player = player;
 	}
 
-	public boolean isItemValid(ItemStack stack) {
+	@Override
+	public boolean mayPlace(ItemStack stack) {
 		return false;
 	}
 
-	public ItemStack decrStackSize(int amount) {
-		if (this.getHasStack()) {
-			this.removeCount += Math.min(amount, this.getStack().getCount());
+	@Override
+	public ItemStack remove(int amount) {
+		if (this.hasItem()) {
+			this.removeCount += Math.min(amount, this.getItem().getCount());
 		}
 
-		return super.decrStackSize(amount);
+		return super.remove(amount);
 	}
 
-	public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
-		this.onCrafting(stack);
+	@Override
+	public void onTake(Player thePlayer, ItemStack stack) {
+		this.checkTakeAchievements(stack);
 		super.onTake(thePlayer, stack);
-		return stack;
 	}
 
-	protected void onCrafting(ItemStack stack, int amount) {
+	@Override
+	protected void onQuickCraft(ItemStack stack, int amount) {
 		this.removeCount += amount;
-		this.onCrafting(stack);
+		this.checkTakeAchievements(stack);
 	}
 
-	protected void onCrafting(ItemStack stack) {
-		stack.onCrafting(this.player.world, this.player, this.removeCount);
-		if (!this.player.world.isRemote && this.inventory instanceof AbstractEnchantedSmelterTileEntity) {
-			((AbstractEnchantedSmelterTileEntity) this.inventory).unlockRecipes(this.player);
+	@Override
+	protected void checkTakeAchievements(ItemStack stack) {
+		stack.onCraftedBy(this.player.level, this.player, this.removeCount);
+		if (!this.player.level.isClientSide && this.container instanceof AbstractEnchantedSmelterTileEntity) {
+			((AbstractEnchantedSmelterTileEntity) this.container).unlockRecipes(this.player);
 		}
 
 		this.removeCount = 0;
-		net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerSmeltedEvent(this.player, stack);
+		ForgeEventFactory.firePlayerSmeltedEvent(this.player, stack);
 	}
 
 }

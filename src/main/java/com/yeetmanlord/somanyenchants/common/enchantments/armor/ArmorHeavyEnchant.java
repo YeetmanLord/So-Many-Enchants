@@ -3,32 +3,34 @@ package com.yeetmanlord.somanyenchants.common.enchantments.armor;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 public class ArmorHeavyEnchant extends Enchantment
 {
-	public ArmorHeavyEnchant(Rarity rarityIn, EquipmentSlotType[] slots) 
+	public ArmorHeavyEnchant(Rarity rarityIn, EquipmentSlot[] slots) 
 	{
-		super(rarityIn, EnchantmentType.ARMOR, slots);
+		super(rarityIn, EnchantmentCategory.ARMOR, slots);
 	}
 	
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack)
 	{
-		return EnchantmentType.ARMOR.canEnchantItem(stack.getItem());
+		return EnchantmentCategory.ARMOR.canEnchant(stack.getItem());
 	}
 	
-	public int getMinEnchantability(int enchantmentLevel) 
+	@Override
+	public int getMinCost(int enchantmentLevel) 
 	{
 		return 25;
 	}
 
-	public int getMaxEnchantability(int enchantmentLevel) 
+	@Override
+	public int getMaxCost(int enchantmentLevel) 
 	{
-		return super.getMinEnchantability(enchantmentLevel) + 100;
+		return super.getMinCost(enchantmentLevel) + 100;
 	}
 	   
 	 @Override
@@ -42,9 +44,9 @@ public class ArmorHeavyEnchant extends Enchantment
 	}
 	 
 	@Override
-	protected boolean canApplyTogether(Enchantment ench) 
+	protected boolean checkCompatibility(Enchantment ench) 
 	{
-			return super.canApplyTogether(ench) && ench != EnchantmentInit.REINFORCEMENT.get() && ench != EnchantmentInit.TEMPER.get();
+			return super.checkCompatibility(ench) && ench != EnchantmentInit.REINFORCEMENT.get() && ench != EnchantmentInit.TEMPER.get();
 	}
 
 }

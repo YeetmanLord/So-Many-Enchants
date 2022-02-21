@@ -4,7 +4,7 @@ import com.yeetmanlord.somanyenchants.Main;
 import com.yeetmanlord.somanyenchants.core.util.PlayerAttributeHandler;
 import com.yeetmanlord.somanyenchants.core.util.PlayerUtilities;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -16,9 +16,9 @@ public class HandlePlayerJoins
 	@SubscribeEvent
 	public static void onPlayerJoin(final PlayerLoggedInEvent event)
 	{
-		if(event.getEntity() instanceof PlayerEntity)
+		if(event.getEntity() instanceof Player)
 		{
-			PlayerEntity player = (PlayerEntity)event.getEntity();
+			Player player = (Player)event.getEntity();
 			PlayerUtilities util = Main.getPlayerUtil(player);
 			PlayerAttributeHandler.reset(player); 
 		}

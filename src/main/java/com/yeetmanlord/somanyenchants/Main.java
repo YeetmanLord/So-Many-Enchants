@@ -10,9 +10,7 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.yeetmanlord.somanyenchants.client.ConfigMenu;
 import com.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedChestTileEntityRenderer;
-import com.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedHiddenTrappedChestTileEntityRenderer;
 import com.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedShulkerBoxTileEntityRenderer;
-import com.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedTrappedChestTileEntityRenderer;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.AttributeInit;
 import com.yeetmanlord.somanyenchants.core.init.BlockInit;
@@ -27,16 +25,16 @@ import com.yeetmanlord.somanyenchants.core.network.NetworkHandler;
 import com.yeetmanlord.somanyenchants.core.util.PlayerUtilities;
 import com.yeetmanlord.somanyenchants.core.util.Scheduler;
 
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.config.ModConfig;
@@ -53,8 +51,8 @@ public class Main
     public static final String MOD_ID = "so_many_enchants";
     public static Main instance;
     
-    public static HashMap<PlayerEntity, PlayerUtilities> playerUtils;
-	public static HashMap<PlayerEntity, Scheduler> playerTaskSchedulers = new HashMap<>();
+    public static HashMap<Player, PlayerUtilities> playerUtils;
+	public static HashMap<Player, Scheduler> playerTaskSchedulers = new HashMap<>();
     
     public Main() {
     	playerUtils = new HashMap<>();
@@ -64,6 +62,10 @@ public class Main
     		modEventBus.addListener(this::setup);
     		
     		modEventBus.addListener(this::doClientStuff);
+    		
+    		modEventBus.addListener(this::registerRenderers);
+    		
+    		
     		EnchantmentInit.ENCHANTMENTS.register(modEventBus);
     		ContainerTypeInit.CONTAINER_TYPES.register(modEventBus);
     		TileEntityTypeInit.TILE_ENTITY_TYPES.register(modEventBus);
@@ -93,10 +95,9 @@ public class Main
 			    	file.load();
 			    	Config.SyncedServerConfig.setConfig(file);
 					
-					ModLoadingContext.get().registerExtensionPoint(
-			                ExtensionPoint.CONFIGGUIFACTORY,
-			                () -> (mc, screen) -> new ConfigMenu()
-			        );
+			    	ModLoadingContext.get().registerExtensionPoint(
+			    			ConfigGuiHandler.ConfigGuiFactory.class, () -> 
+			    			new ConfigGuiHandler.ConfigGuiFactory(((minecraft, screen) -> new ConfigMenu())));
 					
 				}
 			});
@@ -107,7 +108,7 @@ public class Main
     
     private void setup(final FMLCommonSetupEvent event)
     {
-    	ItemGroup.DECORATIONS.setRelevantEnchantmentTypes(new EnchantmentType[] {EnchantmentTypesInit.HOPPER, EnchantmentTypesInit.STORAGE, EnchantmentTypesInit.TRAPPED_CHEST, EnchantmentTypesInit.SMELTER});
+    	CreativeModeTab.TAB_DECORATIONS.setEnchantmentCategories(new EnchantmentCategory[] {EnchantmentTypesInit.HOPPER, EnchantmentTypesInit.STORAGE, EnchantmentTypesInit.TRAPPED_CHEST, EnchantmentTypesInit.SMELTER});
         LOGGER.info("PREINIT IS FUNCTIONING");
 		VillagerProfessionInit.fillTradeData();
 		NetworkHandler.init();
@@ -120,13 +121,16 @@ public class Main
 
     private void doClientStuff(final FMLClientSetupEvent event) 
     {
-    	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.ENCHANTED_SHULKER_BOX.get(), EnchantedShulkerBoxTileEntityRenderer::new);
-    	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
-    	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.TRAPPED_ENCHANTED_CHEST.get(), EnchantedTrappedChestTileEntityRenderer::new);
-    	ClientRegistry.bindTileEntityRenderer(TileEntityTypeInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get(), EnchantedHiddenTrappedChestTileEntityRenderer::new);
     }
     
-    public static PlayerUtilities getPlayerUtil(PlayerEntity player)
+    private void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+    	event.registerBlockEntityRenderer(TileEntityTypeInit.ENCHANTED_SHULKER_BOX.get(), EnchantedShulkerBoxTileEntityRenderer::new);
+    	event.registerBlockEntityRenderer(TileEntityTypeInit.ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
+    	event.registerBlockEntityRenderer(TileEntityTypeInit.TRAPPED_ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
+    	event.registerBlockEntityRenderer(TileEntityTypeInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
+    }
+    
+    public static PlayerUtilities getPlayerUtil(Player player)
     {
     	PlayerUtilities util;
     	
@@ -142,7 +146,7 @@ public class Main
     	}
     }
     
-    public static Scheduler getScheduler(PlayerEntity player)
+    public static Scheduler getScheduler(Player player)
     {
     	if(playerTaskSchedulers.get(player) != null)
     	{

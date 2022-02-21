@@ -4,10 +4,10 @@ import java.util.function.Supplier;
 
 import com.yeetmanlord.somanyenchants.core.events.ArmorEnchantments;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 public class FlyingPacket {
 	private boolean setFly;
@@ -18,12 +18,12 @@ public class FlyingPacket {
 		this.setFly = setFly;
 	}
 	
-	public static void encode(FlyingPacket msg, PacketBuffer buff) 
+	public static void encode(FlyingPacket msg, FriendlyByteBuf buff) 
 	{
 		buff.writeBoolean(msg.setFly);
 	}
 	
-	public static FlyingPacket decode(PacketBuffer buff) 
+	public static FlyingPacket decode(FriendlyByteBuf buff) 
 	{
 		return new FlyingPacket(buff.readBoolean());
 	}

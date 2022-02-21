@@ -1,0 +1,9 @@
+{
+	"replace": false,
+	"values": [
+		"so_many_enchants:enchanted_barrel",
+		"so_many_enchants:enchanted_chest",
+		"so_many_enchants:enchanted_trapped_chest",
+		"so_many_enchants:hidden_enchanted_trapped_chest"
+	]
+}

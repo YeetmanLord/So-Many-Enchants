@@ -2,7 +2,7 @@ package com.yeetmanlord.somanyenchants.core.init;
 
 import com.yeetmanlord.somanyenchants.Main;
 
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;

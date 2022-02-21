@@ -3,19 +3,19 @@ package com.yeetmanlord.somanyenchants.common.enchantments.weapons;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.TridentItem;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TridentItem;
 
 public class CriticalEnchant extends Enchantment
 {
-	public CriticalEnchant(Rarity rarityIn, EquipmentSlotType... slots)
+	public CriticalEnchant(Rarity rarityIn, EquipmentSlot... slots)
 	{
-		super(rarityIn, EnchantmentType.WEAPON, slots);
+		super(rarityIn, EnchantmentCategory.WEAPON, slots);
 	}
 	
 	@Override
@@ -25,9 +25,9 @@ public class CriticalEnchant extends Enchantment
 	}
 	
 	@Override
-	public boolean canApply(ItemStack stack) 
+	public boolean canEnchant(ItemStack stack) 
 	{
-		return stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem ? true : EnchantmentType.WEAPON.canEnchantItem(stack.getItem());
+		return stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem ? true : EnchantmentCategory.WEAPON.canEnchant(stack.getItem());
 	}
 	
 	@Override
@@ -41,26 +41,26 @@ public class CriticalEnchant extends Enchantment
 	}
 	
 	@Override
-	public int getMinEnchantability(int enchantmentLevel) 
+	public int getMinCost(int enchantmentLevel) 
 	{
 		return 15 + (enchantmentLevel - 1) * 9;
 	}
 
 	@Override
-	public int getMaxEnchantability(int enchantmentLevel) 
+	public int getMaxCost(int enchantmentLevel) 
 	{
-		return super.getMinEnchantability(enchantmentLevel) + 50;
+		return super.getMinCost(enchantmentLevel) + 50;
 	}
 	
 	@Override
-	protected boolean canApplyTogether(Enchantment ench) 
+	protected boolean checkCompatibility(Enchantment ench) 
 	{
-		return super.canApplyTogether(ench) && ench != Enchantments.SWEEPING && ench != EnchantmentInit.FREEZING.get();
+		return super.checkCompatibility(ench) && ench != Enchantments.SWEEPING_EDGE && ench != EnchantmentInit.FREEZING.get();
 	}
 	
 	
 	@Override
-	public boolean canVillagerTrade() 
+	public boolean isTradeable() 
 	{
 		return false;
 	}

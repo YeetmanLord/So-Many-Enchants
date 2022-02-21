@@ -1,141 +1,169 @@
 package com.yeetmanlord.somanyenchants.common.blocks;
 
-import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedHopperTileEntity;
+import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HopperBlock;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
+import com.yeetmanlord.somanyenchants.common.tileentities.EnchantedHopperTileEntity;
+import com.yeetmanlord.somanyenchants.core.init.TileEntityTypeInit;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.IHopper;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.IBooleanFunction;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HopperBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.Hopper;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 
 public class EnchantedHopper extends HopperBlock {
 
-	   private static final VoxelShape INPUT_SHAPE = Block.makeCuboidShape(0.0D, 10.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-	   private static final VoxelShape MIDDLE_SHAPE = Block.makeCuboidShape(4.0D, 4.0D, 4.0D, 12.0D, 10.0D, 12.0D);
-	   private static final VoxelShape INPUT_MIDDLE_SHAPE = VoxelShapes.or(MIDDLE_SHAPE, INPUT_SHAPE);
-	   private static final VoxelShape BASE_SHAPE = VoxelShapes.combineAndSimplify(INPUT_MIDDLE_SHAPE, IHopper.INSIDE_BOWL_SHAPE, IBooleanFunction.ONLY_FIRST);
-	   private static final VoxelShape DOWN_SHAPE = VoxelShapes.or(BASE_SHAPE, Block.makeCuboidShape(6.0D, 0.0D, 6.0D, 10.0D, 4.0D, 10.0D));
-	   private static final VoxelShape EAST_SHAPE = VoxelShapes.or(BASE_SHAPE, Block.makeCuboidShape(12.0D, 4.0D, 6.0D, 16.0D, 8.0D, 10.0D));
-	   private static final VoxelShape NORTH_SHAPE = VoxelShapes.or(BASE_SHAPE, Block.makeCuboidShape(6.0D, 4.0D, 0.0D, 10.0D, 8.0D, 4.0D));
-	   private static final VoxelShape SOUTH_SHAPE = VoxelShapes.or(BASE_SHAPE, Block.makeCuboidShape(6.0D, 4.0D, 12.0D, 10.0D, 8.0D, 16.0D));
-	   private static final VoxelShape WEST_SHAPE = VoxelShapes.or(BASE_SHAPE, Block.makeCuboidShape(0.0D, 4.0D, 6.0D, 4.0D, 8.0D, 10.0D));
-	   private static final VoxelShape DOWN_RAYTRACE_SHAPE = IHopper.INSIDE_BOWL_SHAPE;
-	   private static final VoxelShape EAST_RAYTRACE_SHAPE = VoxelShapes.or(IHopper.INSIDE_BOWL_SHAPE, Block.makeCuboidShape(12.0D, 8.0D, 6.0D, 16.0D, 10.0D, 10.0D));
-	   private static final VoxelShape NORTH_RAYTRACE_SHAPE = VoxelShapes.or(IHopper.INSIDE_BOWL_SHAPE, Block.makeCuboidShape(6.0D, 8.0D, 0.0D, 10.0D, 10.0D, 4.0D));
-	   private static final VoxelShape SOUTH_RAYTRACE_SHAPE = VoxelShapes.or(IHopper.INSIDE_BOWL_SHAPE, Block.makeCuboidShape(6.0D, 8.0D, 12.0D, 10.0D, 10.0D, 16.0D));
-	   private static final VoxelShape WEST_RAYTRACE_SHAPE = VoxelShapes.or(IHopper.INSIDE_BOWL_SHAPE, Block.makeCuboidShape(0.0D, 8.0D, 6.0D, 4.0D, 10.0D, 10.0D));
-	   
-	
-	   public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-		      switch((Direction)state.get(FACING)) {
-		      case DOWN:
-		         return DOWN_SHAPE;
-		      case NORTH:
-		         return NORTH_SHAPE;
-		      case SOUTH:
-		         return SOUTH_SHAPE;
-		      case WEST:
-		         return WEST_SHAPE;
-		      case EAST:
-		         return EAST_SHAPE;
-		      default:
-		         return BASE_SHAPE;
-		      }
-		   }
+	private static final VoxelShape INPUT_SHAPE = Block.box(0.0D, 10.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+	private static final VoxelShape MIDDLE_SHAPE = Block.box(4.0D, 4.0D, 4.0D, 12.0D, 10.0D, 12.0D);
+	private static final VoxelShape INPUT_MIDDLE_SHAPE = Shapes.or(MIDDLE_SHAPE, INPUT_SHAPE);
+	private static final VoxelShape BASE_SHAPE = Shapes.join(INPUT_MIDDLE_SHAPE, Hopper.INSIDE, BooleanOp.ONLY_FIRST);
+	private static final VoxelShape DOWN_SHAPE = Shapes.or(BASE_SHAPE, Block.box(6.0D, 0.0D, 6.0D, 10.0D, 4.0D, 10.0D));
+	private static final VoxelShape EAST_SHAPE = Shapes.or(BASE_SHAPE,
+			Block.box(12.0D, 4.0D, 6.0D, 16.0D, 8.0D, 10.0D));
+	private static final VoxelShape NORTH_SHAPE = Shapes.or(BASE_SHAPE, Block.box(6.0D, 4.0D, 0.0D, 10.0D, 8.0D, 4.0D));
+	private static final VoxelShape SOUTH_SHAPE = Shapes.or(BASE_SHAPE,
+			Block.box(6.0D, 4.0D, 12.0D, 10.0D, 8.0D, 16.0D));
+	private static final VoxelShape WEST_SHAPE = Shapes.or(BASE_SHAPE, Block.box(0.0D, 4.0D, 6.0D, 4.0D, 8.0D, 10.0D));
+	private static final VoxelShape DOWN_RAYTRACE_SHAPE = Hopper.INSIDE;
+	private static final VoxelShape EAST_RAYTRACE_SHAPE = Shapes.or(Hopper.INSIDE,
+			Block.box(12.0D, 8.0D, 6.0D, 16.0D, 10.0D, 10.0D));
+	private static final VoxelShape NORTH_RAYTRACE_SHAPE = Shapes.or(Hopper.INSIDE,
+			Block.box(6.0D, 8.0D, 0.0D, 10.0D, 10.0D, 4.0D));
+	private static final VoxelShape SOUTH_RAYTRACE_SHAPE = Shapes.or(Hopper.INSIDE,
+			Block.box(6.0D, 8.0D, 12.0D, 10.0D, 10.0D, 16.0D));
+	private static final VoxelShape WEST_RAYTRACE_SHAPE = Shapes.or(Hopper.INSIDE,
+			Block.box(0.0D, 8.0D, 6.0D, 4.0D, 10.0D, 10.0D));
 
-		   public VoxelShape getRaytraceShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
-		      switch((Direction)state.get(FACING)) {
-		      case DOWN:
-		         return DOWN_RAYTRACE_SHAPE;
-		      case NORTH:
-		         return NORTH_RAYTRACE_SHAPE;
-		      case SOUTH:
-		         return SOUTH_RAYTRACE_SHAPE;
-		      case WEST:
-		         return WEST_RAYTRACE_SHAPE;
-		      case EAST:
-		         return EAST_RAYTRACE_SHAPE;
-		      default:
-		         return IHopper.INSIDE_BOWL_SHAPE;
-		      }
-		   }
+	@Override
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+		switch ((Direction) state.getValue(FACING)) {
+		case DOWN:
+			return DOWN_SHAPE;
+		case NORTH:
+			return NORTH_SHAPE;
+		case SOUTH:
+			return SOUTH_SHAPE;
+		case WEST:
+			return WEST_SHAPE;
+		case EAST:
+			return EAST_SHAPE;
+		default:
+			return BASE_SHAPE;
+		}
+	}
+
+	@Override
+	@Nullable
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153378_, BlockState p_153379_,
+			BlockEntityType<T> p_153380_) {
+		return p_153378_.isClientSide ? null
+				: createTickerHelper(p_153380_, TileEntityTypeInit.ENCHANTED_HOPPER.get(), EnchantedHopperTileEntity::pushItemsTick);
+	}
+
+	@Override
+	public VoxelShape getInteractionShape(BlockState state, BlockGetter worldIn, BlockPos pos) {
+		switch ((Direction) state.getValue(FACING)) {
+		case DOWN:
+			return DOWN_RAYTRACE_SHAPE;
+		case NORTH:
+			return NORTH_RAYTRACE_SHAPE;
+		case SOUTH:
+			return SOUTH_RAYTRACE_SHAPE;
+		case WEST:
+			return WEST_RAYTRACE_SHAPE;
+		case EAST:
+			return EAST_RAYTRACE_SHAPE;
+		default:
+			return Hopper.INSIDE;
+		}
+	}
 
 	public EnchantedHopper(Properties properties) {
 		super(properties);
-	    this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.DOWN).with(ENABLED, Boolean.valueOf(true)));
+		this.registerDefaultState(
+				this.stateDefinition.any().setValue(FACING, Direction.DOWN).setValue(ENABLED, Boolean.valueOf(true)));
 	}
-	
-	 public TileEntity createNewTileEntity(IBlockReader worldIn) {
-	      return new EnchantedHopperTileEntity();
-	   }
 
-	   /**
-	    * Called by ItemBlocks after a block is set in the world, to allow post-place logic
-	    */
-	   public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-	      if (stack.hasDisplayName()) {
-	         TileEntity tileentity = worldIn.getTileEntity(pos);
-	         if (tileentity instanceof EnchantedHopperTileEntity) {
-	            ((EnchantedHopperTileEntity)tileentity).setCustomName(stack.getDisplayName());
-	         }
-	      }
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new EnchantedHopperTileEntity(pos, state);
+	}
 
-	   }
+	/**
+	 * Called by ItemBlocks after a block is set in the world, to allow post-place
+	 * logic
+	 */
+	@Override
+	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+		if (stack.hasCustomHoverName()) {
+			BlockEntity tileentity = worldIn.getBlockEntity(pos);
+			if (tileentity instanceof EnchantedHopperTileEntity) {
+				((EnchantedHopperTileEntity) tileentity).setCustomName(stack.getHoverName());
+			}
+		}
 
-	   public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
-	      if (!oldState.matchesBlock(state.getBlock())) {
-	         this.updateState(worldIn, pos, state);
-	      }
-	   }
-	   
-	   private void updateState(World worldIn, BlockPos pos, BlockState state) {
-		      boolean flag = !worldIn.isBlockPowered(pos);
-		      if (flag != state.get(ENABLED)) {
-		         worldIn.setBlockState(pos, state.with(ENABLED, Boolean.valueOf(flag)), 4);
-		      }
-	   }
+	}
 
-	   public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-	      if (worldIn.isRemote) {
-	         return ActionResultType.SUCCESS;
-	      } else {
-	         TileEntity tileentity = worldIn.getTileEntity(pos);
-	         if (tileentity instanceof EnchantedHopperTileEntity) {
-	        	NetworkHooks.openGui((ServerPlayerEntity) player, (EnchantedHopperTileEntity) tileentity, pos);
-	            player.addStat(Stats.INSPECT_HOPPER);
-	         }
+	@Override
+	public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+		if (!oldState.is(state.getBlock())) {
+			this.updateState(worldIn, pos, state);
+		}
+	}
 
-	         return ActionResultType.CONSUME;
-	      }
-	   }
-	   
-	   public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		      if (!state.matchesBlock(newState.getBlock())) {
-		         TileEntity tileentity = worldIn.getTileEntity(pos);
-		         if (tileentity instanceof EnchantedHopperTileEntity) {
-		            InventoryHelper.dropInventoryItems(worldIn, pos, (EnchantedHopperTileEntity)tileentity);
-		            worldIn.updateComparatorOutputLevel(pos, this);
-		         }
+	private void updateState(Level worldIn, BlockPos pos, BlockState state) {
+		boolean flag = !worldIn.hasNeighborSignal(pos);
+		if (flag != state.getValue(ENABLED)) {
+			worldIn.setBlock(pos, state.setValue(ENABLED, Boolean.valueOf(flag)), 4);
+		}
+	}
 
-		         super.onReplaced(state, worldIn, pos, newState, isMoving);
-		      }
-		   }
+	@Override
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
+			BlockHitResult hit) {
+		if (worldIn.isClientSide) {
+			return InteractionResult.SUCCESS;
+		} else {
+			BlockEntity tileentity = worldIn.getBlockEntity(pos);
+			if (tileentity instanceof EnchantedHopperTileEntity) {
+				NetworkHooks.openGui((ServerPlayer) player, (EnchantedHopperTileEntity) tileentity, pos);
+				player.awardStat(Stats.INSPECT_HOPPER);
+			}
+
+			return InteractionResult.CONSUME;
+		}
+	}
+
+	@Override
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (!state.is(newState.getBlock())) {
+			BlockEntity tileentity = worldIn.getBlockEntity(pos);
+			if (tileentity instanceof EnchantedHopperTileEntity) {
+				Containers.dropContents(worldIn, pos, (EnchantedHopperTileEntity) tileentity);
+				worldIn.updateNeighbourForOutputSignal(pos, this);
+			}
+
+			super.onRemove(state, worldIn, pos, newState, isMoving);
+		}
+	}
 }

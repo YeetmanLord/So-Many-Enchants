@@ -4,35 +4,35 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.HoeItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.PickaxeItem;
-import net.minecraft.item.ShovelItem;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.TieredItem;
-import net.minecraft.item.TridentItem;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.TridentItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 
 public class AttributeHelper {
 	public static void changeAttribute(ItemStack stack, Attribute attribute, double newAmount, String name,
-			PlayerEntity player, @Nullable EquipmentSlotType slot) {
+			Player player, @Nullable EquipmentSlot slot) {
 		if (stack.hasTag()) {
 			if (stack.getTag().contains("AttributeModifiers")) {
-				ListNBT attributes = stack.getTag().getList("AttributeModifiers", 10);
+				ListTag attributes = stack.getTag().getList("AttributeModifiers", 10);
 				for (int x = 0; x < attributes.size(); x++) {
-					CompoundNBT nbt = attributes.getCompound(x);
+					CompoundTag nbt = attributes.getCompound(x);
 					String s = nbt.getString("AttributeName");
 					String n = nbt.getString("Name");
 
@@ -51,9 +51,9 @@ public class AttributeHelper {
 	public static void removeAttribute(ItemStack stack, Attribute attribute, String name) {
 		if (stack.hasTag()) {
 			if (stack.getTag().contains("AttributeModifiers")) {
-				ListNBT attributes = stack.getTag().getList("AttributeModifiers", 10);
+				ListTag attributes = stack.getTag().getList("AttributeModifiers", 10);
 				for (int x = 0; x < attributes.size(); x++) {
-					CompoundNBT nbt = attributes.getCompound(x);
+					CompoundTag nbt = attributes.getCompound(x);
 					String s = nbt.getString("AttributeName");
 					String n = nbt.getString("Name");
 
@@ -66,16 +66,16 @@ public class AttributeHelper {
 		return;
 	}
 
-	public static void newAttribute(ItemStack stack, Attribute attribute, String name, double amount, boolean isBaseAttribute, PlayerEntity player, @Nullable EquipmentSlotType slot, UUID uuid)
+	public static void newAttribute(ItemStack stack, Attribute attribute, String name, double amount, boolean isBaseAttribute, Player player, @Nullable EquipmentSlot slot, UUID uuid)
 	{
 		if(stack.hasTag())
 		{
 			if(stack.getTag().getList("AttributeModifiers", 10) != null)
 			{
-				ListNBT attributes = stack.getTag().getList("AttributeModifiers", 10);
+				ListTag attributes = stack.getTag().getList("AttributeModifiers", 10);
 				for(int x = 0; x < attributes.size(); x++)
 				{
-					CompoundNBT nbt = attributes.getCompound(x);
+					CompoundTag nbt = attributes.getCompound(x);
 					String s = nbt.getString("AttributeName");
 					String n = nbt.getString("Name");
 					boolean flag = (isAttributePresent(Attributes.ARMOR, "Armor Modifier", stack) || isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", stack) 
@@ -125,12 +125,12 @@ public class AttributeHelper {
 		}
 	}
 
-	public static void setBaseArmor(ItemStack stack, EquipmentSlotType slotIn, UUID uuid) {
+	public static void setBaseArmor(ItemStack stack, EquipmentSlot slotIn, UUID uuid) {
 		if (stack.getItem() instanceof ArmorItem) {
 			ArmorItem armor = (ArmorItem) stack.getItem();
-			float baseArmor = armor.getArmorMaterial().getDamageReductionAmount(slotIn);
-			float kbresistance = armor.getArmorMaterial().getKnockbackResistance();
-			float toughness = armor.getArmorMaterial().getToughness();
+			float baseArmor = armor.getMaterial().getDefenseForSlot(slotIn);
+			float kbresistance = armor.getMaterial().getKnockbackResistance();
+			float toughness = armor.getMaterial().getToughness();
 			if (toughness > 0) {
 				stack.addAttributeModifier(Attributes.ARMOR_TOUGHNESS,
 						new AttributeModifier(uuid, "Armor Modifier", toughness, Operation.ADDITION), slotIn);
@@ -152,11 +152,11 @@ public class AttributeHelper {
 			if (item instanceof HoeItem) {
 				attackDamage = 0.0D;
 			} else if (item instanceof PickaxeItem) {
-				attackDamage = ((TieredItem) item).getTier().getAttackDamage() + 1.0d;
+				attackDamage = ((TieredItem) item).getTier().getAttackDamageBonus() + 1.0d;
 			} else if (item instanceof ShovelItem) {
-				attackDamage = ((TieredItem) item).getTier().getAttackDamage() + 1.5d;
+				attackDamage = ((TieredItem) item).getTier().getAttackDamageBonus() + 1.5d;
 			} else if (item instanceof SwordItem) {
-				attackDamage = ((SwordItem) item).getAttackDamage();
+				attackDamage = ((SwordItem) item).getDamage();
 			} else if (item instanceof AxeItem) {
 				attackDamage = ((AxeItem) item).getAttackDamage();
 			} else if (item instanceof TridentItem) {
@@ -196,9 +196,9 @@ public class AttributeHelper {
 	public static boolean isAttributePresent(Attribute at, String name, ItemStack stack) {
 		if (stack.hasTag()) {
 			if (stack.getTag().contains("AttributeModifiers")) {
-				ListNBT attributes = stack.getTag().getList("AttributeModifiers", 10);
+				ListTag attributes = stack.getTag().getList("AttributeModifiers", 10);
 				for (int x = 0; x < attributes.size(); x++) {
-					CompoundNBT nbt = attributes.getCompound(x);
+					CompoundTag nbt = attributes.getCompound(x);
 					String s = nbt.getString("AttributeName");
 					String n = nbt.getString("Name");
 
@@ -214,9 +214,9 @@ public class AttributeHelper {
 	public static boolean isAttributePresentExact(Attribute at, String name, ItemStack stack, double amount) {
 		if (stack.hasTag()) {
 			if (stack.getTag().contains("AttributeModifiers")) {
-				ListNBT attributes = stack.getTag().getList("AttributeModifiers", 10);
+				ListTag attributes = stack.getTag().getList("AttributeModifiers", 10);
 				for (int x = 0; x < attributes.size(); x++) {
-					CompoundNBT nbt = attributes.getCompound(x);
+					CompoundTag nbt = attributes.getCompound(x);
 					String s = nbt.getString("AttributeName");
 					String n = nbt.getString("Name");
 					double value = nbt.getDouble("Amount");
@@ -231,8 +231,8 @@ public class AttributeHelper {
 		return false;
 	}
 
-	public static double getStrengthEffect(PlayerEntity player) {
-		EffectInstance effect = player.getActivePotionEffect(Effects.STRENGTH);
+	public static double getStrengthEffect(Player player) {
+		MobEffectInstance effect = player.getEffect(MobEffects.DAMAGE_BOOST);
 		if (effect != null) {
 			return effect.getAmplifier() * 3 + 3;
 		}

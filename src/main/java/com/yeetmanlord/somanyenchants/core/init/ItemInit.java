@@ -2,15 +2,15 @@ package com.yeetmanlord.somanyenchants.core.init;
 
 import com.yeetmanlord.somanyenchants.Main;
 
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class ItemInit {
 	
-	private static Item.Properties p = new Item.Properties().maxStackSize(1);
+	private static Item.Properties p = new Item.Properties().stacksTo(1);
 	
 	public static final DeferredRegister<Item> BLOCK_ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Main.MOD_ID);
 	

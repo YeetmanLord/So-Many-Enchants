@@ -3,29 +3,34 @@ package com.yeetmanlord.somanyenchants.common.blocks.smelters.blast_furnace;
 import com.yeetmanlord.somanyenchants.common.tileentities.AbstractEnchantedSmelterTileEntity;
 import com.yeetmanlord.somanyenchants.core.init.TileEntityTypeInit;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class EnchantedBlastFurnaceTileEntity extends AbstractEnchantedSmelterTileEntity
 {
-	public EnchantedBlastFurnaceTileEntity()
+	public EnchantedBlastFurnaceTileEntity(BlockPos pos, BlockState state)
 	{
-		super(TileEntityTypeInit.ENCHANTED_BLAST_FURNACE.get(), IRecipeType.BLASTING);
+		super(TileEntityTypeInit.ENCHANTED_BLAST_FURNACE.get(), RecipeType.BLASTING, pos, state);
 	}
 
-	protected ITextComponent getDefaultName()
-	{ return new TranslationTextComponent("container.enchantedBlastFurnace"); }
+	@Override
+	protected Component getDefaultName()
+	{ return new TranslatableComponent("container.enchantedBlastFurnace"); }
 
-	protected int getBurnTime(ItemStack fuel)
+	@Override
+	protected int getBurnDuration(ItemStack fuel)
 	{
-		return super.getBurnTime(fuel) / 2;
+		return super.getBurnDuration(fuel) / 2;
 	}
 
-	protected Container createMenu(int id, PlayerInventory player)
+	@Override
+	protected AbstractContainerMenu createMenu(int id, Inventory player)
 	{
 		return new EnchantedBlastFurnaceContainer(id, player, this, this.furnaceData);
 	}

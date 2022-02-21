@@ -2,26 +2,26 @@ package com.yeetmanlord.somanyenchants.common.container;
 
 import com.yeetmanlord.somanyenchants.core.init.ContainerTypeInit;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
-public class EnchantedHopperContainer extends Container {
-   private final IInventory enchantedHopperInventory;
+public class EnchantedHopperContainer extends AbstractContainerMenu {
+   private final Container enchantedHopperInventory;
 
-   public EnchantedHopperContainer(int id, PlayerInventory playerInventory) {
-      this(id, playerInventory, new Inventory(5));
+   public EnchantedHopperContainer(int id, Inventory playerInventory) {
+      this(id, playerInventory, new SimpleContainer(5));
    }
 
-   public EnchantedHopperContainer(int id, PlayerInventory playerInventory, IInventory inventory) {
+   public EnchantedHopperContainer(int id, Inventory playerInventory, Container inventory) {
       super(ContainerTypeInit.ENCHANTED_HOPPER.get(), id);
       this.enchantedHopperInventory = inventory;
-      assertInventorySize(inventory, 5);
-      inventory.openInventory(playerInventory.player);
+      checkContainerSize(inventory, 5);
+      inventory.startOpen(playerInventory.player);
       int i = 51;
 
       for(int j = 0; j < 5; ++j) {
@@ -43,32 +43,34 @@ public class EnchantedHopperContainer extends Container {
    /**
     * Determines whether supplied player can use this container
     */
-   public boolean canInteractWith(PlayerEntity playerIn) {
-      return this.enchantedHopperInventory.isUsableByPlayer(playerIn);
+   @Override
+public boolean stillValid(Player playerIn) {
+      return this.enchantedHopperInventory.stillValid(playerIn);
    }
 
    /**
     * Handle when the stack in slot {@code index} is shift-clicked. Normally this moves the stack between the player
     * inventory and the other inventory(s).
     */
-   public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+   @Override
+public ItemStack quickMoveStack(Player playerIn, int index) {
       ItemStack itemstack = ItemStack.EMPTY;
-      Slot slot = this.inventorySlots.get(index);
-      if (slot != null && slot.getHasStack()) {
-         ItemStack itemstack1 = slot.getStack();
+      Slot slot = this.slots.get(index);
+      if (slot != null && slot.hasItem()) {
+         ItemStack itemstack1 = slot.getItem();
          itemstack = itemstack1.copy();
-         if (index < this.enchantedHopperInventory.getSizeInventory()) {
-            if (!this.mergeItemStack(itemstack1, this.enchantedHopperInventory.getSizeInventory(), this.inventorySlots.size(), true)) {
+         if (index < this.enchantedHopperInventory.getContainerSize()) {
+            if (!this.moveItemStackTo(itemstack1, this.enchantedHopperInventory.getContainerSize(), this.slots.size(), true)) {
                return ItemStack.EMPTY;
             }
-         } else if (!this.mergeItemStack(itemstack1, 0, this.enchantedHopperInventory.getSizeInventory(), false)) {
+         } else if (!this.moveItemStackTo(itemstack1, 0, this.enchantedHopperInventory.getContainerSize(), false)) {
             return ItemStack.EMPTY;
          }
 
          if (itemstack1.isEmpty()) {
-            slot.putStack(ItemStack.EMPTY);
+            slot.set(ItemStack.EMPTY);
          } else {
-            slot.onSlotChanged();
+            slot.setChanged();
          }
       }
 
@@ -78,8 +80,9 @@ public class EnchantedHopperContainer extends Container {
    /**
     * Called when the container is closed.
     */
-   public void onContainerClosed(PlayerEntity playerIn) {
-      super.onContainerClosed(playerIn);
-      this.enchantedHopperInventory.closeInventory(playerIn);
+   @Override
+public void removed(Player playerIn) {
+      super.removed(playerIn);
+      this.enchantedHopperInventory.stopOpen(playerIn);
    }
 }

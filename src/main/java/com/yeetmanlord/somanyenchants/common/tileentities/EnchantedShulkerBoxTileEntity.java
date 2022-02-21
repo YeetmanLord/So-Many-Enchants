@@ -10,36 +10,36 @@ import com.yeetmanlord.somanyenchants.common.container.EnchantedShulkerBoxContai
 import com.yeetmanlord.somanyenchants.core.enums.EnchantedShulkerAnimationStatuses;
 import com.yeetmanlord.somanyenchants.core.init.TileEntityTypeInit;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.PushReaction;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.LockableLootTileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class EnchantedShulkerBoxTileEntity extends LockableLootTileEntity
-		implements ISidedInventory, ITickableTileEntity {
+public class EnchantedShulkerBoxTileEntity extends RandomizableContainerBlockEntity implements WorldlyContainer {
 	private static final int[] SLOTS = IntStream.range(0, 36).toArray();
 	private NonNullList<ItemStack> items = NonNullList.withSize(36, ItemStack.EMPTY);
 	private int openCount;
@@ -50,26 +50,21 @@ public class EnchantedShulkerBoxTileEntity extends LockableLootTileEntity
 	private DyeColor color;
 	private boolean needsColorFromWorld;
 
-	public EnchantedShulkerBoxTileEntity(@Nullable DyeColor colorIn) {
-		super(TileEntityTypeInit.ENCHANTED_SHULKER_BOX.get());
+	public EnchantedShulkerBoxTileEntity(@Nullable DyeColor colorIn, BlockPos pos, BlockState state) {
+		super(TileEntityTypeInit.ENCHANTED_SHULKER_BOX.get(), pos, state);
 		this.color = colorIn;
 	}
 
-	public EnchantedShulkerBoxTileEntity() {
-		this((DyeColor) null);
+	public EnchantedShulkerBoxTileEntity(BlockPos pos, BlockState state) {
+		this((DyeColor) null, pos, state);
 		this.needsColorFromWorld = true;
 	}
 
-	public void tick() {
-		this.updateAnimation();
-		if (this.animationStatus == EnchantedShulkerAnimationStatuses.OPENING
-				|| this.animationStatus == EnchantedShulkerAnimationStatuses.CLOSING) {
-			this.moveCollidedEntities();
-		}
-
+	public static void tick(Level world, BlockPos pos, BlockState state, EnchantedShulkerBoxTileEntity tile) {
+		tile.updateAnimation(world, pos, state);
 	}
 
-	protected void updateAnimation() {
+	private void updateAnimation(Level world, BlockPos pos, BlockState state) {
 		this.progressOld = this.progress;
 		switch (this.animationStatus) {
 		case CLOSED:
@@ -78,92 +73,47 @@ public class EnchantedShulkerBoxTileEntity extends LockableLootTileEntity
 		case OPENING:
 			this.progress += 0.1F;
 			if (this.progress >= 1.0F) {
-				this.moveCollidedEntities();
 				this.animationStatus = EnchantedShulkerAnimationStatuses.OPENED;
 				this.progress = 1.0F;
-				this.func_213975_v();
+				doNeighborUpdates(world, pos, state);
 			}
+
+			this.moveCollidedEntities(world, pos, state);
 			break;
 		case CLOSING:
 			this.progress -= 0.1F;
 			if (this.progress <= 0.0F) {
 				this.animationStatus = EnchantedShulkerAnimationStatuses.CLOSED;
 				this.progress = 0.0F;
-				this.func_213975_v();
+				doNeighborUpdates(world, pos, state);
 			}
 			break;
 		case OPENED:
 			this.progress = 1.0F;
 		}
-
 	}
 
 	public EnchantedShulkerAnimationStatuses getAnimationStatus() {
 		return this.animationStatus;
 	}
 
-	public AxisAlignedBB getBoundingBox(BlockState state) {
-		return this.getBoundingBox(state.get(EnchantedShulkerBoxBlock.FACING));
+	public AABB getBoundingBox(BlockState state) {
+		return Shulker.getProgressAabb(state.getValue(EnchantedShulkerBoxBlock.FACING), 0.5F * this.getProgress(1.0F));
 	}
 
-	public AxisAlignedBB getBoundingBox(Direction direction) {
-		float f = this.getProgress(1.0F);
-		return VoxelShapes.fullCube().getBoundingBox().expand((double) (0.5F * f * (float) direction.getXOffset()),
-				(double) (0.5F * f * (float) direction.getYOffset()),
-				(double) (0.5F * f * (float) direction.getZOffset()));
-	}
-
-	private AxisAlignedBB getTopBoundingBox(Direction directionIn) {
-		Direction direction = directionIn.getOpposite();
-		return this.getBoundingBox(directionIn).contract((double) direction.getXOffset(),
-				(double) direction.getYOffset(), (double) direction.getZOffset());
-	}
-
-	private void moveCollidedEntities() {
-		BlockState blockstate = this.world.getBlockState(this.getPos());
-		if (blockstate.getBlock() instanceof EnchantedShulkerBoxBlock) {
-			Direction direction = blockstate.get(EnchantedShulkerBoxBlock.FACING);
-			AxisAlignedBB axisalignedbb = this.getTopBoundingBox(direction).offset(this.pos);
-			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity((Entity) null, axisalignedbb);
+	private void moveCollidedEntities(Level world, BlockPos pos, BlockState state) {
+		if (state.getBlock() instanceof EnchantedShulkerBoxBlock) {
+			Direction direction = state.getValue(EnchantedShulkerBoxBlock.FACING);
+			AABB aabb = Shulker.getProgressDeltaAabb(direction, this.progressOld, this.progress).move(pos);
+			List<Entity> list = world.getEntities((Entity) null, aabb);
 			if (!list.isEmpty()) {
 				for (int i = 0; i < list.size(); ++i) {
 					Entity entity = list.get(i);
-					if (entity.getPushReaction() != PushReaction.IGNORE) {
-						double d0 = 0.0D;
-						double d1 = 0.0D;
-						double d2 = 0.0D;
-						AxisAlignedBB axisalignedbb1 = entity.getBoundingBox();
-						switch (direction.getAxis()) {
-						case X:
-							if (direction.getAxisDirection() == Direction.AxisDirection.POSITIVE) {
-								d0 = axisalignedbb.maxX - axisalignedbb1.minX;
-							} else {
-								d0 = axisalignedbb1.maxX - axisalignedbb.minX;
-							}
-
-							d0 = d0 + 0.01D;
-							break;
-						case Y:
-							if (direction.getAxisDirection() == Direction.AxisDirection.POSITIVE) {
-								d1 = axisalignedbb.maxY - axisalignedbb1.minY;
-							} else {
-								d1 = axisalignedbb1.maxY - axisalignedbb.minY;
-							}
-
-							d1 = d1 + 0.01D;
-							break;
-						case Z:
-							if (direction.getAxisDirection() == Direction.AxisDirection.POSITIVE) {
-								d2 = axisalignedbb.maxZ - axisalignedbb1.minZ;
-							} else {
-								d2 = axisalignedbb1.maxZ - axisalignedbb.minZ;
-							}
-
-							d2 = d2 + 0.01D;
-						}
-
-						entity.move(MoverType.SHULKER_BOX, new Vector3d(d0 * (double) direction.getXOffset(),
-								d1 * (double) direction.getYOffset(), d2 * (double) direction.getZOffset()));
+					if (entity.getPistonPushReaction() != PushReaction.IGNORE) {
+						entity.move(MoverType.SHULKER_BOX,
+								new Vec3((aabb.getXsize() + 0.01D) * (double) direction.getStepX(),
+										(aabb.getYsize() + 0.01D) * (double) direction.getStepY(),
+										(aabb.getZsize() + 0.01D) * (double) direction.getStepZ()));
 					}
 				}
 
@@ -174,7 +124,8 @@ public class EnchantedShulkerBoxTileEntity extends LockableLootTileEntity
 	/**
 	 * Returns the number of slots in the inventory.
 	 */
-	public int getSizeInventory() {
+	@Override
+	public int getContainerSize() {
 		return this.items.size();
 	}
 
@@ -182,95 +133,103 @@ public class EnchantedShulkerBoxTileEntity extends LockableLootTileEntity
 	 * See {@link Block#eventReceived} for more information. This must return true
 	 * serverside before it is called clientside.
 	 */
-	public boolean receiveClientEvent(int id, int type) {
-		if (id == 1) {
-			this.openCount = type;
-			if (type == 0) {
+	@Override
+	public boolean triggerEvent(int p_59678_, int p_59679_) {
+		if (p_59678_ == 1) {
+			this.openCount = p_59679_;
+			if (p_59679_ == 0) {
 				this.animationStatus = EnchantedShulkerAnimationStatuses.CLOSING;
-				this.func_213975_v();
+				doNeighborUpdates(this.getLevel(), this.worldPosition, this.getBlockState());
 			}
 
-			if (type == 1) {
+			if (p_59679_ == 1) {
 				this.animationStatus = EnchantedShulkerAnimationStatuses.OPENING;
-				this.func_213975_v();
+				doNeighborUpdates(this.getLevel(), this.worldPosition, this.getBlockState());
 			}
 
 			return true;
 		} else {
-			return super.receiveClientEvent(id, type);
+			return super.triggerEvent(p_59678_, p_59679_);
 		}
 	}
 
-	private void func_213975_v() {
-		this.getBlockState().updateNeighbours(this.getWorld(), this.getPos(), 3);
+	private static void doNeighborUpdates(Level world, BlockPos pos, BlockState state) {
+		state.updateNeighbourShapes(world, pos, 3);
 	}
 
-	public void openInventory(PlayerEntity player) {
+	@Override
+	public void startOpen(Player player) {
 		if (!player.isSpectator()) {
 			if (this.openCount < 0) {
 				this.openCount = 0;
 			}
 
 			++this.openCount;
-			this.world.addBlockEvent(this.pos, this.getBlockState().getBlock(), 1, this.openCount);
+			this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, this.openCount);
 			if (this.openCount == 1) {
-				this.world.playSound((PlayerEntity) null, this.pos, SoundEvents.BLOCK_SHULKER_BOX_OPEN,
-						SoundCategory.BLOCKS, 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
+				this.level.playSound((Player) null, this.worldPosition, SoundEvents.SHULKER_BOX_OPEN,
+						SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
 			}
 		}
 
 	}
 
-	public void closeInventory(PlayerEntity player) {
+	@Override
+	public void stopOpen(Player player) {
 		if (!player.isSpectator()) {
 			--this.openCount;
-			this.world.addBlockEvent(this.pos, this.getBlockState().getBlock(), 1, this.openCount);
+			this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, this.openCount);
 			if (this.openCount <= 0) {
-				this.world.playSound((PlayerEntity) null, this.pos, SoundEvents.BLOCK_SHULKER_BOX_CLOSE,
-						SoundCategory.BLOCKS, 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
+				this.level.playSound((Player) null, this.worldPosition, SoundEvents.SHULKER_BOX_CLOSE,
+						SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
 			}
 		}
 
 	}
 
-	protected ITextComponent getDefaultName() {
-		return new TranslationTextComponent("container.enchantedShulkerBox");
+	@Override
+	protected Component getDefaultName() {
+		return new TranslatableComponent("container.enchantedShulkerBox");
 	}
 
-	public void read(BlockState state, CompoundNBT nbt) {
-		super.read(state, nbt);
+	@Override
+	public void load(CompoundTag nbt) {
+		super.load(nbt);
 		this.loadFromNbt(nbt);
 	}
 
-	public CompoundNBT write(CompoundNBT compound) {
-		super.write(compound);
-		return this.saveToNbt(compound);
+	@Override
+	public void saveAdditional(CompoundTag compound) {
+		super.saveAdditional(compound);
+		this.saveToNbt(compound);
 	}
 
-	public void loadFromNbt(CompoundNBT compound) {
-		this.items = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
-		if (!this.checkLootAndRead(compound) && compound.contains("Items", 9)) {
-			ItemStackHelper.loadAllItems(compound, this.items);
+	public void loadFromNbt(CompoundTag compound) {
+		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+		if (!this.tryLoadLootTable(compound) && compound.contains("Items", 9)) {
+			ContainerHelper.loadAllItems(compound, this.items);
 		}
 
 	}
 
-	public CompoundNBT saveToNbt(CompoundNBT compound) {
-		if (!this.checkLootAndWrite(compound)) {
-			ItemStackHelper.saveAllItems(compound, this.items, false);
+	public CompoundTag saveToNbt(CompoundTag compound) {
+		if (!this.trySaveLootTable(compound)) {
+			ContainerHelper.saveAllItems(compound, this.items, false);
 		}
-
 		return compound;
 	}
 
+	@Override
 	protected NonNullList<ItemStack> getItems() {
 		return this.items;
 	}
 
+	@Override
 	protected void setItems(NonNullList<ItemStack> itemsIn) {
 		this.items = itemsIn;
 	}
 
+	@Override
 	public int[] getSlotsForFace(Direction side) {
 		return SLOTS;
 	}
@@ -279,20 +238,22 @@ public class EnchantedShulkerBoxTileEntity extends LockableLootTileEntity
 	 * Returns true if automation can insert the given item in the given slot from
 	 * the given side.
 	 */
-	public boolean canInsertItem(int index, ItemStack itemStackIn, @Nullable Direction direction) {
-		return !(Block.getBlockFromItem(itemStackIn.getItem()) instanceof EnchantedShulkerBoxBlock);
+	@Override
+	public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
+		return !(Block.byItem(itemStackIn.getItem()) instanceof EnchantedShulkerBoxBlock);
 	}
 
 	/**
 	 * Returns true if automation can extract the given item in the given slot from
 	 * the given side.
 	 */
-	public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
+	@Override
+	public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
 		return true;
 	}
 
 	public float getProgress(float progress) {
-		return MathHelper.lerp(progress, this.progressOld, this.progress);
+		return Mth.lerp(progress, this.progressOld, this.progress);
 	}
 
 	@Nullable
@@ -306,7 +267,8 @@ public class EnchantedShulkerBoxTileEntity extends LockableLootTileEntity
 		return this.color;
 	}
 
-	protected Container createMenu(int id, PlayerInventory player) {
+	@Override
+	protected AbstractContainerMenu createMenu(int id, Inventory player) {
 		return new EnchantedShulkerBoxContainer(id, player, this);
 	}
 

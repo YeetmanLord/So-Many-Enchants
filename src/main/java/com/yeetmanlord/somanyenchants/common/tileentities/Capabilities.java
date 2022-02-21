@@ -5,16 +5,15 @@ import java.util.Optional;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.yeetmanlord.somanyenchants.common.blocks.EnchantedHopper;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.HopperTileEntity;
-import net.minecraft.tileentity.IHopper;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.HopperBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.Hopper;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -23,8 +22,8 @@ public class Capabilities {
 
 	public static boolean insertHook(EnchantedHopperTileEntity hopper)
     {
-        Direction hopperFacing = hopper.getBlockState().get(EnchantedHopper.FACING);
-        return getItemHandler(hopper, hopperFacing)
+        Direction hopperFacing = hopper.getBlockState().getValue(HopperBlock.FACING);
+        return getItemHandler(hopper.getLevel(), hopper, hopperFacing)
                 .map(destinationResult -> {
                     IItemHandler itemHandler = destinationResult.getKey();
                     Object destination = destinationResult.getValue();
@@ -34,12 +33,12 @@ public class Capabilities {
                     }
                     else
                     {
-                        for (int i = 0; i < hopper.getSizeInventory(); ++i)
+                        for (int i = 0; i < hopper.getContainerSize(); ++i)
                         {
-                            if (!hopper.getStackInSlot(i).isEmpty())
+                            if (!hopper.getItem(i).isEmpty())
                             {
-                                ItemStack originalSlotContents = hopper.getStackInSlot(i).copy();
-                                ItemStack insertStack = hopper.decrStackSize(i, 1);
+                                ItemStack originalSlotContents = hopper.getItem(i).copy();
+                                ItemStack insertStack = hopper.removeItem(i, 1);
                                 ItemStack remainder = putStackInInventoryAllSlots(hopper, destination, itemHandler, insertStack);
 
                                 if (remainder.isEmpty())
@@ -47,7 +46,7 @@ public class Capabilities {
                                     return true;
                                 }
 
-                                hopper.setInventorySlotContents(i, originalSlotContents);
+                                hopper.setItem(i, originalSlotContents);
                             }
                         }
 
@@ -57,25 +56,25 @@ public class Capabilities {
                 .orElse(false);
     }
 	
-	private static Optional<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, Direction hopperFacing)
+	private static Optional<Pair<IItemHandler, Object>> getItemHandler(Level world, Hopper hopper, Direction hopperFacing)
     {
-        double x = hopper.getXPos() + (double) hopperFacing.getXOffset();
-        double y = hopper.getYPos() + (double) hopperFacing.getYOffset();
-        double z = hopper.getZPos() + (double) hopperFacing.getZOffset();
-        return getItemHandler(hopper.getWorld(), x, y, z, hopperFacing.getOpposite());
+        double x = hopper.getLevelX() + (double) hopperFacing.getStepX();
+        double y = hopper.getLevelY() + (double) hopperFacing.getStepY();
+        double z = hopper.getLevelZ() + (double) hopperFacing.getStepZ();
+        return getItemHandler(world, x, y, z, hopperFacing.getOpposite());
     }
 	
-	public static Optional<Pair<IItemHandler, Object>> getItemHandler(World worldIn, double x, double y, double z, final Direction side)
+	public static Optional<Pair<IItemHandler, Object>> getItemHandler(Level worldIn, double x, double y, double z, final Direction side)
     {
-        int i = MathHelper.floor(x);
-        int j = MathHelper.floor(y);
-        int k = MathHelper.floor(z);
+        int i = Mth.floor(x);
+        int j = Mth.floor(y);
+        int k = Mth.floor(z);
         BlockPos blockpos = new BlockPos(i, j, k);
-        net.minecraft.block.BlockState state = worldIn.getBlockState(blockpos);
+        net.minecraft.world.level.block.state.BlockState state = worldIn.getBlockState(blockpos);
 
-        if (state.hasTileEntity())
+        if (state.hasBlockEntity())
         {
-            TileEntity tileentity = worldIn.getTileEntity(blockpos);
+            BlockEntity tileentity = worldIn.getBlockEntity(blockpos);
             if (tileentity != null)
             {
                 return tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)
@@ -86,7 +85,7 @@ public class Capabilities {
         return Optional.empty();
     }
 	
-	private static ItemStack putStackInInventoryAllSlots(TileEntity source, Object destination, IItemHandler destInventory, ItemStack stack)
+	private static ItemStack putStackInInventoryAllSlots(BlockEntity source, Object destination, IItemHandler destInventory, ItemStack stack)
     {
         for (int slot = 0; slot < destInventory.getSlots() && !stack.isEmpty(); slot++)
         {
@@ -95,7 +94,7 @@ public class Capabilities {
         return stack;
     }
 	
-	private static ItemStack insertStack(TileEntity source, Object destination, IItemHandler destInventory, ItemStack stack, int slot)
+	private static ItemStack insertStack(BlockEntity source, Object destination, IItemHandler destInventory, ItemStack stack, int slot)
     {
         ItemStack itemstack = destInventory.getStackInSlot(slot);
 
@@ -119,21 +118,38 @@ public class Capabilities {
 
             if (insertedItem)
             {
-                if (inventoryWasEmpty && destination instanceof HopperTileEntity)
+            	if (inventoryWasEmpty && destination instanceof HopperBlockEntity)
                 {
-                    HopperTileEntity destinationHopper = (HopperTileEntity)destination;
+                    HopperBlockEntity destinationHopper = (HopperBlockEntity)destination;
 
-                    if (!destinationHopper.mayTransfer())
+                    if (!destinationHopper.isOnCustomCooldown())
                     {
                         int k = 0;
-                        if (source instanceof HopperTileEntity)
+                        if (source instanceof HopperBlockEntity)
                         {
-                            if (destinationHopper.getLastUpdateTime() >= ((HopperTileEntity) source).getLastUpdateTime())
+                            if (destinationHopper.getLastUpdateTime() >= ((HopperBlockEntity) source).getLastUpdateTime())
                             {
                                 k = 1;
                             }
                         }
-                        destinationHopper.setTransferCooldown(8 - k);
+                        destinationHopper.setCooldown(8 - k);
+                    }
+                }
+            	if (inventoryWasEmpty && destination instanceof EnchantedHopperTileEntity)
+                {
+            		EnchantedHopperTileEntity destinationHopper = (EnchantedHopperTileEntity)destination;
+
+                    if (!destinationHopper.isOnCustomCooldown())
+                    {
+                        int k = 0;
+                        if (source instanceof EnchantedHopperTileEntity)
+                        {
+                            if (destinationHopper.getLastUpdateTime() >= ((EnchantedHopperTileEntity) source).getLastUpdateTime())
+                            {
+                                k = 1;
+                            }
+                        }
+                        destinationHopper.setCooldown(2 - k);
                     }
                 }
             }

@@ -3,41 +3,45 @@ package com.yeetmanlord.somanyenchants.common.blocks.smelters.furnace;
 import java.util.Random;
 
 import com.yeetmanlord.somanyenchants.common.blocks.smelters.AbstractEnchantedSmelterBlock;
+import com.yeetmanlord.somanyenchants.core.init.TileEntityTypeInit;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class EnchantedFurnaceBlock extends AbstractEnchantedSmelterBlock {
 
-	public EnchantedFurnaceBlock(AbstractBlock.Properties builder) {
+	public EnchantedFurnaceBlock(BlockBehaviour.Properties builder) {
 		super(builder);
 	}
 
-	public TileEntity createNewTileEntity(IBlockReader worldIn) {
-		return new EnchantedFurnaceTileEntity();
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new EnchantedFurnaceTileEntity(pos, state);
 	}
 	
 	
-	protected void interactWith(World worldIn, BlockPos pos, PlayerEntity player) {
-		TileEntity tileentity = worldIn.getTileEntity(pos);
+	@Override
+	protected void interactWith(Level worldIn, BlockPos pos, Player player) {
+		BlockEntity tileentity = worldIn.getBlockEntity(pos);
 		if (tileentity instanceof EnchantedFurnaceTileEntity) {
-			player.openContainer((INamedContainerProvider) tileentity);
-			player.addStat(Stats.INTERACT_WITH_FURNACE);
+			player.openMenu((MenuProvider) tileentity);
+			player.awardStat(Stats.INTERACT_WITH_FURNACE);
 		}
 
 	}
@@ -48,24 +52,25 @@ public class EnchantedFurnaceBlock extends AbstractEnchantedSmelterBlock {
 	 * {@link randomTick} and {@link #needsRandomTick}, and will always be called
 	 * regardless of whether the block can receive random update ticks
 	 */
+	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
-		if (stateIn.get(LIT)) {
+	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
+		if (stateIn.getValue(LIT)) {
 			double d0 = (double) pos.getX() + 0.5D;
 			double d1 = (double) pos.getY();
 			double d2 = (double) pos.getZ() + 0.5D;
 			if (rand.nextDouble() < 0.1D) {
-				worldIn.playSound(d0, d1, d2, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F, 1.0F,
+				worldIn.playLocalSound(d0, d1, d2, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.0F,
 						false);
 			}
 
-			Direction direction = stateIn.get(FACING);
+			Direction direction = stateIn.getValue(FACING);
 			Direction.Axis direction$axis = direction.getAxis();
 			double d3 = 0.52D;
 			double d4 = rand.nextDouble() * 0.6D - 0.3D;
-			double d5 = direction$axis == Direction.Axis.X ? (double) direction.getXOffset() * 0.52D : d4;
+			double d5 = direction$axis == Direction.Axis.X ? (double) direction.getStepX() * 0.52D : d4;
 			double d6 = rand.nextDouble() * 6.0D / 16.0D;
-			double d7 = direction$axis == Direction.Axis.Z ? (double) direction.getZOffset() * 0.52D : d4;
+			double d7 = direction$axis == Direction.Axis.Z ? (double) direction.getStepZ() * 0.52D : d4;
 			worldIn.addParticle(ParticleTypes.SMOKE, d0 + d5, d1 + d6, d2 + d7, 0.0D, 0.0D, 0.0D);
 			worldIn.addParticle(ParticleTypes.FLAME, d0 + d5, d1 + d6, d2 + d7, 0.0D, 0.0D, 0.0D);
 		}
@@ -74,5 +79,11 @@ public class EnchantedFurnaceBlock extends AbstractEnchantedSmelterBlock {
 	@Override
 	public Block getUnenchantedBlock()
 	{ return Blocks.FURNACE; }
+	
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state,
+			BlockEntityType<T> type) {
+		return createFurnaceTicker(world, type, TileEntityTypeInit.ENCHANTED_FURNACE.get());
+	}
 
 }

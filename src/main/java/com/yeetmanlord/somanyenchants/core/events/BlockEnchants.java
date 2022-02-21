@@ -19,34 +19,34 @@ import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentTypesInit;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
-import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.HopperBlock;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.TrappedChestBlock;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.arguments.EntitySelector;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.state.properties.ChestType;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.selector.EntitySelector;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.HopperBlock;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.TrappedChestBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
@@ -66,14 +66,14 @@ public class BlockEnchants
 	{
 		Entity e = event.getEntity();
 
-		if (e instanceof PlayerEntity)
+		if (e instanceof Player)
 		{
-			PlayerEntity player = (PlayerEntity) e;
-			ItemStack mainhand = player.getHeldItemMainhand();
-			ItemStack offhand = player.getHeldItemOffhand();
-			RayTraceResult r = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0.5f, false);
+			Player player = (Player) e;
+			ItemStack mainhand = player.getMainHandItem();
+			ItemStack offhand = player.getOffhandItem();
+			HitResult r = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0.5f, false);
 
-			if (r.getType() != RayTraceResult.Type.BLOCK)
+			if (r.getType() != HitResult.Type.BLOCK)
 			{
 				return;
 			}
@@ -83,13 +83,12 @@ public class BlockEnchants
 							|| Config.extraExperience.isEnabled.get() == true))
 			{
 
-				if (Block.getBlockFromItem(mainhand.getItem()) instanceof AbstractEnchantedSmelterBlock)
+				if (Block.byItem(mainhand.getItem()) instanceof AbstractEnchantedSmelterBlock)
 				{
-
 					if (mainhand.isEnchanted())
 					{
 						AbstractEnchantedSmelterTileEntity tile = (AbstractEnchantedSmelterTileEntity) event.getWorld()
-								.getTileEntity(event.getPos());
+								.getBlockEntity(event.getPos());
 
 						if (Config.fastSmelt.isEnabled.get() == true
 								&& ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_SMELT.get(), mainhand))
@@ -115,10 +114,10 @@ public class BlockEnchants
 					}
 					else
 					{
-						event.getWorld().setBlockState(event.getPos(),
-								((AbstractEnchantedSmelterBlock) Block.getBlockFromItem(mainhand.getItem()))
-										.getUnenchantedBlock().getDefaultState().with(AbstractFurnaceBlock.FACING,
-												event.getState().get(AbstractEnchantedSmelterBlock.FACING)),
+						event.getWorld().setBlock(event.getPos(),
+								((AbstractEnchantedSmelterBlock) Block.byItem(mainhand.getItem()))
+										.getUnenchantedBlock().defaultBlockState().setValue(AbstractFurnaceBlock.FACING,
+												event.getState().getValue(AbstractEnchantedSmelterBlock.FACING)),
 								1);
 					}
 
@@ -126,13 +125,13 @@ public class BlockEnchants
 				else if (!(mainhand.getItem() instanceof BlockItem))
 				{
 
-					if (Block.getBlockFromItem(offhand.getItem()) instanceof AbstractEnchantedSmelterBlock)
+					if (Block.byItem(offhand.getItem()) instanceof AbstractEnchantedSmelterBlock)
 					{
 
 						if (offhand.isEnchanted())
 						{
 							AbstractEnchantedSmelterTileEntity tile = (AbstractEnchantedSmelterTileEntity) event
-									.getWorld().getTileEntity(event.getPos());
+									.getWorld().getBlockEntity(event.getPos());
 
 							if (Config.fastSmelt.isEnabled.get() == true
 									&& ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_SMELT.get(), offhand))
@@ -158,10 +157,10 @@ public class BlockEnchants
 						}
 						else
 						{
-							event.getWorld().setBlockState(event.getPos(),
-									((AbstractEnchantedSmelterBlock) Block.getBlockFromItem(mainhand.getItem()))
-											.getUnenchantedBlock().getDefaultState().with(AbstractFurnaceBlock.FACING,
-													event.getState().get(AbstractEnchantedSmelterBlock.FACING)),
+							event.getWorld().setBlock(event.getPos(),
+									((AbstractEnchantedSmelterBlock) Block.byItem(mainhand.getItem()))
+											.getUnenchantedBlock().defaultBlockState().setValue(AbstractFurnaceBlock.FACING,
+													event.getState().getValue(AbstractEnchantedSmelterBlock.FACING)),
 									1);
 						}
 
@@ -179,9 +178,9 @@ public class BlockEnchants
 
 					if (ModEnchantmentHelper.hasFastHopper(player))
 					{
-						event.getWorld().setBlockState(event.getPos(),
-								BlockInit.ENCHANTED_HOPPER.get().getDefaultState().with(EnchantedHopper.FACING,
-										event.getState().get(HopperBlock.FACING)),
+						event.getWorld().setBlock(event.getPos(),
+								BlockInit.ENCHANTED_HOPPER.get().defaultBlockState().setValue(EnchantedHopper.FACING,
+										event.getState().getValue(HopperBlock.FACING)),
 								1);
 					}
 
@@ -195,9 +194,9 @@ public class BlockEnchants
 						if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_HOPPER.get(), offhand) > 0)
 						{
 							event.getWorld()
-									.setBlockState(event.getPos(),
-											BlockInit.ENCHANTED_HOPPER.get().getDefaultState().with(
-													EnchantedHopper.FACING, event.getState().get(HopperBlock.FACING)),
+									.setBlock(event.getPos(),
+											BlockInit.ENCHANTED_HOPPER.get().defaultBlockState().setValue(
+													EnchantedHopper.FACING, event.getState().getValue(HopperBlock.FACING)),
 											1);
 						}
 
@@ -214,15 +213,15 @@ public class BlockEnchants
 				if (mainhand.getItem() instanceof BlockItem)
 				{
 
-					if (ModEnchantmentHelper.isCavernousStorage(mainhand.getEnchantmentTagList()))
+					if (ModEnchantmentHelper.isCavernousStorage(mainhand.getEnchantmentTags()))
 					{
 						BlockState state = EnchantedShulkerBoxBlock
 								.getBlockByColor(
 										((ShulkerBoxBlock) ((BlockItem) mainhand.getItem()).getBlock()).getColor())
-								.getDefaultState();
+								.defaultBlockState();
 
-						event.getWorld().setBlockState(event.getPos(), state.with(EnchantedShulkerBoxBlock.FACING,
-								event.getState().get(ShulkerBoxBlock.FACING)), 1);
+						event.getWorld().setBlock(event.getPos(), state.setValue(EnchantedShulkerBoxBlock.FACING,
+								event.getState().getValue(ShulkerBoxBlock.FACING)), 1);
 					}
 
 				}
@@ -232,15 +231,15 @@ public class BlockEnchants
 					if (offhand.getItem() instanceof BlockItem)
 					{
 
-						if (ModEnchantmentHelper.isCavernousStorage(offhand.getEnchantmentTagList()))
+						if (ModEnchantmentHelper.isCavernousStorage(offhand.getEnchantmentTags()))
 						{
 							BlockState state = EnchantedShulkerBoxBlock
 									.getBlockByColor(
 											((ShulkerBoxBlock) ((BlockItem) offhand.getItem()).getBlock()).getColor())
-									.getDefaultState();
+									.defaultBlockState();
 
-							event.getWorld().setBlockState(event.getPos(), state.with(EnchantedShulkerBoxBlock.FACING,
-									event.getState().get(ShulkerBoxBlock.FACING)), 1);
+							event.getWorld().setBlock(event.getPos(), state.setValue(EnchantedShulkerBoxBlock.FACING,
+									event.getState().getValue(ShulkerBoxBlock.FACING)), 1);
 						}
 
 					}
@@ -255,9 +254,9 @@ public class BlockEnchants
 
 				if (!mainhand.isEnchanted())
 				{
-					event.getWorld().setBlockState(event.getPos(),
-							ShulkerBoxBlock.getBlockByColor(shulker.getColor()).getDefaultState().with(
-									ShulkerBoxBlock.FACING, event.getState().get(EnchantedShulkerBoxBlock.FACING)),
+					event.getWorld().setBlock(event.getPos(),
+							ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(
+									ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)),
 							1);
 				}
 				else if (!((mainhand.getItem()) instanceof BlockItem))
@@ -265,9 +264,9 @@ public class BlockEnchants
 
 					if (!offhand.isEnchanted())
 					{
-						event.getWorld().setBlockState(event.getPos(),
-								ShulkerBoxBlock.getBlockByColor(shulker.getColor()).getDefaultState().with(
-										ShulkerBoxBlock.FACING, event.getState().get(EnchantedShulkerBoxBlock.FACING)),
+						event.getWorld().setBlock(event.getPos(),
+								ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(
+										ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)),
 								1);
 					}
 					else
@@ -280,9 +279,9 @@ public class BlockEnchants
 				}
 				else if (!offhand.isEnchanted() && !mainhand.isEnchanted())
 				{
-					event.getWorld().setBlockState(event.getPos(),
-							ShulkerBoxBlock.getBlockByColor(shulker.getColor()).getDefaultState().with(
-									ShulkerBoxBlock.FACING, event.getState().get(EnchantedShulkerBoxBlock.FACING)),
+					event.getWorld().setBlock(event.getPos(),
+							ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(
+									ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)),
 							1);
 				}
 
@@ -296,102 +295,102 @@ public class BlockEnchants
 
 					if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand) > 0)
 					{
-						event.getWorld().setBlockState(event.getPos(), BlockInit.ENCHANTED_CHEST.get().getDefaultState()
-								.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING)), 1);
+						event.getWorld().setBlock(event.getPos(), BlockInit.ENCHANTED_CHEST.get().defaultBlockState()
+								.setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING)), 1);
 
-						World world = (World) event.getWorld();
-						BlockState state = BlockInit.ENCHANTED_CHEST.get().getDefaultState()
-								.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING));
+						Level world = (Level) event.getWorld();
+						BlockState state = BlockInit.ENCHANTED_CHEST.get().defaultBlockState()
+								.setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING));
 
-						if (state.get(EnchantedChestBlock.FACING) == Direction.WEST)
+						if (state.getValue(EnchantedChestBlock.FACING) == Direction.WEST)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+							BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 							if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedChestBlock.FACING) == state.get(EnchantedChestBlock.FACING)
-									&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING)
+									&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedChestBlock.TYPE, ChestType.LEFT);
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
 							}
 
-							newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+							newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 							if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedChestBlock.FACING) == state.get(EnchantedChestBlock.FACING)
-									&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING)
+									&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
 							}
 
 						}
 
-						if (state.get(EnchantedChestBlock.FACING) == Direction.EAST)
+						if (state.getValue(EnchantedChestBlock.FACING) == Direction.EAST)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+							BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 							if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedChestBlock.FACING) == state.get(EnchantedChestBlock.FACING)
-									&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING)
+									&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedChestBlock.TYPE, ChestType.LEFT);
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
 							}
 
-							newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+							newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 							if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedChestBlock.FACING) == state.get(EnchantedChestBlock.FACING)
-									&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING)
+									&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
 							}
 
 						}
 
-						if (state.get(EnchantedChestBlock.FACING) == Direction.SOUTH)
+						if (state.getValue(EnchantedChestBlock.FACING) == Direction.SOUTH)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+							BlockState newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedChestBlock.FACING) == state.get(EnchantedChestBlock.FACING)
-									&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING)
+									&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedChestBlock.TYPE, ChestType.LEFT);
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
 							}
 
-							newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+							newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedChestBlock.FACING) == state.get(EnchantedChestBlock.FACING)
-									&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING)
+									&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
 							}
 
 						}
 
-						if (state.get(EnchantedChestBlock.FACING) == Direction.NORTH)
+						if (state.getValue(EnchantedChestBlock.FACING) == Direction.NORTH)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+							BlockState newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedChestBlock.FACING) == state.get(EnchantedChestBlock.FACING)
-									&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING)
+									&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedChestBlock.TYPE, ChestType.LEFT);
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
 							}
 
-							newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+							newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedChestBlock.FACING) == state.get(EnchantedChestBlock.FACING)
-									&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING)
+									&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
 							}
 
 						}
 
-						world.setBlockState(event.getPos(), state);
+						world.setBlockAndUpdate(event.getPos(), state);
 
 					}
 
@@ -406,111 +405,111 @@ public class BlockEnchants
 								offhand) > 0)
 						{
 							event.getWorld()
-									.setBlockState(event.getPos(), BlockInit.ENCHANTED_CHEST.get().getDefaultState()
-											.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING)),
+									.setBlock(event.getPos(), BlockInit.ENCHANTED_CHEST.get().defaultBlockState()
+											.setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING)),
 											1);
 
-							World world = (World) event.getWorld();
-							BlockState state = BlockInit.ENCHANTED_CHEST.get().getDefaultState()
-									.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING));
+							Level world = (Level) event.getWorld();
+							BlockState state = BlockInit.ENCHANTED_CHEST.get().defaultBlockState()
+									.setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING));
 
-							if (state.get(EnchantedChestBlock.FACING) == Direction.WEST)
+							if (state.getValue(EnchantedChestBlock.FACING) == Direction.WEST)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+								BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 								if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedChestBlock.FACING) == state
-												.get(EnchantedChestBlock.FACING)
-										&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedChestBlock.FACING) == state
+												.getValue(EnchantedChestBlock.FACING)
+										&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedChestBlock.TYPE, ChestType.LEFT);
+									state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
 								}
 
-								newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+								newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 								if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedChestBlock.FACING) == state
-												.get(EnchantedChestBlock.FACING)
-										&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedChestBlock.FACING) == state
+												.getValue(EnchantedChestBlock.FACING)
+										&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+									state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
 								}
 
 							}
 
-							if (state.get(EnchantedChestBlock.FACING) == Direction.EAST)
+							if (state.getValue(EnchantedChestBlock.FACING) == Direction.EAST)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+								BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 								if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedChestBlock.FACING) == state
-												.get(EnchantedChestBlock.FACING)
-										&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedChestBlock.FACING) == state
+												.getValue(EnchantedChestBlock.FACING)
+										&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedChestBlock.TYPE, ChestType.LEFT);
+									state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
 								}
 
-								newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+								newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 								if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedChestBlock.FACING) == state
-												.get(EnchantedChestBlock.FACING)
-										&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedChestBlock.FACING) == state
+												.getValue(EnchantedChestBlock.FACING)
+										&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+									state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
 								}
 
 							}
 
-							if (state.get(EnchantedChestBlock.FACING) == Direction.SOUTH)
+							if (state.getValue(EnchantedChestBlock.FACING) == Direction.SOUTH)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+								BlockState newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedChestBlock.FACING) == state
-												.get(EnchantedChestBlock.FACING)
-										&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedChestBlock.FACING) == state
+												.getValue(EnchantedChestBlock.FACING)
+										&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedChestBlock.TYPE, ChestType.LEFT);
+									state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
 								}
 
-								newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+								newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedChestBlock.FACING) == state
-												.get(EnchantedChestBlock.FACING)
-										&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedChestBlock.FACING) == state
+												.getValue(EnchantedChestBlock.FACING)
+										&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+									state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
 								}
 
 							}
 
-							if (state.get(EnchantedChestBlock.FACING) == Direction.NORTH)
+							if (state.getValue(EnchantedChestBlock.FACING) == Direction.NORTH)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+								BlockState newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedChestBlock.FACING) == state
-												.get(EnchantedChestBlock.FACING)
-										&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedChestBlock.FACING) == state
+												.getValue(EnchantedChestBlock.FACING)
+										&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedChestBlock.TYPE, ChestType.LEFT);
+									state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
 								}
 
-								newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+								newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedChestBlock.FACING) == state
-												.get(EnchantedChestBlock.FACING)
-										&& newstate.get(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedChestBlock.FACING) == state
+												.getValue(EnchantedChestBlock.FACING)
+										&& newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+									state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
 								}
 
 							}
 
-							world.setBlockState(event.getPos(), state);
+							world.setBlockAndUpdate(event.getPos(), state);
 
 						}
 
@@ -533,13 +532,13 @@ public class BlockEnchants
 							&& ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(), mainhand) <= 0
 							&& Config.cavernousStorage.isEnabled.get() == true)
 					{
-						event.getWorld().setBlockState(event.getPos(),
-								BlockInit.TRAPPED_ENCHANTED_CHEST.get().getDefaultState().with(
+						event.getWorld().setBlock(event.getPos(),
+								BlockInit.TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(
 										EnchantedTrappedChestBlock.FACING,
-										event.getState().get(TrappedChestBlock.FACING)),
+										event.getState().getValue(TrappedChestBlock.FACING)),
 								1);
 
-						TileEntity t = event.getWorld().getTileEntity(event.getPos());
+						BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
 
 						if (t != null && t instanceof EnchantedTrappedChestTileEntity)
 						{
@@ -554,13 +553,13 @@ public class BlockEnchants
 					if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(), mainhand) > 0
 							&& Config.camouflage.isEnabled.get() == true)
 					{
-						event.getWorld().setBlockState(event.getPos(),
-								BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().getDefaultState().with(
+						event.getWorld().setBlock(event.getPos(),
+								BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(
 										EnchantedTrappedChestBlock.FACING,
-										event.getState().get(TrappedChestBlock.FACING)),
+										event.getState().getValue(TrappedChestBlock.FACING)),
 								1);
 
-						TileEntity t = event.getWorld().getTileEntity(event.getPos());
+						BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
 
 						if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity)
 						{
@@ -578,7 +577,7 @@ public class BlockEnchants
 							&& Config.camouflage.isEnabled.get() == true)
 					{
 
-						TileEntity t = event.getWorld().getTileEntity(event.getPos());
+						BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
 
 						if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity)
 						{
@@ -592,159 +591,159 @@ public class BlockEnchants
 
 					if (placed && !hidden && Config.cavernousStorage.isEnabled.get() == true)
 					{
-						World world = (World) event.getWorld();
-						BlockState state = BlockInit.TRAPPED_ENCHANTED_CHEST.get().getDefaultState()
-								.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING));
+						Level world = (Level) event.getWorld();
+						BlockState state = BlockInit.TRAPPED_ENCHANTED_CHEST.get().defaultBlockState()
+								.setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING));
 
-						if (state.get(EnchantedChestBlock.FACING) == Direction.WEST)
+						if (state.getValue(EnchantedChestBlock.FACING) == Direction.WEST)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+							BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 							if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+								state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 							}
 
-							newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+							newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 							if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+								state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 							}
 
 						}
 
-						if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.EAST)
+						if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.EAST)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+							BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 							if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+								state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 							}
 
-							newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+							newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 							if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+								state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 							}
 
 						}
 
-						if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.SOUTH)
+						if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.SOUTH)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+							BlockState newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+								state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 							}
 
-							newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+							newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+								state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 							}
 
 						}
 
-						if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.NORTH)
+						if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.NORTH)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+							BlockState newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+								state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 							}
 
-							newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+							newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
-								state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+								state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 							}
 
 						}
 
-						world.setBlockState(event.getPos(), state);
+						world.setBlockAndUpdate(event.getPos(), state);
 					}
 
 					if (placed && hidden && Config.camouflage.isEnabled.get() == true)
 					{
-						World world = (World) event.getWorld();
-						BlockState state = BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().getDefaultState()
-								.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING));
+						Level world = (Level) event.getWorld();
+						BlockState state = BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().defaultBlockState()
+								.setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING));
 
-						if (state.get(EnchantedChestBlock.FACING) == Direction.WEST)
+						if (state.getValue(EnchantedChestBlock.FACING) == Direction.WEST)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+							BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 							if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
 
-								if (world.getTileEntity(
-										event.getPos().add(0, 0, -1)) instanceof EnchantedHiddenTrappedChestTileEntity)
+								if (world.getBlockEntity(
+										event.getPos().offset(0, 0, -1)) instanceof EnchantedHiddenTrappedChestTileEntity)
 								{
 
 									if (((EnchantedHiddenTrappedChestTileEntity) world
-											.getTileEntity(event.getPos().add(0, 0, -1))).getEnchants()
+											.getBlockEntity(event.getPos().offset(0, 0, -1))).getEnchants()
 													.equals(((EnchantedHiddenTrappedChestTileEntity) world
-															.getTileEntity(event.getPos())).getEnchants()))
+															.getBlockEntity(event.getPos())).getEnchants()))
 									{
-										state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+										state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 									}
 
 								}
 
 							}
 
-							newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+							newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 							if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
 
-								if (world.getTileEntity(
-										event.getPos().add(0, 0, 1)) instanceof EnchantedHiddenTrappedChestTileEntity)
+								if (world.getBlockEntity(
+										event.getPos().offset(0, 0, 1)) instanceof EnchantedHiddenTrappedChestTileEntity)
 								{
 
 									if (((EnchantedHiddenTrappedChestTileEntity) world
-											.getTileEntity(event.getPos().add(0, 0, 1))).getEnchants()
+											.getBlockEntity(event.getPos().offset(0, 0, 1))).getEnchants()
 													.equals(((EnchantedHiddenTrappedChestTileEntity) world
-															.getTileEntity(event.getPos())).getEnchants()))
+															.getBlockEntity(event.getPos())).getEnchants()))
 									{
-										state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+										state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 									}
 
 								}
@@ -753,50 +752,50 @@ public class BlockEnchants
 
 						}
 
-						if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.EAST)
+						if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.EAST)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+							BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 							if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
 
-								if (world.getTileEntity(
-										event.getPos().add(0, 0, 1)) instanceof EnchantedHiddenTrappedChestTileEntity)
+								if (world.getBlockEntity(
+										event.getPos().offset(0, 0, 1)) instanceof EnchantedHiddenTrappedChestTileEntity)
 								{
 
 									if (((EnchantedHiddenTrappedChestTileEntity) world
-											.getTileEntity(event.getPos().add(0, 0, 1))).getEnchants()
+											.getBlockEntity(event.getPos().offset(0, 0, 1))).getEnchants()
 													.equals(((EnchantedHiddenTrappedChestTileEntity) world
-															.getTileEntity(event.getPos())).getEnchants()))
+															.getBlockEntity(event.getPos())).getEnchants()))
 									{
-										state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+										state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 									}
 
 								}
 
 							}
 
-							newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+							newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 							if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
 
-								if (world.getTileEntity(
-										event.getPos().add(0, 0, -1)) instanceof EnchantedHiddenTrappedChestTileEntity)
+								if (world.getBlockEntity(
+										event.getPos().offset(0, 0, -1)) instanceof EnchantedHiddenTrappedChestTileEntity)
 								{
 
 									if (((EnchantedHiddenTrappedChestTileEntity) world
-											.getTileEntity(event.getPos().add(0, 0, -1))).getEnchants()
+											.getBlockEntity(event.getPos().offset(0, 0, -1))).getEnchants()
 													.equals(((EnchantedHiddenTrappedChestTileEntity) world
-															.getTileEntity(event.getPos())).getEnchants()))
+															.getBlockEntity(event.getPos())).getEnchants()))
 									{
-										state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+										state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 									}
 
 								}
@@ -805,50 +804,50 @@ public class BlockEnchants
 
 						}
 
-						if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.SOUTH)
+						if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.SOUTH)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+							BlockState newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
 
-								if (world.getTileEntity(
-										event.getPos().add(-1, 0, 0)) instanceof EnchantedHiddenTrappedChestTileEntity)
+								if (world.getBlockEntity(
+										event.getPos().offset(-1, 0, 0)) instanceof EnchantedHiddenTrappedChestTileEntity)
 								{
 
 									if (((EnchantedHiddenTrappedChestTileEntity) world
-											.getTileEntity(event.getPos().add(-1, 0, 0))).getEnchants()
+											.getBlockEntity(event.getPos().offset(-1, 0, 0))).getEnchants()
 													.equals(((EnchantedHiddenTrappedChestTileEntity) world
-															.getTileEntity(event.getPos())).getEnchants()))
+															.getBlockEntity(event.getPos())).getEnchants()))
 									{
-										state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+										state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 									}
 
 								}
 
 							}
 
-							newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+							newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
 
-								if (world.getTileEntity(
-										event.getPos().add(1, 0, 0)) instanceof EnchantedHiddenTrappedChestTileEntity)
+								if (world.getBlockEntity(
+										event.getPos().offset(1, 0, 0)) instanceof EnchantedHiddenTrappedChestTileEntity)
 								{
 
 									if (((EnchantedHiddenTrappedChestTileEntity) world
-											.getTileEntity(event.getPos().add(1, 0, 0))).getEnchants()
+											.getBlockEntity(event.getPos().offset(1, 0, 0))).getEnchants()
 													.equals(((EnchantedHiddenTrappedChestTileEntity) world
-															.getTileEntity(event.getPos())).getEnchants()))
+															.getBlockEntity(event.getPos())).getEnchants()))
 									{
-										state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+										state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 									}
 
 								}
@@ -857,50 +856,50 @@ public class BlockEnchants
 
 						}
 
-						if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.NORTH)
+						if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.NORTH)
 						{
-							BlockState newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+							BlockState newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
 
-								if (world.getTileEntity(
-										event.getPos().add(1, 0, 0)) instanceof EnchantedHiddenTrappedChestTileEntity)
+								if (world.getBlockEntity(
+										event.getPos().offset(1, 0, 0)) instanceof EnchantedHiddenTrappedChestTileEntity)
 								{
 
 									if (((EnchantedHiddenTrappedChestTileEntity) world
-											.getTileEntity(event.getPos().add(1, 0, 0))).getEnchants()
+											.getBlockEntity(event.getPos().offset(1, 0, 0))).getEnchants()
 													.equals(((EnchantedHiddenTrappedChestTileEntity) world
-															.getTileEntity(event.getPos())).getEnchants()))
+															.getBlockEntity(event.getPos())).getEnchants()))
 									{
-										state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+										state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 									}
 
 								}
 
 							}
 
-							newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+							newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 							if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-									&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-											.get(EnchantedTrappedChestBlock.FACING)
-									&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+									&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+											.getValue(EnchantedTrappedChestBlock.FACING)
+									&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 							{
 
-								if (world.getTileEntity(
-										event.getPos().add(-1, 0, 0)) instanceof EnchantedHiddenTrappedChestTileEntity)
+								if (world.getBlockEntity(
+										event.getPos().offset(-1, 0, 0)) instanceof EnchantedHiddenTrappedChestTileEntity)
 								{
 
 									if (((EnchantedHiddenTrappedChestTileEntity) world
-											.getTileEntity(event.getPos().add(-1, 0, 0))).getEnchants()
+											.getBlockEntity(event.getPos().offset(-1, 0, 0))).getEnchants()
 													.equals(((EnchantedHiddenTrappedChestTileEntity) world
-															.getTileEntity(event.getPos())).getEnchants()))
+															.getBlockEntity(event.getPos())).getEnchants()))
 									{
-										state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+										state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 									}
 
 								}
@@ -909,7 +908,7 @@ public class BlockEnchants
 
 						}
 
-						world.setBlockState(event.getPos(), state);
+						world.setBlockAndUpdate(event.getPos(), state);
 					}
 
 				}
@@ -927,13 +926,13 @@ public class BlockEnchants
 										offhand) <= 0
 								&& Config.cavernousStorage.isEnabled.get() == true)
 						{
-							event.getWorld().setBlockState(event.getPos(),
-									BlockInit.TRAPPED_ENCHANTED_CHEST.get().getDefaultState().with(
+							event.getWorld().setBlock(event.getPos(),
+									BlockInit.TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(
 											EnchantedTrappedChestBlock.FACING,
-											event.getState().get(TrappedChestBlock.FACING)),
+											event.getState().getValue(TrappedChestBlock.FACING)),
 									1);
 
-							TileEntity t = event.getWorld().getTileEntity(event.getPos());
+							BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
 
 							if (t != null && t instanceof EnchantedTrappedChestTileEntity)
 							{
@@ -948,13 +947,13 @@ public class BlockEnchants
 						if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.CAMOUFLAGE.get(), offhand) > 0
 								&& Config.camouflage.isEnabled.get() == true)
 						{
-							event.getWorld().setBlockState(event.getPos(),
-									BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().getDefaultState().with(
+							event.getWorld().setBlock(event.getPos(),
+									BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(
 											EnchantedTrappedChestBlock.FACING,
-											event.getState().get(TrappedChestBlock.FACING)),
+											event.getState().getValue(TrappedChestBlock.FACING)),
 									1);
 
-							TileEntity t = event.getWorld().getTileEntity(event.getPos());
+							BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
 
 							if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity)
 							{
@@ -974,7 +973,7 @@ public class BlockEnchants
 								&& Config.camouflage.isEnabled.get() == true)
 						{
 
-							TileEntity t = event.getWorld().getTileEntity(event.getPos());
+							BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
 
 							if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity)
 							{
@@ -988,159 +987,159 @@ public class BlockEnchants
 
 						if (placed && !hidden && Config.cavernousStorage.isEnabled.get() == true)
 						{
-							World world = (World) event.getWorld();
-							BlockState state = BlockInit.TRAPPED_ENCHANTED_CHEST.get().getDefaultState()
-									.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING));
+							Level world = (Level) event.getWorld();
+							BlockState state = BlockInit.TRAPPED_ENCHANTED_CHEST.get().defaultBlockState()
+									.setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING));
 
-							if (state.get(EnchantedChestBlock.FACING) == Direction.WEST)
+							if (state.getValue(EnchantedChestBlock.FACING) == Direction.WEST)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+								BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 								if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+									state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 								}
 
-								newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+								newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 								if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+									state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 								}
 
 							}
 
-							if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.EAST)
+							if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.EAST)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+								BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 								if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+									state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 								}
 
-								newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+								newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 								if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+									state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 								}
 
 							}
 
-							if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.SOUTH)
+							if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.SOUTH)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+								BlockState newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+									state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 								}
 
-								newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+								newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+									state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 								}
 
 							}
 
-							if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.NORTH)
+							if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.NORTH)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+								BlockState newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+									state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 								}
 
-								newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+								newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
-									state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+									state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 								}
 
 							}
 
-							world.setBlockState(event.getPos(), state);
+							world.setBlockAndUpdate(event.getPos(), state);
 						}
 
 						if (placed && hidden && Config.camouflage.isEnabled.get() == true)
 						{
-							World world = (World) event.getWorld();
-							BlockState state = BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().getDefaultState()
-									.with(EnchantedChestBlock.FACING, event.getState().get(ChestBlock.FACING));
+							Level world = (Level) event.getWorld();
+							BlockState state = BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().defaultBlockState()
+									.setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING));
 
-							if (state.get(EnchantedChestBlock.FACING) == Direction.WEST)
+							if (state.getValue(EnchantedChestBlock.FACING) == Direction.WEST)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+								BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 								if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
 
-									if (world.getTileEntity(event.getPos().add(0, 0,
+									if (world.getBlockEntity(event.getPos().offset(0, 0,
 											-1)) instanceof EnchantedHiddenTrappedChestTileEntity)
 									{
 
 										if (((EnchantedHiddenTrappedChestTileEntity) world
-												.getTileEntity(event.getPos().add(0, 0, -1))).getEnchants()
+												.getBlockEntity(event.getPos().offset(0, 0, -1))).getEnchants()
 														.equals(((EnchantedHiddenTrappedChestTileEntity) world
-																.getTileEntity(event.getPos())).getEnchants()))
+																.getBlockEntity(event.getPos())).getEnchants()))
 										{
-											state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+											state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 										}
 
 									}
 
 								}
 
-								newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+								newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 								if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
 
-									if (world.getTileEntity(event.getPos().add(0, 0,
+									if (world.getBlockEntity(event.getPos().offset(0, 0,
 											1)) instanceof EnchantedHiddenTrappedChestTileEntity)
 									{
 
 										if (((EnchantedHiddenTrappedChestTileEntity) world
-												.getTileEntity(event.getPos().add(0, 0, 1))).getEnchants()
+												.getBlockEntity(event.getPos().offset(0, 0, 1))).getEnchants()
 														.equals(((EnchantedHiddenTrappedChestTileEntity) world
-																.getTileEntity(event.getPos())).getEnchants()))
+																.getBlockEntity(event.getPos())).getEnchants()))
 										{
-											state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+											state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 										}
 
 									}
@@ -1149,50 +1148,50 @@ public class BlockEnchants
 
 							}
 
-							if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.EAST)
+							if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.EAST)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(0, 0, 1));
+								BlockState newstate = world.getBlockState(event.getPos().offset(0, 0, 1));
 
 								if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
 
-									if (world.getTileEntity(event.getPos().add(0, 0,
+									if (world.getBlockEntity(event.getPos().offset(0, 0,
 											1)) instanceof EnchantedHiddenTrappedChestTileEntity)
 									{
 
 										if (((EnchantedHiddenTrappedChestTileEntity) world
-												.getTileEntity(event.getPos().add(0, 0, 1))).getEnchants()
+												.getBlockEntity(event.getPos().offset(0, 0, 1))).getEnchants()
 														.equals(((EnchantedHiddenTrappedChestTileEntity) world
-																.getTileEntity(event.getPos())).getEnchants()))
+																.getBlockEntity(event.getPos())).getEnchants()))
 										{
-											state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+											state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 										}
 
 									}
 
 								}
 
-								newstate = world.getBlockState(event.getPos().add(0, 0, -1));
+								newstate = world.getBlockState(event.getPos().offset(0, 0, -1));
 
 								if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
 
-									if (world.getTileEntity(event.getPos().add(0, 0,
+									if (world.getBlockEntity(event.getPos().offset(0, 0,
 											-1)) instanceof EnchantedHiddenTrappedChestTileEntity)
 									{
 
 										if (((EnchantedHiddenTrappedChestTileEntity) world
-												.getTileEntity(event.getPos().add(0, 0, -1))).getEnchants()
+												.getBlockEntity(event.getPos().offset(0, 0, -1))).getEnchants()
 														.equals(((EnchantedHiddenTrappedChestTileEntity) world
-																.getTileEntity(event.getPos())).getEnchants()))
+																.getBlockEntity(event.getPos())).getEnchants()))
 										{
-											state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+											state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 										}
 
 									}
@@ -1201,50 +1200,50 @@ public class BlockEnchants
 
 							}
 
-							if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.SOUTH)
+							if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.SOUTH)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+								BlockState newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
 
-									if (world.getTileEntity(event.getPos().add(-1, 0,
+									if (world.getBlockEntity(event.getPos().offset(-1, 0,
 											0)) instanceof EnchantedHiddenTrappedChestTileEntity)
 									{
 
 										if (((EnchantedHiddenTrappedChestTileEntity) world
-												.getTileEntity(event.getPos().add(-1, 0, 0))).getEnchants()
+												.getBlockEntity(event.getPos().offset(-1, 0, 0))).getEnchants()
 														.equals(((EnchantedHiddenTrappedChestTileEntity) world
-																.getTileEntity(event.getPos())).getEnchants()))
+																.getBlockEntity(event.getPos())).getEnchants()))
 										{
-											state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+											state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 										}
 
 									}
 
 								}
 
-								newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+								newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
 
-									if (world.getTileEntity(event.getPos().add(1, 0,
+									if (world.getBlockEntity(event.getPos().offset(1, 0,
 											0)) instanceof EnchantedHiddenTrappedChestTileEntity)
 									{
 
 										if (((EnchantedHiddenTrappedChestTileEntity) world
-												.getTileEntity(event.getPos().add(1, 0, 0))).getEnchants()
+												.getBlockEntity(event.getPos().offset(1, 0, 0))).getEnchants()
 														.equals(((EnchantedHiddenTrappedChestTileEntity) world
-																.getTileEntity(event.getPos())).getEnchants()))
+																.getBlockEntity(event.getPos())).getEnchants()))
 										{
-											state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+											state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 										}
 
 									}
@@ -1253,50 +1252,50 @@ public class BlockEnchants
 
 							}
 
-							if (state.get(EnchantedTrappedChestBlock.FACING) == Direction.NORTH)
+							if (state.getValue(EnchantedTrappedChestBlock.FACING) == Direction.NORTH)
 							{
-								BlockState newstate = world.getBlockState(event.getPos().add(1, 0, 0));
+								BlockState newstate = world.getBlockState(event.getPos().offset(1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
 
-									if (world.getTileEntity(event.getPos().add(1, 0,
+									if (world.getBlockEntity(event.getPos().offset(1, 0,
 											0)) instanceof EnchantedHiddenTrappedChestTileEntity)
 									{
 
 										if (((EnchantedHiddenTrappedChestTileEntity) world
-												.getTileEntity(event.getPos().add(1, 0, 0))).getEnchants()
+												.getBlockEntity(event.getPos().offset(1, 0, 0))).getEnchants()
 														.equals(((EnchantedHiddenTrappedChestTileEntity) world
-																.getTileEntity(event.getPos())).getEnchants()))
+																.getBlockEntity(event.getPos())).getEnchants()))
 										{
-											state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
+											state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.LEFT);
 										}
 
 									}
 
 								}
 
-								newstate = world.getBlockState(event.getPos().add(-1, 0, 0));
+								newstate = world.getBlockState(event.getPos().offset(-1, 0, 0));
 
 								if (newstate.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get()
-										&& newstate.get(EnchantedTrappedChestBlock.FACING) == state
-												.get(EnchantedTrappedChestBlock.FACING)
-										&& newstate.get(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
+										&& newstate.getValue(EnchantedTrappedChestBlock.FACING) == state
+												.getValue(EnchantedTrappedChestBlock.FACING)
+										&& newstate.getValue(EnchantedTrappedChestBlock.TYPE) == ChestType.SINGLE)
 								{
 
-									if (world.getTileEntity(event.getPos().add(-1, 0,
+									if (world.getBlockEntity(event.getPos().offset(-1, 0,
 											0)) instanceof EnchantedHiddenTrappedChestTileEntity)
 									{
 
 										if (((EnchantedHiddenTrappedChestTileEntity) world
-												.getTileEntity(event.getPos().add(-1, 0, 0))).getEnchants()
+												.getBlockEntity(event.getPos().offset(-1, 0, 0))).getEnchants()
 														.equals(((EnchantedHiddenTrappedChestTileEntity) world
-																.getTileEntity(event.getPos())).getEnchants()))
+																.getBlockEntity(event.getPos())).getEnchants()))
 										{
-											state = state.with(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
+											state = state.setValue(EnchantedTrappedChestBlock.TYPE, ChestType.RIGHT);
 										}
 
 									}
@@ -1305,7 +1304,7 @@ public class BlockEnchants
 
 							}
 
-							world.setBlockState(event.getPos(), state);
+							world.setBlockAndUpdate(event.getPos(), state);
 						}
 
 					}
@@ -1321,9 +1320,9 @@ public class BlockEnchants
 	@SubscribeEvent
 	public static void breakEnchantedBlocks(final BreakEvent event)
 	{
-		PlayerEntity player = event.getPlayer();
+		Player player = event.getPlayer();
 		Block block = event.getState().getBlock();
-		World world = (World) event.getWorld();
+		Level world = (Level) event.getWorld();
 		BlockState state = event.getState();
 		BlockPos pos = event.getPos();
 		breakEnchantedBlock(block, BlockInit.ENCHANTED_HOPPER.get(), state, pos, Items.HOPPER, world, player,
@@ -1334,45 +1333,45 @@ public class BlockEnchants
 	}
 
 	public static void breakEnchantedBlock(Block block, Block checkBlock, BlockState state, BlockPos pos, Item drop,
-			World world, PlayerEntity player, Enchantment ench)
+			Level world, Player player, Enchantment ench)
 	{
 
 		if (block == checkBlock && !player.isCreative() && !player.isSpectator()
-				&& block.canHarvestBlock(state, player.world, pos, player))
+				&& block.canHarvestBlock(state, player.level, pos, player))
 		{
 			ItemStack stack = new ItemStack(drop);
-			stack.addEnchantment(ench, 1);
-			ItemEntity item = new ItemEntity((World) world, pos.getX(), pos.getY(), pos.getZ(), stack);
-			item.setPickupDelay(10);
+			stack.enchant(ench, 1);
+			ItemEntity item = new ItemEntity((Level) world, pos.getX(), pos.getY(), pos.getZ(), stack);
+			item.setPickUpDelay(10);
 
-			world.addEntity(item);
+			world.addFreshEntity(item);
 		}
 
 	}
 
-	public static void breakTrappedEnchantedChest(Block block, BlockState state, BlockPos pos, World world,
-			PlayerEntity player)
+	public static void breakTrappedEnchantedChest(Block block, BlockState state, BlockPos pos, Level world,
+			Player player)
 	{
 
 		if (block == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator()
-				&& block.canHarvestBlock(state, player.world, pos, player))
+				&& block.canHarvestBlock(state, player.level, pos, player))
 		{
 			ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
-			TileEntity tile = world.getTileEntity(pos);
+			BlockEntity tile = world.getBlockEntity(pos);
 
 			if (tile instanceof EnchantedTrappedChestTileEntity)
 			{
 				EnchantedTrappedChestTileEntity eTile = (EnchantedTrappedChestTileEntity) tile;
-				ListNBT nbt = eTile.getEnchants();
+				ListTag nbt = eTile.getEnchants();
 
 				if (ModEnchantmentHelper.hasCamouflage(nbt))
 				{
-					stack.addEnchantment(EnchantmentInit.CAMOUFLAGE.get(), 1);
+					stack.enchant(EnchantmentInit.CAMOUFLAGE.get(), 1);
 				}
 
 				if (ModEnchantmentHelper.isCavernousStorage(nbt))
 				{
-					stack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+					stack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 				}
 
 			}
@@ -1380,33 +1379,33 @@ public class BlockEnchants
 		}
 
 		if (block == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator()
-				&& block.canHarvestBlock(state, player.world, pos, player))
+				&& block.canHarvestBlock(state, player.level, pos, player))
 		{
 			ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
-			TileEntity tile = world.getTileEntity(pos);
+			BlockEntity tile = world.getBlockEntity(pos);
 
 			if (tile instanceof EnchantedHiddenTrappedChestTileEntity)
 			{
 				EnchantedHiddenTrappedChestTileEntity eTile = (EnchantedHiddenTrappedChestTileEntity) tile;
-				ListNBT nbt = eTile.getEnchants();
+				ListTag nbt = eTile.getEnchants();
 
 				if (ModEnchantmentHelper.hasCamouflage(nbt))
 				{
-					stack.addEnchantment(EnchantmentInit.CAMOUFLAGE.get(), 1);
+					stack.enchant(EnchantmentInit.CAMOUFLAGE.get(), 1);
 				}
 
 				if (ModEnchantmentHelper.isCavernousStorage(nbt))
 				{
-					stack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+					stack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 				}
 
 			}
 
-			ItemEntity item = new ItemEntity((World) world, pos.getX(), pos.getY(), pos.getZ(), stack);
+			ItemEntity item = new ItemEntity((Level) world, pos.getX(), pos.getY(), pos.getZ(), stack);
 
-			item.setPickupDelay(10);
+			item.setPickUpDelay(10);
 
-			world.addEntity(item);
+			world.addFreshEntity(item);
 		}
 
 	}
@@ -1414,12 +1413,12 @@ public class BlockEnchants
 	@SubscribeEvent
 	public static void onEnchant(final CommandEvent event)
 	{
-		CommandContext<CommandSource> command = event.getParseResults().getContext().build(null);
+		CommandContext<CommandSourceStack> command = event.getParseResults().getContext().build(null);
 
 		if (command.getCommand() != null)
 		{
-
-			if (command.getCommand().toString().contains("net.minecraft.command.impl.EnchantCommand"))
+			Main.LOGGER.info(command.getCommand().toString());
+			if (command.getCommand().toString().contains("net.minecraft.server.commands.EnchantCommand$$Lambda$"))
 			{
 				Enchantment enchant = command.getArgument("enchantment", Enchantment.class);
 				EntitySelector e = command.getArgument("targets", EntitySelector.class);
@@ -1427,7 +1426,7 @@ public class BlockEnchants
 
 				try
 				{
-					entities = e.select(command.getSource());
+					entities = e.findEntities(command.getSource());
 
 					for (int x = 0; x < entities.size(); x++)
 					{
@@ -1436,12 +1435,12 @@ public class BlockEnchants
 						if (entity instanceof LivingEntity)
 						{
 							LivingEntity living = (LivingEntity) entity;
-
-							if (EnchantmentTypesInit.STORAGE.canEnchantItem(living.getHeldItemMainhand().getItem())
+							
+							if (EnchantmentTypesInit.STORAGE.canEnchant(living.getMainHandItem().getItem())
 									&& enchant == EnchantmentInit.CAVERNOUS_STORAGE.get()
 									&& Config.cavernousStorage.isEnabled.get() == true)
 							{
-								ItemStack stack = living.getHeldItemMainhand();
+								ItemStack stack = living.getMainHandItem();
 								Item item = stack.getItem();
 
 								if (item instanceof BlockItem)
@@ -1454,32 +1453,32 @@ public class BlockEnchants
 										ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock
 												.getBlockByColor(((ShulkerBoxBlock) block).getColor()));
 										newStack.setTag(stack.getTag());
-										newStack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+										newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 
-										if (living instanceof PlayerEntity)
+										if (living instanceof Player)
 										{
-											PlayerEntity player = (PlayerEntity) living;
-											player.replaceItemInInventory(getSlotFor(stack, player), newStack);
+											Player player = (Player) living;
+											player.inventory.setItem(getSlotFor(stack, player), newStack);
 										}
 										else
 										{
-											living.replaceItemInInventory(EquipmentSlotType.MAINHAND.getSlotIndex(),
+											living.setItemSlot(EquipmentSlot.MAINHAND,
 													newStack);
 										}
 
-										CommandSource source = command.getSource();
+										CommandSourceStack source = command.getSource();
 
 										if (entities.size() == 1)
 										{
-											source.sendFeedback(new TranslationTextComponent(
-													"commands.enchant.success.single", enchant.getDisplayName(1),
+											source.sendSuccess(new TranslatableComponent(
+													"commands.enchant.success.single", enchant.getFullname(1),
 													entities.iterator().next().getDisplayName()), true);
 										}
 										else
 										{
-											source.sendFeedback(
-													new TranslationTextComponent("commands.enchant.success.multiple",
-															enchant.getDisplayName(1), entities.size()),
+											source.sendSuccess(
+													new TranslatableComponent("commands.enchant.success.multiple",
+															enchant.getFullname(1), entities.size()),
 													true);
 										}
 
@@ -1490,9 +1489,9 @@ public class BlockEnchants
 
 							}
 
-							if (EnchantmentTypesInit.SMELTER.canEnchantItem(living.getHeldItemMainhand().getItem()))
+							if (EnchantmentTypesInit.SMELTER.canEnchant(living.getMainHandItem().getItem()))
 							{
-								ItemStack stack = living.getHeldItemMainhand();
+								ItemStack stack = living.getMainHandItem();
 								Item item = stack.getItem();
 								int level = 1;
 								try
@@ -1514,47 +1513,46 @@ public class BlockEnchants
 
 										if (enchant == EnchantmentInit.FAST_SMELT.get() && Config.fastSmelt.isEnabled.get() == true)
 										{
-											newStack.addEnchantment(EnchantmentInit.FAST_SMELT.get(), level);
+											newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
 										}
 
 										if (enchant == EnchantmentInit.FUEL_EFFICIENT.get()
 												&& Config.fuelEfficient.isEnabled.get() == true)
 										{
-											newStack.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), level);
+											newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
 										}
 
 										if (enchant == EnchantmentInit.EXTRA_EXPERIENCE.get()
 												&& Config.extraExperience.isEnabled.get() == true)
 										{
-											newStack.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
+											newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
 										}
 
 										if (newStack.isEnchanted())
 										{
-
-											if (living instanceof PlayerEntity)
+											if (living instanceof Player)
 											{
-												PlayerEntity player = (PlayerEntity) living;
-												player.replaceItemInInventory(getSlotFor(stack, player), newStack);
+												Player player = (Player) living;
+												player.inventory.setItem(getSlotFor(stack, player), newStack);
 											}
 											else
 											{
-												living.replaceItemInInventory(EquipmentSlotType.MAINHAND.getSlotIndex(),
+												living.setItemSlot(EquipmentSlot.MAINHAND,
 														newStack);
 											}
 
-											CommandSource source = command.getSource();
+											CommandSourceStack source = command.getSource();
 
 											if (entities.size() == 1)
 											{
-												source.sendFeedback(new TranslationTextComponent(
-														"commands.enchant.success.single", enchant.getDisplayName(level),
+												source.sendSuccess(new TranslatableComponent(
+														"commands.enchant.success.single", enchant.getFullname(level),
 														entities.iterator().next().getDisplayName()), true);
 											}
 											else
 											{
-												source.sendFeedback(new TranslationTextComponent(
-														"commands.enchant.success.multiple", enchant.getDisplayName(level),
+												source.sendSuccess(new TranslatableComponent(
+														"commands.enchant.success.multiple", enchant.getFullname(level),
 														entities.size()), true);
 											}
 
@@ -1571,47 +1569,47 @@ public class BlockEnchants
 
 										if (enchant == EnchantmentInit.FAST_SMELT.get() && Config.fastSmelt.isEnabled.get() == true)
 										{
-											newStack.addEnchantment(EnchantmentInit.FAST_SMELT.get(), level);
+											newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
 										}
 
 										if (enchant == EnchantmentInit.FUEL_EFFICIENT.get()
 												&& Config.fuelEfficient.isEnabled.get() == true)
 										{
-											newStack.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), level);
+											newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
 										}
 
 										if (enchant == EnchantmentInit.EXTRA_EXPERIENCE.get()
 												&& Config.extraExperience.isEnabled.get() == true)
 										{
-											newStack.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
+											newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
 										}
 
 										if (newStack.isEnchanted())
 										{
 
-											if (living instanceof PlayerEntity)
+											if (living instanceof Player)
 											{
-												PlayerEntity player = (PlayerEntity) living;
-												player.replaceItemInInventory(getSlotFor(stack, player), newStack);
+												Player player = (Player) living;
+												player.inventory.setItem(getSlotFor(stack, player), newStack);
 											}
 											else
 											{
-												living.replaceItemInInventory(EquipmentSlotType.MAINHAND.getSlotIndex(),
+												living.setItemSlot(EquipmentSlot.MAINHAND,
 														newStack);
 											}
 
-											CommandSource source = command.getSource();
+											CommandSourceStack source = command.getSource();
 
 											if (entities.size() == 1)
 											{
-												source.sendFeedback(new TranslationTextComponent(
-														"commands.enchant.success.single", enchant.getDisplayName(level),
+												source.sendSuccess(new TranslatableComponent(
+														"commands.enchant.success.single", enchant.getFullname(level),
 														entities.iterator().next().getDisplayName()), true);
 											}
 											else
 											{
-												source.sendFeedback(new TranslationTextComponent(
-														"commands.enchant.success.multiple", enchant.getDisplayName(level),
+												source.sendSuccess(new TranslatableComponent(
+														"commands.enchant.success.multiple", enchant.getFullname(level),
 														entities.size()), true);
 											}
 
@@ -1639,37 +1637,36 @@ public class BlockEnchants
 
 	}
 
-
 	@SubscribeEvent
 	public static void onBookApply(final AnvilRepairEvent event)
 	{
-		PlayerEntity player = event.getPlayer();
+		Player player = event.getPlayer();
 		ItemStack initial = event.getItemInput();
 		ItemStack ingredient = event.getIngredientInput();
-		ItemStack stack = event.getPlayer().inventory.getItemStack();
+		ItemStack stack = event.getPlayer().inventory.getSelected();
 
-		if (ItemStack.areItemsEqual(initial, stack))
+		if (ItemStack.isSame(initial, stack))
 		{
 
-			if (ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTagList())
+			if (ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTags())
 					&& stack.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get() == true)
 			{
-				Block block = Block.getBlockFromItem(stack.getItem());
+				Block block = Block.byItem(stack.getItem());
 
 				if (block instanceof ShulkerBoxBlock)
 				{
 					ItemStack newStack = new ItemStack(
 							EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
-					newStack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+					newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 					newStack.setTag(stack.getTag());
-					player.inventory.setItemStack(newStack);
+					player.inventory.setPickedItem(newStack);
 				}
 
 			}
 
 			if (stack.getItem() instanceof BlockItem)
 			{
-				Block block = Block.getBlockFromItem(stack.getItem());
+				Block block = Block.byItem(stack.getItem());
 
 				if (block instanceof AbstractFurnaceBlock && stack.isEnchanted())
 				{
@@ -1679,7 +1676,7 @@ public class BlockEnchants
 
 					if (level > 0 && stack.getItem() instanceof BlockItem && Config.fastSmelt.isEnabled.get() == true)
 					{
-						newStack.addEnchantment(EnchantmentInit.FAST_SMELT.get(), level);
+						newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
 					}
 
 					level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), stack);
@@ -1687,7 +1684,7 @@ public class BlockEnchants
 					if (level > 0 && stack.getItem() instanceof BlockItem
 							&& Config.fuelEfficient.isEnabled.get() == true)
 					{
-						newStack.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), level);
+						newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
 					}
 
 					level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), stack);
@@ -1695,12 +1692,12 @@ public class BlockEnchants
 					if (level > 0 && stack.getItem() instanceof BlockItem
 							&& Config.extraExperience.isEnabled.get() == true)
 					{
-						newStack.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
+						newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
 					}
 
 					if (newStack.isEnchanted())
 					{
-						player.inventory.setItemStack(newStack);
+						player.inventory.setPickedItem(newStack);
 					}
 
 				}
@@ -1711,14 +1708,14 @@ public class BlockEnchants
 		else
 		{
 
-			for (int x = 0; x < player.inventory.getSizeInventory(); x++)
+			for (int x = 0; x < player.inventory.getContainerSize(); x++)
 			{
 
-				if (ItemStack.areItemsEqual(initial, player.inventory.getStackInSlot(x)))
+				if (ItemStack.isSame(initial, player.inventory.getItem(x)))
 				{
-					ItemStack stack1 = player.inventory.getStackInSlot(x);
+					ItemStack stack1 = player.inventory.getItem(x);
 
-					if (ModEnchantmentHelper.isCavernousStorage(stack1.getEnchantmentTagList())
+					if (ModEnchantmentHelper.isCavernousStorage(stack1.getEnchantmentTags())
 							&& stack1.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get() == true)
 					{
 						Block block = ((BlockItem) stack1.getItem()).getBlock();
@@ -1727,16 +1724,16 @@ public class BlockEnchants
 						{
 							ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock
 									.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
-							newStack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+							newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 							newStack.setTag(stack1.getTag());
-							player.replaceItemInInventory(x, newStack);
+							player.inventory.setItem(x, newStack);
 						}
 
 					}
 
 					if (stack1.getItem() instanceof BlockItem)
 					{
-						Block block = Block.getBlockFromItem(stack1.getItem());
+						Block block = Block.byItem(stack1.getItem());
 
 						if (block instanceof AbstractFurnaceBlock && stack1.isEnchanted())
 						{
@@ -1749,7 +1746,7 @@ public class BlockEnchants
 							if (level > 0 && stack1.getItem() instanceof BlockItem
 									&& Config.fastSmelt.isEnabled.get() == true)
 							{
-								newStack.addEnchantment(EnchantmentInit.FAST_SMELT.get(), level);
+								newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
 							}
 
 							level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(),
@@ -1758,7 +1755,7 @@ public class BlockEnchants
 							if (level > 0 && stack1.getItem() instanceof BlockItem
 									&& Config.fuelEfficient.isEnabled.get() == true)
 							{
-								newStack.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), level);
+								newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
 							}
 
 							level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(),
@@ -1767,12 +1764,12 @@ public class BlockEnchants
 							if (level > 0 && stack1.getItem() instanceof BlockItem
 									&& Config.extraExperience.isEnabled.get() == true)
 							{
-								newStack.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
+								newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
 							}
 
 							if (newStack.isEnchanted())
 							{
-								player.replaceItemInInventory(x, newStack);
+								player.inventory.setItem(x, newStack);
 							}
 
 						}
@@ -1790,32 +1787,32 @@ public class BlockEnchants
 	@SubscribeEvent
 	public static void onPickup(final ItemPickupEvent event)
 	{
-		PlayerEntity player = event.getPlayer();
+		Player player = event.getPlayer();
 		ItemStack stack = event.getStack();
 		int x = getSlotFor(stack, player);
 
 		if (x >= 0)
 		{
 
-			if (ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTagList())
+			if (ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTags())
 					&& stack.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get() == true)
 			{
-				Block block = Block.getBlockFromItem(stack.getItem());
+				Block block = Block.byItem(stack.getItem());
 
 				if (block instanceof ShulkerBoxBlock)
 				{
 					ItemStack newStack = new ItemStack(
 							EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
 					newStack.setTag(stack.getTag());
-					newStack.addEnchantment(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
-					player.replaceItemInInventory(x, newStack);
+					newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+					player.inventory.setItem(x, newStack);
 				}
 
 			}
 
 			if (stack.getItem() instanceof BlockItem)
 			{
-				Block block = Block.getBlockFromItem(stack.getItem());
+				Block block = Block.byItem(stack.getItem());
 
 				if (block instanceof AbstractFurnaceBlock && stack.isEnchanted())
 				{
@@ -1825,7 +1822,7 @@ public class BlockEnchants
 
 					if (level > 0 && stack.getItem() instanceof BlockItem && Config.fastSmelt.isEnabled.get() == true)
 					{
-						newStack.addEnchantment(EnchantmentInit.FAST_SMELT.get(), level);
+						newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
 					}
 
 					level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), stack);
@@ -1833,7 +1830,7 @@ public class BlockEnchants
 					if (level > 0 && stack.getItem() instanceof BlockItem
 							&& Config.fuelEfficient.isEnabled.get() == true)
 					{
-						newStack.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), level);
+						newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
 					}
 
 					level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), stack);
@@ -1841,12 +1838,12 @@ public class BlockEnchants
 					if (level > 0 && stack.getItem() instanceof BlockItem
 							&& Config.extraExperience.isEnabled.get() == true)
 					{
-						newStack.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
+						newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
 					}
 
 					if (newStack.isEnchanted())
 					{
-						player.replaceItemInInventory(x, newStack);
+						player.inventory.setItem(x, newStack);
 					}
 
 				}
@@ -1857,15 +1854,14 @@ public class BlockEnchants
 
 	}
 
-
-	public static int getSlotFor(ItemStack stack, PlayerEntity player)
+	public static int getSlotFor(ItemStack stack, Player player)
 	{
 
-		for (int i = 0; i < player.inventory.getSizeInventory(); ++i)
+		for (int i = 0; i < player.inventory.getContainerSize(); ++i)
 		{
 
-			if (!player.inventory.getStackInSlot(i).isEmpty()
-					&& stackEqualExact(stack, player.inventory.getStackInSlot(i)))
+			if (!player.inventory.getItem(i).isEmpty()
+					&& stackEqualExact(stack, player.inventory.getItem(i)))
 			{
 				return i;
 			}
@@ -1875,8 +1871,9 @@ public class BlockEnchants
 		return -1;
 	}
 
+	@SuppressWarnings("unused")
 	private static boolean stackEqualExact(ItemStack stack1, ItemStack stack2)
 	{
-		return stack1.getItem() == stack2.getItem() && ItemStack.areItemStackTagsEqual(stack1, stack2);
+		return stack1.getItem() == stack2.getItem() && ItemStack.tagMatches(stack1, stack2);
 	}
 }

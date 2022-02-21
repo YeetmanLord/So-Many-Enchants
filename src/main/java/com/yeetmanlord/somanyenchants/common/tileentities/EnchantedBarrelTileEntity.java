@@ -4,51 +4,80 @@ import com.yeetmanlord.somanyenchants.common.blocks.EnchantedBarrelBlock;
 import com.yeetmanlord.somanyenchants.common.container.EnchantedChestContainer;
 import com.yeetmanlord.somanyenchants.core.init.TileEntityTypeInit;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.tileentity.LockableLootTileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class EnchantedBarrelTileEntity extends LockableLootTileEntity {
+public class EnchantedBarrelTileEntity extends RandomizableContainerBlockEntity {
 	private NonNullList<ItemStack> barrelContents = NonNullList.withSize(36, ItemStack.EMPTY);
-	private int numPlayersUsing;
-
-	private EnchantedBarrelTileEntity(TileEntityType<?> barrelType) {
-	      super(barrelType);
-	   }
-
-	public EnchantedBarrelTileEntity() {
-	      this(TileEntityTypeInit.ENCHANTED_BARREL.get());
-	   }
-
-	public CompoundNBT write(CompoundNBT compound) {
-		super.write(compound);
-		if (!this.checkLootAndWrite(compound)) {
-			ItemStackHelper.saveAllItems(compound, this.barrelContents);
+	private ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+		@Override
+		protected void onOpen(Level p_155062_, BlockPos p_155063_, BlockState p_155064_) {
+			EnchantedBarrelTileEntity.this.playSound(p_155064_, SoundEvents.BARREL_OPEN);
+			EnchantedBarrelTileEntity.this.updateBlockState(p_155064_, true);
 		}
 
-		return compound;
+		@Override
+		protected void onClose(Level p_155072_, BlockPos p_155073_, BlockState p_155074_) {
+			EnchantedBarrelTileEntity.this.playSound(p_155074_, SoundEvents.BARREL_CLOSE);
+			EnchantedBarrelTileEntity.this.updateBlockState(p_155074_, false);
+		}
+
+		@Override
+		protected void openerCountChanged(Level p_155066_, BlockPos p_155067_, BlockState p_155068_, int p_155069_,
+				int p_155070_) {
+		}
+
+		@Override
+		protected boolean isOwnContainer(Player p_155060_) {
+			if (p_155060_.containerMenu instanceof EnchantedChestContainer) {
+				Container container = ((EnchantedChestContainer) p_155060_.containerMenu).getContainer();
+				return container == EnchantedBarrelTileEntity.this;
+			} else {
+				return false;
+			}
+		}
+	};
+
+	private EnchantedBarrelTileEntity(BlockEntityType<?> barrelType, BlockPos pos, BlockState state) {
+		super(barrelType, pos, state);
 	}
 
-	public void read(BlockState state, CompoundNBT nbt) {
-		super.read(state, nbt);
-		this.barrelContents = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
-		if (!this.checkLootAndRead(nbt)) {
-			ItemStackHelper.loadAllItems(nbt, this.barrelContents);
+	public EnchantedBarrelTileEntity(BlockPos pos, BlockState state) {
+		this(TileEntityTypeInit.ENCHANTED_BARREL.get(), pos, state);
+	}
+
+	@Override
+	public void saveAdditional(CompoundTag compound) {
+		super.saveAdditional(compound);
+		if (!this.trySaveLootTable(compound)) {
+			ContainerHelper.saveAllItems(compound, this.barrelContents);
+		}
+	}
+
+	@Override
+	public void load(CompoundTag nbt) {
+		super.load(nbt);
+		this.barrelContents = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+		if (!this.tryLoadLootTable(nbt)) {
+			ContainerHelper.loadAllItems(nbt, this.barrelContents);
 		}
 
 	}
@@ -56,89 +85,65 @@ public class EnchantedBarrelTileEntity extends LockableLootTileEntity {
 	/**
 	 * Returns the number of slots in the inventory.
 	 */
-	public int getSizeInventory() {
+	@Override
+	public int getContainerSize() {
 		return 36;
 	}
 
+	@Override
 	protected NonNullList<ItemStack> getItems() {
 		return this.barrelContents;
 	}
 
+	@Override
 	protected void setItems(NonNullList<ItemStack> itemsIn) {
 		this.barrelContents = itemsIn;
 	}
 
-	protected ITextComponent getDefaultName() {
-		return new TranslationTextComponent("container.enchantedBarrel");
+	@Override
+	protected Component getDefaultName() {
+		return new TranslatableComponent("container.enchantedBarrel");
 	}
 
-	protected Container createMenu(int id, PlayerInventory player) {
+	@Override
+	protected AbstractContainerMenu createMenu(int id, Inventory player) {
 		return EnchantedChestContainer.createGeneric9X4(id, player, this);
 	}
 
-	public void openInventory(PlayerEntity player) {
-		if (!player.isSpectator()) {
-			if (this.numPlayersUsing < 0) {
-				this.numPlayersUsing = 0;
-			}
-
-			++this.numPlayersUsing;
-			BlockState blockstate = this.getBlockState();
-			boolean flag = blockstate.get(EnchantedBarrelBlock.PROPERTY_OPEN);
-			if (!flag) {
-				this.playSound(blockstate, SoundEvents.BLOCK_BARREL_OPEN);
-				this.setOpenProperty(blockstate, true);
-			}
-
-			this.scheduleTick();
+	@Override
+	public void startOpen(Player p_58616_) {
+		if (!this.remove && !p_58616_.isSpectator()) {
+			this.openersCounter.incrementOpeners(p_58616_, this.getLevel(), this.getBlockPos(), this.getBlockState());
 		}
 
 	}
 
-	private void scheduleTick() {
-		this.world.getPendingBlockTicks().scheduleTick(this.getPos(), this.getBlockState().getBlock(), 5);
-	}
-
-	public void barrelTick() {
-		int i = this.pos.getX();
-		int j = this.pos.getY();
-		int k = this.pos.getZ();
-		this.numPlayersUsing = ChestTileEntity.calculatePlayersUsing(this.world, this, i, j, k);
-		if (this.numPlayersUsing > 0) {
-			this.scheduleTick();
-		} else {
-			BlockState blockstate = this.getBlockState();
-			if (!blockstate.matchesBlock(Blocks.BARREL)) {
-				this.remove();
-				return;
-			}
-
-			boolean flag = blockstate.get(EnchantedBarrelBlock.PROPERTY_OPEN);
-			if (flag) {
-				this.playSound(blockstate, SoundEvents.BLOCK_BARREL_CLOSE);
-				this.setOpenProperty(blockstate, false);
-			}
+	@Override
+	public void stopOpen(Player p_58614_) {
+		if (!this.remove && !p_58614_.isSpectator()) {
+			this.openersCounter.decrementOpeners(p_58614_, this.getLevel(), this.getBlockPos(), this.getBlockState());
 		}
 
 	}
 
-	public void closeInventory(PlayerEntity player) {
-		if (!player.isSpectator()) {
-			--this.numPlayersUsing;
+	public void recheckOpen() {
+		if (!this.remove) {
+			this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
 		}
 
 	}
 
-	private void setOpenProperty(BlockState state, boolean open) {
-		this.world.setBlockState(this.getPos(), state.with(EnchantedBarrelBlock.PROPERTY_OPEN, Boolean.valueOf(open)), 3);
+	private void updateBlockState(BlockState state, boolean open) {
+		this.level.setBlock(this.getBlockPos(),
+				state.setValue(EnchantedBarrelBlock.OPEN, Boolean.valueOf(open)), 3);
 	}
 
 	private void playSound(BlockState state, SoundEvent sound) {
-		Vector3i vector3i = state.get(EnchantedBarrelBlock.PROPERTY_FACING).getDirectionVec();
-		double d0 = (double) this.pos.getX() + 0.5D + (double) vector3i.getX() / 2.0D;
-		double d1 = (double) this.pos.getY() + 0.5D + (double) vector3i.getY() / 2.0D;
-		double d2 = (double) this.pos.getZ() + 0.5D + (double) vector3i.getZ() / 2.0D;
-		this.world.playSound((PlayerEntity) null, d0, d1, d2, sound, SoundCategory.BLOCKS, 0.5F,
-				this.world.rand.nextFloat() * 0.1F + 0.9F);
+		Vec3i vector3i = state.getValue(EnchantedBarrelBlock.FACING).getNormal();
+		double d0 = (double) this.worldPosition.getX() + 0.5D + (double) vector3i.getX() / 2.0D;
+		double d1 = (double) this.worldPosition.getY() + 0.5D + (double) vector3i.getY() / 2.0D;
+		double d2 = (double) this.worldPosition.getZ() + 0.5D + (double) vector3i.getZ() / 2.0D;
+		this.level.playSound((Player) null, d0, d1, d2, sound, SoundSource.BLOCKS, 0.5F,
+				this.level.random.nextFloat() * 0.1F + 0.9F);
 	}
 }

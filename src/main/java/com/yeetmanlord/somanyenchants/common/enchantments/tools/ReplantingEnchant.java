@@ -2,27 +2,28 @@ package com.yeetmanlord.somanyenchants.common.enchantments.tools;
 
 import com.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.HoeItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.ItemStack;
 
 public class ReplantingEnchant extends Enchantment 
 {
-	public ReplantingEnchant(Rarity rarityIn, EquipmentSlotType... slots) 
+	public ReplantingEnchant(Rarity rarityIn, EquipmentSlot... slots) 
 	{
-		super(rarityIn, EnchantmentType.DIGGER, slots);
+		super(rarityIn, EnchantmentCategory.DIGGER, slots);
 	}
 	
-	public int getMinEnchantability(int enchantmentLevel) 
+	@Override
+	public int getMinCost(int enchantmentLevel) 
 	{
 	      return 20;
 	}
 	
 	@Override
-	public boolean canApply(ItemStack stack)
+	public boolean canEnchant(ItemStack stack)
 	{
 		return stack.getItem() instanceof HoeItem || stack.getItem() instanceof AxeItem ? true : false;
 	}
@@ -33,11 +34,13 @@ public class ReplantingEnchant extends Enchantment
 		return stack.getItem() instanceof HoeItem ? true : false;
 	}
 
-	public int getMaxEnchantability(int enchantmentLevel) 
+	@Override
+	public int getMaxCost(int enchantmentLevel) 
 	{
-	      return this.getMinEnchantability(enchantmentLevel) + 50;
+	      return this.getMinCost(enchantmentLevel) + 50;
 	}
 	   
+	@Override
 	public int getMaxLevel() 
 	{
 		if(Config.replanting.isEnabled.get() == false)

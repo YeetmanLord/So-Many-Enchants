@@ -2,34 +2,34 @@ package com.yeetmanlord.somanyenchants.common.enchantments.armor;
 
 import com.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 public class StepAssistEnchant extends Enchantment
 {
-	public StepAssistEnchant(Rarity rarityIn, EquipmentSlotType... slots) 
+	public StepAssistEnchant(Rarity rarityIn, EquipmentSlot... slots) 
 	{
-		super(rarityIn, EnchantmentType.ARMOR_FEET, slots);
+		super(rarityIn, EnchantmentCategory.ARMOR_FEET, slots);
 	}
 	
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack)
 	{
-		return EnchantmentType.ARMOR_FEET.canEnchantItem(stack.getItem());
+		return EnchantmentCategory.ARMOR_FEET.canEnchant(stack.getItem());
 	}
 	
 	@Override
-	public int getMinEnchantability(int enchantmentLevel) 
+	public int getMinCost(int enchantmentLevel) 
 	{
 		return 25;
 	}
 	
 	@Override
-	public int getMaxEnchantability(int enchantmentLevel)
+	public int getMaxCost(int enchantmentLevel)
 	{
-		return this.getMinEnchantability(enchantmentLevel) + 40;
+		return this.getMinCost(enchantmentLevel) + 40;
 	}
 	
 	@Override

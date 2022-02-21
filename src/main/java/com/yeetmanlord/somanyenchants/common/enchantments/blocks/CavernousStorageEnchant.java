@@ -3,21 +3,21 @@ package com.yeetmanlord.somanyenchants.common.enchantments.blocks;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentTypesInit;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 public class CavernousStorageEnchant extends Enchantment {
 
-	public CavernousStorageEnchant(Rarity rarityIn, EquipmentSlotType... slots) 
+	public CavernousStorageEnchant(Rarity rarityIn, EquipmentSlot... slots) 
 	{
 		super(rarityIn, EnchantmentTypesInit.STORAGE, slots);
 	}
 	
 	@Override
-	public boolean canApply(ItemStack stack)
+	public boolean canEnchant(ItemStack stack)
 	{
-		return EnchantmentTypesInit.STORAGE.canEnchantItem(stack.getItem());
+		return EnchantmentTypesInit.STORAGE.canEnchant(stack.getItem());
 	}
 	
 	@Override
@@ -26,15 +26,15 @@ public class CavernousStorageEnchant extends Enchantment {
 	}
 	
 	@Override
-	public int getMinEnchantability(int enchantmentLevel) 
+	public int getMinCost(int enchantmentLevel) 
 	{
 		return 15;
 	}
 	
 	@Override
-	public int getMaxEnchantability(int enchantmentLevel)
+	public int getMaxCost(int enchantmentLevel)
 	{
-		return this.getMinEnchantability(enchantmentLevel) + 40;
+		return this.getMinCost(enchantmentLevel) + 40;
 	}
 	
 	@Override

@@ -16,6 +16,6 @@ public class ParticleFactoriesInit
 	@SubscribeEvent
 	public static void registerParticleFactories(final ParticleFactoryRegisterEvent event)
 	{
-		Minecraft.getInstance().particles.registerFactory(ParticleTypesInit.FREEZE_PARTICLE.get(), FreezeParticle.Factory::new);
+		Minecraft.getInstance().particleEngine.register(ParticleTypesInit.FREEZE_PARTICLE.get(), FreezeParticle.Factory::new);
 	}
 }

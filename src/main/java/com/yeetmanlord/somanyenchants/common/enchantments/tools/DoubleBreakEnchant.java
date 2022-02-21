@@ -2,28 +2,28 @@ package com.yeetmanlord.somanyenchants.common.enchantments.tools;
 
 import com.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 public class DoubleBreakEnchant extends Enchantment
 {
-	public DoubleBreakEnchant(Rarity rarityIn, EquipmentSlotType... slots)
+	public DoubleBreakEnchant(Rarity rarityIn, EquipmentSlot... slots)
 	{
-		super(rarityIn, EnchantmentType.DIGGER, slots);
+		super(rarityIn, EnchantmentCategory.DIGGER, slots);
 	}
 	
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack) 
 	{
-		return EnchantmentType.DIGGER.canEnchantItem(stack.getItem());
+		return EnchantmentCategory.DIGGER.canEnchant(stack.getItem());
 	}
 	
 	@Override
-	public boolean canApply(ItemStack stack) 
+	public boolean canEnchant(ItemStack stack) 
 	{
-		return EnchantmentType.DIGGER.canEnchantItem(stack.getItem());
+		return EnchantmentCategory.DIGGER.canEnchant(stack.getItem());
 	}
 	
 	@Override
@@ -37,14 +37,14 @@ public class DoubleBreakEnchant extends Enchantment
 	}
 	
 	@Override
-	public int getMinEnchantability(int enchantmentLevel) 
+	public int getMinCost(int enchantmentLevel) 
 	{
 		return 15 + (enchantmentLevel - 1) * 9;
 	}
 
 	@Override
-	public int getMaxEnchantability(int enchantmentLevel) 
+	public int getMaxCost(int enchantmentLevel) 
 	{
-		return super.getMinEnchantability(enchantmentLevel) + 50;
+		return super.getMinCost(enchantmentLevel) + 50;
 	}
 }
