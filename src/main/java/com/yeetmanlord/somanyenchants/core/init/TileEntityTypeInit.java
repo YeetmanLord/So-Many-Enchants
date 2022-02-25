@@ -1,6 +1,6 @@
 package com.yeetmanlord.somanyenchants.core.init;
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.common.blocks.smelters.blast_furnace.EnchantedBlastFurnaceTileEntity;
 import com.yeetmanlord.somanyenchants.common.blocks.smelters.furnace.EnchantedFurnaceTileEntity;
 import com.yeetmanlord.somanyenchants.common.blocks.smelters.smoker.EnchantedSmokerTileEntity;
@@ -19,7 +19,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class TileEntityTypeInit
 {
 	public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITY_TYPES = DeferredRegister
-			.create(ForgeRegistries.BLOCK_ENTITIES, Main.MOD_ID);
+			.create(ForgeRegistries.BLOCK_ENTITIES, SoManyEnchants.MOD_ID);
 
 	public static final RegistryObject<BlockEntityType<EnchantedHopperTileEntity>> ENCHANTED_HOPPER = TILE_ENTITY_TYPES
 			.register("enchanted_hopper", () -> BlockEntityType.Builder

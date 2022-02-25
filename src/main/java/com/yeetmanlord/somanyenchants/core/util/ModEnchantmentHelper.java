@@ -122,7 +122,6 @@ public class ModEnchantmentHelper
 	      return 0;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static int getEnchantmentLevel(Enchantment enchID, ItemStack stack)
 	{
 	      if (stack.isEmpty()) {

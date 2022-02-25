@@ -1,6 +1,6 @@
 package com.yeetmanlord.somanyenchants.core.events;
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 import com.yeetmanlord.somanyenchants.core.util.PlayerAttributeHandler;
@@ -14,7 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
+@EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class WeaponAttributes
 {
 

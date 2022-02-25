@@ -109,5 +109,26 @@
 	"block.so_many_enchants.enchanted_smoker": "Fumador encantado",
 	
 	"so_many_enchants.screen.config.max_level.lightBlade": "Hoja ligera | Máximo nivel",
-	"enchantment.so_many_enchants.light_blade": "Hoja ligera"
+	"enchantment.so_many_enchants.light_blade": "Hoja ligera",
+
+	"enchantment.so_many_enchants.health_boost.desc": "Para cada nivel de impulso de salud le dará al usuario un corazón más. Estas pilas con otras piezas de armadura.",
+	"enchantment.so_many_enchants.flight.desc": "Cuando se usan botas con vuelo, podrás volar. Mientras vuelas, perderás el hambre.",
+	"enchantment.so_many_enchants.attack_reach.desc": "Las armas con este encanto tendrán 1.5 bloques más de alcance por nivel.",
+	"enchantment.so_many_enchants.block_reach.desc": "Herramientas con esta ganancia de encanto un bloque de alcance para romper bloques por nivel.",
+	"enchantment.so_many_enchants.freezing_attack.desc": "Cuando golpeas a los enemigos, no podrán moverse, excavará más lento, y no saltará.",
+	"enchantment.so_many_enchants.replanting.desc": "Cuando mía un cultivo con este encantamiento, será reemplazado automáticamente.",
+	"enchantment.so_many_enchants.temper.desc": "Para cada nivel de este encantamiento, la armadura obtendrá 1 dureza de la armadura.",
+	"enchantment.so_many_enchants.reinforcement.desc": "Para cada nivel de este encantamiento, la armadura obtendrá 1 barra de armadura.",
+	"enchantment.so_many_enchants.critical.desc": "Para cada nivel de crítica, tiene un 20% más de la oportunidad de hacer un golpe crítico sin saltar o hacer más daño con un crítico normal.",
+	"enchantment.so_many_enchants.heavy.desc": "Para cada nivel de este encantamiento, la armadura obtendrá 1 resistencia a la crisis.",
+	"enchantment.so_many_enchants.cat_vision.desc": "Cuando se use tendrá una visión nocturna infinita.",
+	"enchantment.so_many_enchants.double_break.desc": "Para cada nivel, tiene un 20% más de un chancce para romper 2 bloques en lugar de uno.",
+	"enchantment.so_many_enchants.step_assist.desc": "Para cada nivel gana 0.5 bloques de altura del paso.",
+	"enchantment.so_many_enchants.fast_hopper.desc": "Hará una tolva de transferencia 4 veces más rápido.",
+	"enchantment.so_many_enchants.cavernous_storage.desc": "Agrega una fila adicional a los cofres y las cajas de Shulker.",
+	"enchantment.so_many_enchants.fast_smelt.desc": "Hace hornos, los hornos de establo y los fumadores derraman más rápido.",
+	"enchantment.so_many_enchants.fuel_efficient.desc": "Hace hornos, los hornos de explosión, y los fumadores eliminan el combustible menos rápidamente. (Durará más tiempo)",
+	"enchantment.so_many_enchants.extra_experience.desc": "Hace hornos, los hornos de explosión, y los fumadores hacen más experiencia cuando toma artículos.",
+	"enchantment.so_many_enchants.heavy_blade.desc": "Las armas hacen mucho más daño de ataque, pero la velocidad de ataque se reduce.",
+	"enchantment.so_many_enchants.light_blade.desc": "Las armas son mucho más rápidas, pero hacen menos daño. "
 }

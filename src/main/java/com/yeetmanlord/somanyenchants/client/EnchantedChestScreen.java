@@ -2,7 +2,7 @@ package com.yeetmanlord.somanyenchants.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.common.container.EnchantedChestContainer;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -19,7 +19,7 @@ public class EnchantedChestScreen extends AbstractContainerScreen<EnchantedChest
 		implements MenuAccess<EnchantedChestContainer> {
 	/** The ResourceLocation containing the chest GUI texture. */
 	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(
-			Main.MOD_ID + ":textures/gui/container/generic_72.png");
+			SoManyEnchants.MOD_ID + ":textures/gui/container/generic_72.png");
 	/** Window height is calculated with these values" the more rows, the higher */
 	private final int inventoryRows;
 

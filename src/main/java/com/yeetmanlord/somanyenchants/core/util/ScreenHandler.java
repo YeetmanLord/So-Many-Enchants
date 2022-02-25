@@ -1,7 +1,7 @@
 package com.yeetmanlord.somanyenchants.core.util;
 
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.client.EnchantedChestScreen;
 import com.yeetmanlord.somanyenchants.client.EnchantedHopperScreen;
 import com.yeetmanlord.somanyenchants.client.EnchantedShulkerBoxScreen;
@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.MOD, value = Dist.CLIENT)
 public class ScreenHandler
 {
 	@SubscribeEvent

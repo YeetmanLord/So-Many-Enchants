@@ -1,6 +1,6 @@
 package com.yeetmanlord.somanyenchants.core.init;
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedBarrelBlock;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedChestBlock;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedHopper;
@@ -27,7 +27,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class BlockInit {
 
-	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Main.MOD_ID);
+	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, SoManyEnchants.MOD_ID);
 
 	public static final RegistryObject<Block> ENCHANTED_HOPPER = BLOCKS.register("enchanted_hopper",
 			() -> new EnchantedHopper(Block.Properties.copy(Blocks.HOPPER).isRedstoneConductor(BlockInit::isntSolid)

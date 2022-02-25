@@ -110,6 +110,27 @@
 	"block.so_many_enchants.enchanted_smoker": "Enchanted Smoker",
 	
 	"so_many_enchants.screen.config.max_level.lightBlade": "Light Blade | Max Level",
-	"enchantment.so_many_enchants.light_blade": "Light Blade"
+	"enchantment.so_many_enchants.light_blade": "Light Blade",
+
+	"enchantment.so_many_enchants.health_boost.desc": "For each level of health boost will give the wearer one more heart. This stacks with other armor pieces.",
+	"enchantment.so_many_enchants.flight.desc": "When boots with flight are worn, you will be able to fly. While flying you will lose hunger.",
+	"enchantment.so_many_enchants.attack_reach.desc": "Weapons with this enchant will have 1.5 more blocks of reach per level.",
+	"enchantment.so_many_enchants.block_reach.desc": "Tools with this enchant gain one block of reach for breaking blocks per level.",
+	"enchantment.so_many_enchants.freezing_attack.desc": "When you hit enemies they will not be able to move, will dig slower, and will not jump.",
+	"enchantment.so_many_enchants.replanting.desc": "When you mine a crop with this enchantment it will automatically be replaced.",
+	"enchantment.so_many_enchants.temper.desc": "For each level of this enchantment, armor will gain 1 armor toughness.",
+	"enchantment.so_many_enchants.reinforcement.desc": "For each level of this enchantment, armor will gain 1 armor bar.",
+	"enchantment.so_many_enchants.critical.desc": "For each level of critical, you have 20% more of a chance to do a critical hit without jumping or do more damage with a normal critical",
+	"enchantment.so_many_enchants.heavy.desc": "For each level of this enchantment, armor will gain 1 knockback resistance.",
+	"enchantment.so_many_enchants.cat_vision.desc": "When worn you will have infinite night vision.",
+	"enchantment.so_many_enchants.double_break.desc": "For each level, you have a 20% more of a chancce to break 2 blocks instead of one.",
+	"enchantment.so_many_enchants.step_assist.desc": "For each level gain 0.5 blocks of step height.",
+	"enchantment.so_many_enchants.fast_hopper.desc": "Will make a hopper transfer 4 times faster.",
+	"enchantment.so_many_enchants.cavernous_storage.desc": "Adds an extra row to chests and shulker boxes.",
+	"enchantment.so_many_enchants.fast_smelt.desc": "Makes furnaces, blast furnaces, and smokers smelt faster.",
+	"enchantment.so_many_enchants.fuel_efficient.desc": "Makes furnaces, blast furnaces, and smokers smelt use fuel less quickly. (It will last longer)",
+	"enchantment.so_many_enchants.extra_experience.desc": "Makes furnaces, blast furnaces, and smokers smelt give more experience when you take items out.",
+	"enchantment.so_many_enchants.heavy_blade.desc": "Weapons do a lot more attack damage but attack speed is reduced.",
+	"enchantment.so_many_enchants.light_blade.desc": "Weapons are a lot faster but do less damage."
 	
 }

@@ -2,7 +2,7 @@ package com.yeetmanlord.somanyenchants.core.events;
 
 import java.util.Random;
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
@@ -17,7 +17,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
+@EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class ApplyCriticalEnchant {
 	@SubscribeEvent
 	public static void applyCriticalEnchantment(final CriticalHitEvent event) {
@@ -35,7 +35,7 @@ public class ApplyCriticalEnchant {
 				} else if ((chance >= criticalLevel * 20 && chance <= 100)) {
 					return;
 				}
-				Main.LOGGER.error("{} is an invalid chance somehow", (Object) String.valueOf(chance));
+				SoManyEnchants.LOGGER.error("{} is an invalid chance somehow", (Object) String.valueOf(chance));
 				throw (new IllegalStateException(chance + " is an invalid percentage"));
 			} else if (event.isVanillaCritical() == false) {
 				int chance = (int) (rand.nextFloat() * 100);
@@ -47,10 +47,10 @@ public class ApplyCriticalEnchant {
 						|| player.getAttackStrengthScale(0.5F) < 1.0F) {
 					return;
 				}
-				Main.LOGGER.error("{} is an invalid chance somehow", (Object) String.valueOf(chance));
+				SoManyEnchants.LOGGER.error("{} is an invalid chance somehow", (Object) String.valueOf(chance));
 				throw (new IllegalStateException(chance + " is an invalid percentage"));
 			}
-			Main.LOGGER.error("{} has invalid critical state", (Object) player.getName().getString());
+			SoManyEnchants.LOGGER.error("{} has invalid critical state", (Object) player.getName().getString());
 			throw (new IllegalStateException(player.getName().getString() + " has invalid critical state"));
 		}
 	}

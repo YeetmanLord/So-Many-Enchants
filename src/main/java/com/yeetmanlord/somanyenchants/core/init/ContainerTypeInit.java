@@ -1,6 +1,6 @@
 package com.yeetmanlord.somanyenchants.core.init;
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.common.blocks.smelters.blast_furnace.EnchantedBlastFurnaceContainer;
 import com.yeetmanlord.somanyenchants.common.blocks.smelters.furnace.EnchantedFurnaceContainer;
 import com.yeetmanlord.somanyenchants.common.blocks.smelters.smoker.EnchantedSmokerContainer;
@@ -16,7 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class ContainerTypeInit {
 
 	public static final DeferredRegister<MenuType<?>> CONTAINER_TYPES = DeferredRegister
-			.create(ForgeRegistries.CONTAINERS, Main.MOD_ID);
+			.create(ForgeRegistries.CONTAINERS, SoManyEnchants.MOD_ID);
 
 	public static final RegistryObject<MenuType<EnchantedHopperContainer>> ENCHANTED_HOPPER = CONTAINER_TYPES
 			.register("enchanted_hopper",

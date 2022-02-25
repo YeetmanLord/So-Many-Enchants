@@ -27,7 +27,8 @@
 		"enchants.MixinTridentRiptideEnchantment",
 		"MixinShulkerBoxSlot",
 		"MixinCombatRules",
-		"MixinHopperTileEntity"
+		"MixinHopperTileEntity",
+		"enchants.MixinEnchantment"
 	],
 	"client": [
 	],

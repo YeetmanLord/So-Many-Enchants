@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedChestBlock;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedHopper;
 import com.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
@@ -57,7 +57,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
+@EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class BlockEnchants
 {
 
@@ -272,7 +272,7 @@ public class BlockEnchants
 					else
 					{
 						event.setCanceled(true);
-						Main.LOGGER.error("The player " + player.getName().getString()
+						SoManyEnchants.LOGGER.error("The player " + player.getName().getString()
 								+ " just placed a block illegally. He is likely hacking!");
 					}
 
@@ -1417,7 +1417,7 @@ public class BlockEnchants
 
 		if (command.getCommand() != null)
 		{
-			Main.LOGGER.info(command.getCommand().toString());
+			SoManyEnchants.LOGGER.info(command.getCommand().toString());
 			if (command.getCommand().toString().contains("net.minecraft.server.commands.EnchantCommand$$Lambda$"))
 			{
 				Enchantment enchant = command.getArgument("enchantment", Enchantment.class);
@@ -1871,7 +1871,6 @@ public class BlockEnchants
 		return -1;
 	}
 
-	@SuppressWarnings("unused")
 	private static boolean stackEqualExact(ItemStack stack1, ItemStack stack2)
 	{
 		return stack1.getItem() == stack2.getItem() && ItemStack.tagMatches(stack1, stack2);

@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.yeetmanlord.somanyenchants.Main;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 
 import net.minecraft.world.damagesource.DamageSource;
@@ -34,7 +33,6 @@ public class MixinProtectionEnchantment {
 	 * @return Returns the protection value for each damage source based on the type of protection. 
 	 */
 	public int getDamageProtection(int level, DamageSource source) {
-		Main.LOGGER.info(type);
 		if (source.isBypassInvul()) {
 			return 0;
 		} else if (this.type == ProtectionEnchantment.Type.ALL) {

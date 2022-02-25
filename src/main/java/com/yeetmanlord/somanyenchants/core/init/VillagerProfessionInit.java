@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -36,10 +36,10 @@ import net.minecraftforge.registries.RegistryObject;
 public class VillagerProfessionInit {
 
 	public static final DeferredRegister<VillagerProfession> 
-		JOBS = DeferredRegister.create(ForgeRegistries.PROFESSIONS, Main.MOD_ID);
+		JOBS = DeferredRegister.create(ForgeRegistries.PROFESSIONS, SoManyEnchants.MOD_ID);
 	
 	public static final DeferredRegister<PoiType> 
-		POI_TYPE = DeferredRegister.create(ForgeRegistries.POI_TYPES, Main.MOD_ID);
+		POI_TYPE = DeferredRegister.create(ForgeRegistries.POI_TYPES, SoManyEnchants.MOD_ID);
 	
 	public static final RegistryObject<PoiType> ENCHANTMENT_TABLE = POI_TYPE.register("enchantment_table", () -> new PoiType("enchantment_table", getAllStates(Blocks.ENCHANTING_TABLE), 1, 1));
 	

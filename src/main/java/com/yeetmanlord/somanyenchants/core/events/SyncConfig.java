@@ -4,7 +4,7 @@ import java.io.File;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.network.NetworkHandler;
 import com.yeetmanlord.somanyenchants.core.network.message.ConfigSetPacket;
@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.loading.FMLPaths;
 
-@EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
+@EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class SyncConfig {
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)

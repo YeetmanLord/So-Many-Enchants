@@ -1,6 +1,6 @@
 package com.yeetmanlord.somanyenchants.core.events;
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 import com.yeetmanlord.somanyenchants.core.network.NetworkHandler;
@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.network.PacketDistributor;
 
-@EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
+@EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void armorEnchantments(final LivingEquipmentChangeEvent event) {
@@ -135,7 +135,7 @@ public class ArmorEnchantments {
 			Player player = (Player) e;
 			ItemStack a = event.getFrom();
 			ItemStack b = event.getTo();
-			PlayerUtilities util = Main.getPlayerUtil(player);
+			PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
 			if (event.getSlot() == EquipmentSlot.FEET) {
 				if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 0 && ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) <= 3) {
 					player.maxUpStep = player.maxUpStep
@@ -176,7 +176,7 @@ public class ArmorEnchantments {
 	public static void updateStepAssist(final PlayerTickEvent event) {
 
 		Player player = event.player;
-		PlayerUtilities util = Main.getPlayerUtil(player);
+		PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
 		if (ModEnchantmentHelper.getStepAssistLevel(player) > 0 && Config.stepAssist.isEnabled.get() == true) {
 			player.maxUpStep = util.getStepHeight();
 		} else if (MathUtils.roundNearestPlace(util.getStepHeight(), -1) == 0.6f
@@ -203,7 +203,7 @@ public class ArmorEnchantments {
 	public static void switchGM(final PlayerChangeGameModeEvent event)
 	{
 		Player player = event.getPlayer();
-		Scheduler sch = Main.getScheduler(player);
+		Scheduler sch = SoManyEnchants.getScheduler(player);
 		sch.schedule(() -> new Runnable() {
 			@Override
 			public void run() 

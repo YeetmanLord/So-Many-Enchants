@@ -1,6 +1,6 @@
 package com.yeetmanlord.somanyenchants.core.network;
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.core.network.message.AttackPacket;
 import com.yeetmanlord.somanyenchants.core.network.message.ConfigSetPacket;
 import com.yeetmanlord.somanyenchants.core.network.message.FlyingPacket;
@@ -13,7 +13,7 @@ public class NetworkHandler {
 
 	public static final String NETWORK_VERSION = "SME-MAIN-1.1.0";
 	
-	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(Main.MOD_ID, "packet_handler"), 
+	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(SoManyEnchants.MOD_ID, "packet_handler"), 
 			() -> NETWORK_VERSION, version -> version.equals(NETWORK_VERSION), version -> version.equals(NETWORK_VERSION));
 	
 	

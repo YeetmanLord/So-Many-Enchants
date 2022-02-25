@@ -2,7 +2,7 @@ package com.yeetmanlord.somanyenchants.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.common.container.EnchantedShulkerBoxContainer;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class EnchantedShulkerBoxScreen extends AbstractContainerScreen<EnchantedShulkerBoxContainer> {
-   private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Main.MOD_ID + ":textures/gui/container/enchanted_shulker_box.png");
+   private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(SoManyEnchants.MOD_ID + ":textures/gui/container/enchanted_shulker_box.png");
 
    public EnchantedShulkerBoxScreen(EnchantedShulkerBoxContainer screenContainer, Inventory inv, Component titleIn) {
       super(screenContainer, inv, titleIn);

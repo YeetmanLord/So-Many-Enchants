@@ -1,6 +1,6 @@
 package com.yeetmanlord.somanyenchants.core.init;
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -12,7 +12,7 @@ public class ItemInit {
 	
 	private static Item.Properties p = new Item.Properties().stacksTo(1);
 	
-	public static final DeferredRegister<Item> BLOCK_ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Main.MOD_ID);
+	public static final DeferredRegister<Item> BLOCK_ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, SoManyEnchants.MOD_ID);
 	
 	public static final RegistryObject<BlockItem> ENCHANTED_SHULKER_BOX = BLOCK_ITEMS.register("enchanted_shulker_box",
 			() -> new BlockItem(BlockInit.ENCHANTED_SHULKER_BOX.get(), p));

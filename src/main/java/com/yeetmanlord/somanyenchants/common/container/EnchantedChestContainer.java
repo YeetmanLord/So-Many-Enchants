@@ -17,7 +17,6 @@ public class EnchantedChestContainer extends AbstractContainerMenu {
 	private final Container lowerChestInventory;
 	private final int numRows;
 
-	@SuppressWarnings("unused")
 	private EnchantedChestContainer(MenuType<?> type, int id, Inventory player, int rows) {
 		this(type, id, player, new SimpleContainer(9 * rows), rows);
 	}

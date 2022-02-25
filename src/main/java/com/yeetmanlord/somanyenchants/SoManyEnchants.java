@@ -44,17 +44,17 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 @Mod("so_many_enchants")
-@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.MOD)
-public class Main 
+@Mod.EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.MOD)
+public class SoManyEnchants 
 {
 	public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "so_many_enchants";
-    public static Main instance;
+    public static SoManyEnchants instance;
     
     public static HashMap<Player, PlayerUtilities> playerUtils;
 	public static HashMap<Player, Scheduler> playerTaskSchedulers = new HashMap<>();
     
-    public Main() {
+    public SoManyEnchants() {
     	playerUtils = new HashMap<>();
     	instance=this;
     	final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

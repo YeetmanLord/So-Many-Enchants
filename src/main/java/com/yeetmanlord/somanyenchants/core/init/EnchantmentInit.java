@@ -1,6 +1,6 @@
 package com.yeetmanlord.somanyenchants.core.init;
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.common.enchantments.armor.ArmorHeavyEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.armor.ArmorReinforcementEnchant;
 import com.yeetmanlord.somanyenchants.common.enchantments.armor.ArmorTemperEnchant;
@@ -35,7 +35,7 @@ public class EnchantmentInit
 	private static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 	
 	public static final DeferredRegister<Enchantment> 
-		ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, Main.MOD_ID);
+		ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, SoManyEnchants.MOD_ID);
 	
 	//Can enchant at table
 	public static final RegistryObject<Enchantment> HEALTH_BOOST 

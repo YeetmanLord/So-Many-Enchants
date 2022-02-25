@@ -2,7 +2,7 @@ package com.yeetmanlord.somanyenchants.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.common.container.EnchantedHopperContainer;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class EnchantedHopperScreen extends AbstractContainerScreen<EnchantedHopperContainer> {
-   private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Main.MOD_ID + ":textures/gui/container/enchanted_hopper.png");
+   private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(SoManyEnchants.MOD_ID + ":textures/gui/container/enchanted_hopper.png");
 
    public EnchantedHopperScreen(EnchantedHopperContainer container, Inventory playerInventory, Component title) {
       super(container, playerInventory, title);

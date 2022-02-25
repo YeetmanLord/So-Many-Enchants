@@ -2,7 +2,7 @@ package com.yeetmanlord.somanyenchants.core.util;
 
 import java.util.function.Supplier;
 
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
@@ -48,13 +48,13 @@ public class Scheduler {
 		}
 	}
 	
-	@EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE)
+	@EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 	public static class SchedulerEvents
 	{
 		@SubscribeEvent
 		public static void serverTick(final ServerTickEvent tick)
 		{
-			for(Scheduler sch : Main.playerTaskSchedulers.values())
+			for(Scheduler sch : SoManyEnchants.playerTaskSchedulers.values())
 			{
 				if(sch.hasTask)
 				{

@@ -2,7 +2,8 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1,
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
@@ -43,13 +44,19 @@
               ]
             },
             {
-              "function": "minecraft:enchant_randomly",
-              "enchantments": [
-                "so_many_enchants:cavernous_storage"
-              ]
+              "function": "minecraft:set_enchantments",
+              "enchantments": {
+                "so_many_enchants:cavernous_storage": 1.0
+              },
+              "add": false
             }
           ],
           "name": "so_many_enchants:enchanted_pink_shulker_box"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
         }
       ]
     }

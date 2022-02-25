@@ -110,5 +110,26 @@
 	"block.so_many_enchants.enchanted_smoker": "魔法吸煙者",
 	
 	"so_many_enchants.screen.config.max_level.lightBlade": "光刃 | 最高等級",
-	"enchantment.so_many_enchants.light_blade": "光刃"
+	"enchantment.so_many_enchants.light_blade": "光刃",
+	
+	"enchantment.so_many_enchants.health_boost.desc": "對於每種級別的健康提升，將為佩戴者提供一種心。 這堆疊與其他盔甲。 ",
+	"enchantment.so_many_enchants.flight.desc": "當帶飛行的靴子磨損時，你將能夠飛行。 在飛行時，你會失去飢餓。",
+	"enchantment.so_many_enchants.attack_reach.desc": "具有這種附帶的武器將有1.5個每水平的更多樓層。",
+	"enchantment.so_many_enchants.block_reach.desc": "具有此奇特的工具可以獲得一個覆蓋塊，用於打破每個級別的塊。",
+	"enchantment.so_many_enchants.freezing_attack.desc": "當你擊中敵人時，他們將無法移動，將挖得慢，不會跳。",
+	"enchantment.so_many_enchants.replanting.desc": "當你用這種魔法挖掘作物時，它會自動更換。",
+	"enchantment.so_many_enchants.temper.desc": "對於這種魔法的每個級別，盔甲將獲得1個裝甲韌性。",
+	"enchantment.so_many_enchants.reinforcement.desc": "對於這種魔法的每個級別，盔甲將獲得1個裝甲酒吧。",
+	"enchantment.so_many_enchants.critical.desc": "對於每個級別的關鍵級別，您有20％的機會在不跳躍的情況下進行嚴重的擊中，或者在正常批判中做出更多傷害。",
+	"enchantment.so_many_enchants.heavy.desc": "對於這種魔法的每個級別，盔甲將獲得1個批次阻力。",
+	"enchantment.so_many_enchants.cat_vision.desc": "當佩戴時，你會有無限的夜視。",
+	"enchantment.so_many_enchants.double_break.desc": "對於每個級別，您有20％的機會突破2個塊而不是一個。",
+	"enchantment.so_many_enchants.step_assist.desc": "對於每個級別增益0.5塊步高度。",
+	"enchantment.so_many_enchants.fast_hopper.desc": "將使料斗轉移4倍。",
+	"enchantment.so_many_enchants.cavernous_storage.desc": "為箱子和墊片盒添加額外的行。",
+	"enchantment.so_many_enchants.fast_smelt.desc": "使爐子，高爐和吸煙者聞起來更快。",
+	"enchantment.so_many_enchants.fuel_efficient.desc": "使爐子，高爐，吸煙者迅速冶煉燃料。 （它會持續更長時間）",
+	"enchantment.so_many_enchants.extra_experience.desc": "使爐子，高爐，吸煙者聞到您拍攝物品時提供更多體驗。",
+	"enchantment.so_many_enchants.heavy_blade.desc": "武器做了更多的攻擊傷害，但攻擊速度減少了。",
+	"enchantment.so_many_enchants.light_blade.desc": "武器的速度越快，但損壞較小。"
 }

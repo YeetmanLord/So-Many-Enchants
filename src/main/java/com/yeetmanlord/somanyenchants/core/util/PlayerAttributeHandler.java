@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.yeetmanlord.somanyenchants.Main;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.core.init.AttributeInit;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
@@ -51,14 +51,14 @@ public class PlayerAttributeHandler {
 	protected static final UUID ATTACK_SPEED_MODIFIER = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
 
 	public static void addToAttributeBase(Player player, Attribute attr, double addon, ItemStack stack) {
-		PlayerUtilities util = Main.getPlayerUtil(player);
+		PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
 		NBTHelper.writeAttributeValue(stack, addon, attr);
 		player.getAttributes().getInstance(attr)
 				.setBaseValue(player.getAttributeBaseValue(attr) + addon);
 	}
 
 	public static void removeAttribute(Player player, Attribute attr, ItemStack stack) {
-		PlayerUtilities util = Main.getPlayerUtil(player);
+		PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
 		double value = NBTHelper.getAttributeValue(stack, attr);
 		player.getAttributes().getInstance(attr)
 				.setBaseValue(player.getAttributeBaseValue(attr) - value);
@@ -79,7 +79,7 @@ public class PlayerAttributeHandler {
 		}
 	}
 
-	@EventBusSubscriber(modid = Main.MOD_ID, bus = Bus.FORGE, value = Dist.CLIENT)
+	@EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE, value = Dist.CLIENT)
 	public static class TooltipUpdate {
 		@SubscribeEvent(priority = EventPriority.HIGHEST)
 		public static void updateTooltip(final ItemTooltipEvent event) {
