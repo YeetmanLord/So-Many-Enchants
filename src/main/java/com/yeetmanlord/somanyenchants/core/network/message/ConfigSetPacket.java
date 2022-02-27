@@ -3,6 +3,7 @@ package com.yeetmanlord.somanyenchants.core.network.message;
 import java.util.function.Supplier;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -36,6 +37,7 @@ public class ConfigSetPacket {
 	public static void handle(ConfigSetPacket msg, Supplier<NetworkEvent.Context> contextSup)
 	{
 		NetworkEvent.Context context = contextSup.get();
+		SoManyEnchants.LOGGER.info("Synching Configs!");
 		
 		context.enqueueWork(() -> {
 			ServerPlayer player = context.getSender();

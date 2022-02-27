@@ -13,8 +13,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -22,23 +22,24 @@ import net.minecraftforge.fml.loading.FMLPaths;
 
 @EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class SyncConfig {
-	@SubscribeEvent
-	@OnlyIn(Dist.CLIENT)
-	public static void syncConfig(final PlayerLoggedInEvent event) {
+
+	@SubscribeEvent @OnlyIn(Dist.CLIENT)
+	public static void syncConfig(final EntityJoinWorldEvent event) {
+
 		if (event.getEntity() instanceof LocalPlayer) {
 			NetworkHandler.CHANNEL.sendToServer(new ConfigSetPacket(0));
 		}
+
 	}
 
-	@SubscribeEvent
-	@OnlyIn(Dist.CLIENT)
-	public static void syncConfig(final PlayerLoggedOutEvent event) {
+	@SubscribeEvent @OnlyIn(Dist.CLIENT)
+	public static void syncConfig(final EntityLeaveWorldEvent event) {
+
 		if (event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
+
 			if (!player.isDeadOrDying()) {
-				final CommentedFileConfig file = CommentedFileConfig
-						.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString()))
-						.sync().autosave().writingMode(WritingMode.REPLACE).build();
+				final CommentedFileConfig file = CommentedFileConfig.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString())).sync().autosave().writingMode(WritingMode.REPLACE).build();
 				file.load();
 
 				Config.load(file);
@@ -47,6 +48,9 @@ public class SyncConfig {
 
 				file.save();
 			}
+
 		}
+
 	}
+
 }
