@@ -85,7 +85,7 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	@Override public Optional<Container>acceptNone(){return Optional.empty();}};
 	private static final DoubleBlockCombiner.Combiner<EnchantedChestTileEntity, Optional<MenuProvider>> MENU_PROVIDER_COMBINER=new DoubleBlockCombiner.Combiner<EnchantedChestTileEntity,Optional<MenuProvider>>(){@Override public Optional<MenuProvider>acceptDouble(final EnchantedChestTileEntity p_51604_,final EnchantedChestTileEntity p_51605_){final Container container=new CompoundContainer(p_51604_,p_51605_);return Optional.of(new MenuProvider(){@Override @Nullable public AbstractContainerMenu createMenu(int p_51622_,Inventory p_51623_,Player p_51624_){if(p_51604_.canOpen(p_51624_)&&p_51605_.canOpen(p_51624_)){p_51604_.unpackLootTable(p_51623_.player);p_51605_.unpackLootTable(p_51623_.player);return EnchantedChestContainer.createGeneric9X8(p_51622_,p_51623_,container);}else{return null;}}
 
-	@Override public Component getDisplayName(){if(p_51604_.hasCustomName()){return p_51604_.getDisplayName();}else{return(Component)(p_51605_.hasCustomName()?p_51605_.getDisplayName():new TranslatableComponent("container.chestDouble"));}}});}
+	@Override public Component getDisplayName(){if(p_51604_.hasCustomName()){return p_51604_.getDisplayName();}else{return(Component)(p_51605_.hasCustomName()?p_51605_.getDisplayName():new TranslatableComponent("container.enchantedChestDouble"));}}});}
 
 	@Override public Optional<MenuProvider>acceptSingle(EnchantedChestTileEntity p_51602_){return Optional.of(p_51602_);}
 

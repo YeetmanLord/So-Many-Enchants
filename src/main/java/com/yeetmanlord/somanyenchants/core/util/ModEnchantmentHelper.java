@@ -51,19 +51,19 @@ public class ModEnchantmentHelper
 	
 	public static int getReinforcementLevel(LivingEntity player, int armorSlot)
 	{
-		return getMaxEnchantmentLevelArmor(EnchantmentInit.REINFORCEMENT.get(), player, armorSlot);
+		return getMaxEnchantmentLevelArmor(EnchantmentInit.REINFORCED_ARMOR.get(), player, armorSlot);
 	}
 	
 	
 	
 	public static int getTemperLevel(LivingEntity player, int armorSlot)
 	{
-		return getMaxEnchantmentLevelArmor(EnchantmentInit.TEMPER.get(), player, armorSlot);
+		return getMaxEnchantmentLevelArmor(EnchantmentInit.TEMPERED_ARMOR.get(), player, armorSlot);
 	}
 	
 	public static int getHeavyArmorLevel(LivingEntity player, int armorSlot)
 	{
-		return getMaxEnchantmentLevelArmor(EnchantmentInit.HEAVY.get(), player, armorSlot);
+		return getMaxEnchantmentLevelArmor(EnchantmentInit.HEAVY_ARMOR.get(), player, armorSlot);
 	}
 	
 	public static int getCriticalLevel(LivingEntity player)

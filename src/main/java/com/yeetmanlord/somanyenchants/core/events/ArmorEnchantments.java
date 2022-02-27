@@ -1,6 +1,9 @@
 package com.yeetmanlord.somanyenchants.core.events;
 
+import java.util.HashMap;
+
 import com.yeetmanlord.somanyenchants.SoManyEnchants;
+import com.yeetmanlord.somanyenchants.common.enchantments.EffectEnchantment;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 import com.yeetmanlord.somanyenchants.core.network.NetworkHandler;
@@ -13,6 +16,9 @@ import com.yeetmanlord.somanyenchants.core.util.Scheduler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -51,38 +57,40 @@ public class ArmorEnchantments {
 						PlayerAttributeHandler.removeAttribute(player, Attributes.MAX_HEALTH, from);
 					}
 				}
-				
+
 				boolean tEnabled = Config.temper.isEnabled.get();
 				if (tEnabled) {
-					boolean flag1 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.TEMPER.get(), to);
-					boolean flag2 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.TEMPER.get(), from);
+					boolean flag1 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.TEMPERED_ARMOR.get(), to);
+					boolean flag2 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.TEMPERED_ARMOR.get(), from);
 					if (flag1) {
-						int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.TEMPER.get(), to);
+						int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.TEMPERED_ARMOR.get(), to);
 						PlayerAttributeHandler.addToAttributeBase(player, Attributes.ARMOR_TOUGHNESS, level, to);
 					} else if (flag2) {
 						PlayerAttributeHandler.removeAttribute(player, Attributes.ARMOR_TOUGHNESS, from);
 					}
 				}
-				
+
 				boolean rEnabled = Config.reinforcement.isEnabled.get();
 				if (rEnabled) {
-					boolean flag1 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.REINFORCEMENT.get(), to);
-					boolean flag2 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.REINFORCEMENT.get(), from);
+					boolean flag1 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.REINFORCED_ARMOR.get(), to);
+					boolean flag2 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.REINFORCED_ARMOR.get(), from);
 					if (flag1) {
-						int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.REINFORCEMENT.get(), to);
+						int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.REINFORCED_ARMOR.get(),
+								to);
 						PlayerAttributeHandler.addToAttributeBase(player, Attributes.ARMOR, level * 2, to);
 					} else if (flag2) {
 						PlayerAttributeHandler.removeAttribute(player, Attributes.ARMOR, from);
 					}
 				}
-				
+
 				boolean heEnabled = Config.heavyArmor.isEnabled.get();
 				if (heEnabled) {
-					boolean flag1 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.HEAVY.get(), to);
-					boolean flag2 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.HEAVY.get(), from);
+					boolean flag1 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.HEAVY_ARMOR.get(), to);
+					boolean flag2 = ModEnchantmentHelper.hasEnchant(EnchantmentInit.HEAVY_ARMOR.get(), from);
 					if (flag1) {
-						int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.HEAVY.get(), to);
-						PlayerAttributeHandler.addToAttributeBase(player, Attributes.KNOCKBACK_RESISTANCE, level * 0.1, to);
+						int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.HEAVY_ARMOR.get(), to);
+						PlayerAttributeHandler.addToAttributeBase(player, Attributes.KNOCKBACK_RESISTANCE, level * 0.1,
+								to);
 					} else if (flag2) {
 						PlayerAttributeHandler.removeAttribute(player, Attributes.KNOCKBACK_RESISTANCE, from);
 					}
@@ -104,16 +112,20 @@ public class ArmorEnchantments {
 					if (level > 0 && !player.isDeadOrDying()) {
 						player.abilities.mayfly = true;
 						player.onUpdateAbilities();
-						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {return (ServerPlayer) player;}), new FlyingPacket(true));
-						
+						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {
+							return (ServerPlayer) player;
+						}), new FlyingPacket(true));
+
 					}
 				} else if (oldSlot != ItemStack.EMPTY) {
-					int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FLIGHT.get(), oldSlot); 
+					int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FLIGHT.get(), oldSlot);
 					if (level > 0 && !player.isDeadOrDying()) {
 						player.abilities.mayfly = false;
 						player.abilities.flying = false;
 						player.onUpdateAbilities();
-						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {return (ServerPlayer) player;}), new FlyingPacket(false));
+						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {
+							return (ServerPlayer) player;
+						}), new FlyingPacket(false));
 					}
 				}
 			}
@@ -137,35 +149,29 @@ public class ArmorEnchantments {
 			ItemStack b = event.getTo();
 			PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
 			if (event.getSlot() == EquipmentSlot.FEET) {
-				if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 0 && ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) <= 3) {
+				if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 0
+						&& ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) <= 3) {
 					player.maxUpStep = player.maxUpStep
 							- ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) * 0.5f;
 					util.setLastModifiedStepHeight(0.6f
 							+ ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) * 0.5f);
 					util.setStepHeight(player.maxUpStep);
-				}
-				else if(ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 3)
-				{
-					player.maxUpStep = player.maxUpStep
-							- 3 * 0.5f;
-					util.setLastModifiedStepHeight(0.6f
-							+ 3 * 0.5f);
+				} else if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 3) {
+					player.maxUpStep = player.maxUpStep - 3 * 0.5f;
+					util.setLastModifiedStepHeight(0.6f + 3 * 0.5f);
 					util.setStepHeight(player.maxUpStep);
 				}
 
-				if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), b) > 0 && ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), b) <= 3) {
+				if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), b) > 0
+						&& ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), b) <= 3) {
 					util.setLastModifiedStepHeight(player.maxUpStep
 							- ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) * 0.5f);
 					player.maxUpStep = 0.6f
 							+ ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), b) * 0.5f;
 					util.setStepHeight(player.maxUpStep);
-				}
-				else if(ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 3)
-				{
-					util.setLastModifiedStepHeight(player.maxUpStep
-							- 3 * 0.5f);
-					player.maxUpStep = 0.6f
-							+ 3 * 0.5f;
+				} else if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 3) {
+					util.setLastModifiedStepHeight(player.maxUpStep - 3 * 0.5f);
+					player.maxUpStep = 0.6f + 3 * 0.5f;
 					util.setStepHeight(player.maxUpStep);
 				}
 			}
@@ -183,15 +189,15 @@ public class ArmorEnchantments {
 				&& MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) != MathUtils
 						.roundNearestPlace(util.getStepHeight(), -1)
 				&& ModEnchantmentHelper.getStepAssistLevel(player) == 0
-				&& MathUtils.roundNearestPlace(player.maxUpStep, -1) == MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) && Config.stepAssist.isEnabled.get() == true) {
+				&& MathUtils.roundNearestPlace(player.maxUpStep, -1) == MathUtils
+						.roundNearestPlace(util.getLastModifiedStepHeight(), -1)
+				&& Config.stepAssist.isEnabled.get() == true) {
 			player.maxUpStep = 0.6f;
 		}
 	}
-	
-	public static class ClientAccess
-	{
-		public static void updatePlayerFlying(boolean flying) 
-		{
+
+	public static class ClientAccess {
+		public static void updatePlayerFlying(boolean flying) {
 			@SuppressWarnings("resource")
 			LocalPlayer player = Minecraft.getInstance().player;
 			player.abilities.mayfly = flying;
@@ -200,23 +206,56 @@ public class ArmorEnchantments {
 	}
 
 	@SubscribeEvent
-	public static void switchGM(final PlayerChangeGameModeEvent event)
-	{
+	public static void switchGM(final PlayerChangeGameModeEvent event) {
 		Player player = event.getPlayer();
 		Scheduler sch = SoManyEnchants.getScheduler(player);
 		sch.schedule(() -> new Runnable() {
 			@Override
-			public void run() 
-			{
+			public void run() {
 				ItemStack stack = player.inventory.armor.get(0);
 				int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FLIGHT.get(), stack);
-				if(level > 0)
-				{
+				if (level > 0) {
 					player.abilities.mayfly = true;
 					player.onUpdateAbilities();
-					NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {return (ServerPlayer) player;}), new FlyingPacket(true));
+					NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {
+						return (ServerPlayer) player;
+					}), new FlyingPacket(true));
 				}
 			}
 		}, 0);
 	}
+
+	public static int wait = 0;
+
+	@SubscribeEvent
+	public static void effectEnchants(final PlayerTickEvent event) {
+		if (wait < 400) {
+			wait++;
+			return;
+		}
+		wait = 0;
+		Player player = event.player;
+		HashMap<EffectEnchantment, Short> effectEnchs = new HashMap<>();
+		for (ItemStack stack : player.inventory.armor) {
+			stack.getEnchantmentTags().forEach(tag -> {
+				if (tag instanceof CompoundTag nbt) {
+					String name = nbt.getString("id");
+					if (Registry.ENCHANTMENT.get(new ResourceLocation(name)) instanceof EffectEnchantment ench) {
+						short level = nbt.getShort("lvl");
+						if (effectEnchs.containsKey(ench)) {
+							if (effectEnchs.get(ench) < level) {
+								effectEnchs.put(ench, level);
+							}
+						} else {
+							effectEnchs.put(ench, level);
+						}
+					}
+				}
+			});
+		}
+		for (EffectEnchantment ench : effectEnchs.keySet()) {
+			ench.applyEffect(player, effectEnchs.get(ench));
+		}
+	}
+
 }

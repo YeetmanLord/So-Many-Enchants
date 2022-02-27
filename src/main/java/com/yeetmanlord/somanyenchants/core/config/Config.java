@@ -63,6 +63,26 @@ public class Config
 	public static EnchantmentConfig fuelEfficient;
 	public static EnchantmentConfig extraExperience;
 	
+	// Effect Enchantments
+	public static EnchantmentConfig blindness;
+	public static EnchantmentConfig fireResistance;
+	public static EnchantmentConfig haste;
+	public static EnchantmentConfig hunger;
+	public static EnchantmentConfig invisibility;
+	public static EnchantmentConfig jumpBoost;
+	public static EnchantmentConfig miningFatigue;
+	public static EnchantmentConfig nausea;
+	public static EnchantmentConfig poison;
+	public static EnchantmentConfig regeneration;
+	public static EnchantmentConfig resistance;
+	public static EnchantmentConfig saturation;
+	public static EnchantmentConfig slowFalling;
+	public static EnchantmentConfig slowness;
+	public static EnchantmentConfig speed;
+	public static EnchantmentConfig strength;
+	public static EnchantmentConfig waterBreathing;
+	public static EnchantmentConfig weakness;
+	
 	static
 	{
 		
@@ -110,6 +130,27 @@ public class Config
 			extraExperience = new EnchantmentConfig(5, "Extra Experience", 1, true);
 			heavyBlade = new EnchantmentConfig(5, "Heavy Blade", 5, true);
 			lightBlade = new EnchantmentConfig(5, "Light Blade", 3, true);
+			
+			blindness = new EnchantmentConfig(1, "Blindness", 1, true);
+			fireResistance = new EnchantmentConfig(1, "Fire Resistance", 1, true);
+			haste = new EnchantmentConfig(5, "Haste", 3, true);
+			healthBoost = new EnchantmentConfig(5, "Health Boost", 3, true);
+			hunger = new EnchantmentConfig(5, "Hunger", 3, true);
+			invisibility = new EnchantmentConfig(1, "Invisibility", 1, true);
+			jumpBoost = new EnchantmentConfig(5, "Jump Boost", 3, true);
+			miningFatigue = new EnchantmentConfig(5, "Mining Fatigue", 3, true);
+			nausea = new EnchantmentConfig(1, "Nausea", 1, true);
+			poison = new EnchantmentConfig(5, "Poison", 3, true);
+			regeneration = new EnchantmentConfig(5, "Regeneration", 3, true);
+			resistance = new EnchantmentConfig(4, "Resistance", 3, true);
+			saturation = new EnchantmentConfig(5, "Saturation", 3, true);
+			slowFalling = new EnchantmentConfig(1, "Slow Falling", 1, true);
+			slowness = new EnchantmentConfig(3, "Slowness", 3, true);
+			speed = new EnchantmentConfig(5, "Speed", 3, true);
+			strength = new EnchantmentConfig(5, "Strength", 3, true);
+			waterBreathing = new EnchantmentConfig(1, "Water Breathing", 1, true);
+			weakness = new EnchantmentConfig(3, "Weakness", 3, true);
+
 			Config.hasInit = true;
 		}
 		config = builder.build();
@@ -240,7 +281,59 @@ public class Config
     	Config.lightBlade.maxLevel.set(file.get(lightBlade.name + ".maxLevel"));
     	Config.lightBlade.isEnabled.set(file.get(lightBlade.name + ".isEnabled"));
     	
-    	
+    	Config.blindness.maxLevel.set(file.get(blindness.name + ".maxLevel"));
+    	Config.blindness.isEnabled.set(file.get(blindness.name + ".isEnabled"));
+
+    	Config.fireResistance.maxLevel.set(file.get(fireResistance.name + ".maxLevel"));
+    	Config.fireResistance.isEnabled.set(file.get(fireResistance.name + ".isEnabled"));
+
+    	Config.haste.maxLevel.set(file.get(haste.name + ".maxLevel"));
+    	Config.haste.isEnabled.set(file.get(haste.name + ".isEnabled"));
+
+    	Config.hunger.maxLevel.set(file.get(hunger.name + ".maxLevel"));
+    	Config.hunger.isEnabled.set(file.get(hunger.name + ".isEnabled"));
+
+    	Config.invisibility.maxLevel.set(file.get(invisibility.name + ".maxLevel"));
+    	Config.invisibility.isEnabled.set(file.get(invisibility.name + ".isEnabled"));
+
+    	Config.jumpBoost.maxLevel.set(file.get(jumpBoost.name + ".maxLevel"));
+    	Config.jumpBoost.isEnabled.set(file.get(jumpBoost.name + ".isEnabled"));
+
+    	Config.miningFatigue.maxLevel.set(file.get(miningFatigue.name + ".maxLevel"));
+    	Config.miningFatigue.isEnabled.set(file.get(miningFatigue.name + ".isEnabled"));
+
+    	Config.nausea.maxLevel.set(file.get(nausea.name + ".maxLevel"));
+    	Config.nausea.isEnabled.set(file.get(nausea.name + ".isEnabled"));
+
+    	Config.poison.maxLevel.set(file.get(poison.name + ".maxLevel"));
+    	Config.poison.isEnabled.set(file.get(poison.name + ".isEnabled"));
+
+    	Config.regeneration.maxLevel.set(file.get(regeneration.name + ".maxLevel"));
+    	Config.regeneration.isEnabled.set(file.get(regeneration.name + ".isEnabled"));
+
+    	Config.resistance.maxLevel.set(file.get(resistance.name + ".maxLevel"));
+    	Config.resistance.isEnabled.set(file.get(resistance.name + ".isEnabled"));
+
+    	Config.saturation.maxLevel.set(file.get(saturation.name + ".maxLevel"));
+    	Config.saturation.isEnabled.set(file.get(saturation.name + ".isEnabled"));
+
+    	Config.slowFalling.maxLevel.set(file.get(slowFalling.name + ".maxLevel"));
+    	Config.slowFalling.isEnabled.set(file.get(slowFalling.name + ".isEnabled"));
+
+    	Config.slowness.maxLevel.set(file.get(slowness.name + ".maxLevel"));
+    	Config.slowness.isEnabled.set(file.get(slowness.name + ".isEnabled"));
+
+    	Config.speed.maxLevel.set(file.get(speed.name + ".maxLevel"));
+    	Config.speed.isEnabled.set(file.get(speed.name + ".isEnabled"));
+
+    	Config.strength.maxLevel.set(file.get(strength.name + ".maxLevel"));
+    	Config.strength.isEnabled.set(file.get(strength.name + ".isEnabled"));
+
+    	Config.waterBreathing.maxLevel.set(file.get(waterBreathing.name + ".maxLevel"));
+    	Config.waterBreathing.isEnabled.set(file.get(waterBreathing.name + ".isEnabled"));
+
+    	Config.weakness.maxLevel.set(file.get(weakness.name + ".maxLevel"));
+    	Config.weakness.isEnabled.set(file.get(weakness.name + ".isEnabled"));
 	}
 	
 	public static void save(CommentedFileConfig file)

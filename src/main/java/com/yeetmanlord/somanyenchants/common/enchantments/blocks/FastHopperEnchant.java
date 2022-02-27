@@ -3,9 +3,9 @@ package com.yeetmanlord.somanyenchants.common.enchantments.blocks;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentTypesInit;
 
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 public class FastHopperEnchant extends Enchantment
 {

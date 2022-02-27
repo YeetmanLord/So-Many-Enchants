@@ -214,22 +214,22 @@ public class PlayerAttributeHandler {
 										d1 = d0 * 100.0D;
 									}
 									double addon = 0d;
-									if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.HEAVY.get(), stack)
+									if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.HEAVY_ARMOR.get(), stack)
 											&& entry.getKey().getDescriptionId()
 													.equals(Attributes.KNOCKBACK_RESISTANCE.getDescriptionId())) {
-										addon += ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.HEAVY.get(),
+										addon += ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.HEAVY_ARMOR.get(),
 												stack);
-									} else if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.TEMPER.get(), stack)
+									} else if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.TEMPERED_ARMOR.get(), stack)
 											&& entry.getKey().getDescriptionId()
 													.equals(Attributes.ARMOR_TOUGHNESS.getDescriptionId())) {
-										addon += ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.TEMPER.get(),
+										addon += ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.TEMPERED_ARMOR.get(),
 												stack);
-									} else if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.REINFORCEMENT.get(),
+									} else if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.REINFORCED_ARMOR.get(),
 											stack)
 											&& entry.getKey().getDescriptionId()
 													.equals(Attributes.ARMOR.getDescriptionId())) {
 										addon += ModEnchantmentHelper
-												.getEnchantmentLevel(EnchantmentInit.REINFORCEMENT.get(), stack) * 2d;
+												.getEnchantmentLevel(EnchantmentInit.REINFORCED_ARMOR.get(), stack) * 2d;
 									}
 									if (d0 > 0.0D && !flag) {
 										list2.add((new TranslatableComponent(

@@ -3,14 +3,13 @@ package com.yeetmanlord.somanyenchants.common.enchantments.armor;
 import com.yeetmanlord.somanyenchants.core.config.Config;
 import com.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
 public class ArmorTemperEnchant extends Enchantment
 {
-
 	public ArmorTemperEnchant(Rarity rarityIn, EquipmentSlot[] slots) 
 	{
 		super(rarityIn, EnchantmentCategory.ARMOR, slots);
@@ -33,21 +32,19 @@ public class ArmorTemperEnchant extends Enchantment
 	{
 		return super.getMinCost(enchantmentLevel) + 100;
 	}
-	   
-	 @Override
-	public int getMaxLevel() 
-	{
-		 if(Config.temper.isEnabled.get() == false)
-		 {
-			 return 0;
-		 }
-		 else return Config.temper.maxLevel.get();
-	}
 	 
 	@Override
 	protected boolean checkCompatibility(Enchantment ench) 
 	{
-		return super.checkCompatibility(ench) && ench != EnchantmentInit.REINFORCEMENT.get() && ench != EnchantmentInit.HEAVY.get();
+		return super.checkCompatibility(ench) && ench != EnchantmentInit.REINFORCED_ARMOR.get() && ench != EnchantmentInit.HEAVY_ARMOR.get();
+	}
+	
+	@Override
+	public int getMaxLevel() {
+		if (Config.temper.isEnabled.get() == false) {
+			return 0;
+		}
+		return Config.temper.maxLevel.get();
 	}
 
 }
