@@ -1,9 +1,7 @@
 package com.github.yeetmanlord.somanyenchants.mixins.enchants;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.Overwrite;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
@@ -16,24 +14,32 @@ import net.minecraft.world.item.enchantment.Enchantment;
 
 @Mixin(DamageEnchantment.class)
 public abstract class MixinDamageEnchantment {
-	@Inject(at = @At("HEAD"), method = "getMaxLevel()I", cancellable = true)
-	private void getMaxLevel(CallbackInfoReturnable<Integer> callback) {
+
+	@Overwrite
+	public int getMaxLevel() {
+
 		if (Config.damageEnchantments.isEnabled.get() == false) {
-			callback.setReturnValue(5);
-		} else
-			callback.setReturnValue(Config.damageEnchantments.maxLevel.get());
+			return 5;
+		}
+		else {
+
+			return Config.damageEnchantments.maxLevel.get();
+		}
+
 	}
 
-	@Inject(at = @At("RETURN"), method = "checkCompatibility(Lnet/minecraft/world/item/enchantment/Enchantment;)Z", cancellable = true)
-	private void checkCompatibility(Enchantment ench, CallbackInfoReturnable<Boolean> callback) {
-		callback.setReturnValue(!(ench instanceof DamageEnchantment) && ench != EnchantmentInit.HEAVY_BLADE.get()
-				&& ench != EnchantmentInit.LIGHT_BLADE.get());
+	@Overwrite
+	public boolean checkCompatibility(Enchantment ench) {
+
+		return !(ench instanceof DamageEnchantment) && ench != EnchantmentInit.HEAVY_BLADE.get() && ench != EnchantmentInit.LIGHT_BLADE.get();
+
 	}
 
-	@Inject(at = @At("RETURN"), method = "canEnchant(Lnet/minecraft/world/item/ItemStack;)Z", cancellable = true)
-	private void canEnchant(ItemStack stack, CallbackInfoReturnable<Boolean> callback) {
-		callback.setReturnValue(stack.getItem() instanceof TridentItem ? true
-				: stack.getItem() instanceof AxeItem ? true
-						: ((DamageEnchantment) (Object) this).canApplyAtEnchantingTable(stack));
+	@Overwrite
+	public boolean canEnchant(ItemStack stack) {
+
+		return stack.getItem() instanceof TridentItem ? true : stack.getItem() instanceof AxeItem ? true : ((DamageEnchantment) (Object) this).canApplyAtEnchantingTable(stack);
+
 	}
+
 }

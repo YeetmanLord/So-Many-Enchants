@@ -15,7 +15,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -54,7 +53,7 @@ public class PlayerAttributeHandler {
 		if (attr == Attributes.MAX_HEALTH) {
 			if (player.getHealth() > player.getAttributeBaseValue(attr))
 			{
-				player.hurt(DamageSource.OUT_OF_WORLD, (float) (player.getHealth() - player.getAttributeBaseValue(attr)));
+				player.setHealth((float) (player.getHealth() - player.getAttributeBaseValue(attr)));
 			}
 		}
 	}

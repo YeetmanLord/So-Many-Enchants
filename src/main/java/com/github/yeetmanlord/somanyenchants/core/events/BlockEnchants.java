@@ -61,8 +61,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class BlockEnchants {
-
-	// TODO: Make code better!
+	
 	@SubscribeEvent
 	public static void placeEnchantedBlocks(final EntityPlaceEvent event) {
 
