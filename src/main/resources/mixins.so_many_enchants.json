@@ -2,7 +2,7 @@
 	"required": true,
 	"package": "com.github.yeetmanlord.somanyenchants.mixins",
 	"compatibilityLevel": "JAVA_17",
-	"refmap": "so_many_enchants.refmap.json",
+	"refmap": "mixins.so_many_enchants.refmap.json",
 	"mixins": [
 		"enchants.MixinArrowDamageEnchantment",
 		"enchants.MixinDamageEnchantment",
