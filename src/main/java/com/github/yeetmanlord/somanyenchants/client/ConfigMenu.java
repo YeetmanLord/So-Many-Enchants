@@ -53,6 +53,7 @@ public class ConfigMenu extends Screen {
 		final CommentedFileConfig file = CommentedFileConfig.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString())).sync().autosave().writingMode(WritingMode.REPLACE).build();
 		file.load();
 		Config.load(file);
+		
 		this.optionsRowList = new OptionsList(this.minecraft, this.width, this.height, OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
 
 		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.de", 1, Config.damageEnchantments.absoluteMax, 1, get -> (double) Config.damageEnchantments.maxLevel.get(), (set, val) -> Config.damageEnchantments.maxLevel.set(val.intValue()), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.de") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.damageEnchantments.isEnabled.get(), (options, set, val) -> Config.damageEnchantments.isEnabled.set(val.booleanValue())));
@@ -179,7 +180,6 @@ public class ConfigMenu extends Screen {
 
 		this.addRenderableWidget(new Button((this.width - BUTTON_WIDTH / 3 + 100) / 2, this.height - DONE_BUTTON_TOP_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("so_many_enchants.screen.config.default"), button -> this.setDefault()));
 
-		file.close();
 
 	}
 
@@ -387,6 +387,7 @@ public class ConfigMenu extends Screen {
 
 		file.save();
 
+
 		this.minecraft.setScreen((Screen) null);
 
 	}
@@ -401,6 +402,7 @@ public class ConfigMenu extends Screen {
 		Config.SyncedServerConfig.save();
 
 		file.save();
+
 
 		this.minecraft.setScreen(new ConfigMenu());
 
