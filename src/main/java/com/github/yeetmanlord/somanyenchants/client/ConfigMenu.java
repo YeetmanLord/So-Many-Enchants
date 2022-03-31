@@ -1,9 +1,5 @@
 package com.github.yeetmanlord.somanyenchants.client;
 
-import java.io.File;
-
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -17,7 +13,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.loading.FMLPaths;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigMenu extends Screen {
@@ -50,10 +45,6 @@ public class ConfigMenu extends Screen {
 	@Override
 	protected void init() {
 
-		final CommentedFileConfig file = CommentedFileConfig.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString())).sync().autosave().writingMode(WritingMode.REPLACE).build();
-		file.load();
-		Config.load(file);
-		
 		this.optionsRowList = new OptionsList(this.minecraft, this.width, this.height, OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
 
 		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.de", 1, Config.damageEnchantments.absoluteMax, 1, get -> (double) Config.damageEnchantments.maxLevel.get(), (set, val) -> Config.damageEnchantments.maxLevel.set(val.intValue()), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.de") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.damageEnchantments.isEnabled.get(), (options, set, val) -> Config.damageEnchantments.isEnabled.set(val.booleanValue())));
@@ -179,7 +170,6 @@ public class ConfigMenu extends Screen {
 		this.addRenderableWidget(new Button((this.width - BUTTON_WIDTH * 2) / 2, this.height - DONE_BUTTON_TOP_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"), button -> this.onClose()));
 
 		this.addRenderableWidget(new Button((this.width - BUTTON_WIDTH / 3 + 100) / 2, this.height - DONE_BUTTON_TOP_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("so_many_enchants.screen.config.default"), button -> this.setDefault()));
-
 
 	}
 
@@ -378,31 +368,11 @@ public class ConfigMenu extends Screen {
 	@Override
 	public void onClose() {
 
-		final CommentedFileConfig file = CommentedFileConfig.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString())).sync().autosave().writingMode(WritingMode.REPLACE).build();
-		file.load();
-		Config.save(file);
-
-		Config.SyncedServerConfig.setConfig(file);
-		Config.SyncedServerConfig.save();
-
-		file.save();
-
-
 		this.minecraft.setScreen((Screen) null);
 
 	}
 
 	private void refresh() {
-
-		final CommentedFileConfig file = CommentedFileConfig.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString())).sync().autosave().writingMode(WritingMode.REPLACE).build();
-		file.load();
-		Config.save(file);
-
-		Config.SyncedServerConfig.setConfig(file);
-		Config.SyncedServerConfig.save();
-
-		file.save();
-
 
 		this.minecraft.setScreen(new ConfigMenu());
 

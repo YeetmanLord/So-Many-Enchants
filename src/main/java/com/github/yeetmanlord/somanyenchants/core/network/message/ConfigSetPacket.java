@@ -50,11 +50,7 @@ public class ConfigSetPacket {
 				final CommentedFileConfig file = CommentedFileConfig.builder(server.getFile("world/serverconfig/so_many_enchants-server.toml")).build();
 				file.load();
 
-				Config.load(file);
-
 				Config.SyncedServerConfig.setConfig(file);
-
-				file.save();
 
 			}
 

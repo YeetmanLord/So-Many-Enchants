@@ -35,13 +35,7 @@ public class SyncConfig {
 			final CommentedFileConfig file = CommentedFileConfig.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString())).sync().autosave().writingMode(WritingMode.REPLACE).build();
 			file.load();
 
-			Config.load(file);
-
 			Config.SyncedServerConfig.setConfig(file);
-
-			file.save();
-			
-			SoManyEnchants.LOGGER.info("DLKSJDFLKJSDKf");
 
 		}
 
