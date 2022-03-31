@@ -31,12 +31,10 @@ public class SyncConfig {
 	public static void syncConfig(final LoggedOutEvent event) {
 
 		if (event.getPlayer() != null) {
-
 			final CommentedFileConfig file = CommentedFileConfig.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString())).sync().autosave().writingMode(WritingMode.REPLACE).build();
 			file.load();
-
+			Config.load(file);
 			Config.SyncedServerConfig.setConfig(file);
-
 		}
 
 	}

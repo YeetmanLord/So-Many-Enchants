@@ -21,7 +21,7 @@ public abstract class MixinDamageEnchantment {
 	private void getMaxLevel(CallbackInfoReturnable<Integer> callback) {
 
 		if (Config.damageEnchantments.isEnabled.get()) {
-			callback.setReturnValue(Config.punch.maxLevel.get());
+			callback.setReturnValue(Config.damageEnchantments.maxLevel.get());
 		}
 
 	}

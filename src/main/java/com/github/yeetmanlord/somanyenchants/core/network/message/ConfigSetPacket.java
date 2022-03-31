@@ -49,9 +49,7 @@ public class ConfigSetPacket {
 			if (server.isDedicatedServer()) {
 				final CommentedFileConfig file = CommentedFileConfig.builder(server.getFile("world/serverconfig/so_many_enchants-server.toml")).build();
 				file.load();
-
 				Config.SyncedServerConfig.setConfig(file);
-
 			}
 
 		});
