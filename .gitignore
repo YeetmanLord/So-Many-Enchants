@@ -23,3 +23,9 @@ run
 
 # Files from Forge MDK
 forge*changelog.txt
+
+gradle
+*.bat
+*.epf
+*.xml
+*.txt
