@@ -77,7 +77,6 @@ public class SoManyEnchants {
 		VillagerProfessionInit.POI_TYPE.register(modEventBus);
 		VillagerProfessionInit.JOBS.register(modEventBus);
 		ParticleTypesInit.PARTICLES.register(modEventBus);
-		;
 		AttributeInit.ATTRIBUTES.register(modEventBus);
 
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.config);
