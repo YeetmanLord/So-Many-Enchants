@@ -48,8 +48,7 @@ public class EnchantmentTypesInit {
 	}
 
 	public static boolean isModdedEnchantable(Item item) {
-		return (EnchantmentTypesInit.HOPPER.canEnchant(item) || EnchantmentTypesInit.STORAGE.canEnchant(item)
-				|| EnchantmentTypesInit.TRAPPED_CHEST.canEnchant(item)) && item != Items.AIR;
+		return isSmelter(item) || isStorage(item) || HOPPER.canEnchant(item);
 	}
 
 }

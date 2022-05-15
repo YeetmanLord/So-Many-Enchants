@@ -17,18 +17,18 @@ public class FastHopperEnchant extends Enchantment
 	@Override
 	public boolean canEnchant(ItemStack stack)
 	{
-		return EnchantmentTypesInit.HOPPER.canEnchant(stack.getItem());
+		return canApplyAtEnchantingTable(stack);
 	}
 	
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack) {
-		return false;
+		return EnchantmentTypesInit.HOPPER.canEnchant(stack.getItem());
 	}
 	
 	@Override
 	public int getMinCost(int enchantmentLevel) 
 	{
-		return 15;
+		return 3;
 	}
 	
 	@Override

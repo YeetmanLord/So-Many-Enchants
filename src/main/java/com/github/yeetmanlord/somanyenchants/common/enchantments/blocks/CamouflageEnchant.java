@@ -17,18 +17,19 @@ public class CamouflageEnchant extends Enchantment {
 	@Override
 	public boolean canEnchant(ItemStack stack)
 	{
-		return EnchantmentTypesInit.TRAPPED_CHEST.canEnchant(stack.getItem());
+		return canApplyAtEnchantingTable(stack);
 	}
 	
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack) {
-		return false;
+		return EnchantmentTypesInit.TRAPPED_CHEST.canEnchant(stack.getItem());
 	}
+	
 	
 	@Override
 	public int getMinCost(int enchantmentLevel) 
 	{
-		return 30;
+		return 3;
 	}
 	
 	@Override

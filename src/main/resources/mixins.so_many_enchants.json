@@ -27,6 +27,8 @@
 		"enchants.MixinTridentRiptideEnchantment",
 		"MixinShulkerBoxSlot",
 		"MixinCombatRules",
+		"MixinItem",
+		"MixinAnvilMenu",
 		"MixinHopperTileEntity",
 		"enchants.MixinEnchantment"
 	],

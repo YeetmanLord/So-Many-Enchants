@@ -4,6 +4,7 @@ import com.electronwill.nightconfig.core.io.WritingException;
 import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.config.EnchantmentConfig;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.CycleOption;
@@ -51,7 +52,8 @@ public class ConfigMenu extends Screen {
 			config.maxLevel.set((int) val);
 		}
 		catch (WritingException exc) {
-			SoManyEnchants.LOGGER.info("Could not save " + config.name + " Because the file is in use.");
+			SoManyEnchants.LOGGER.error("Could not save " + config.name + " config because the file is in use. Retrying");
+			setMaxLevel(config, val);
 		}
 
 	}
@@ -62,7 +64,8 @@ public class ConfigMenu extends Screen {
 			config.isEnabled.set(value);
 		}
 		catch (WritingException exc) {
-			SoManyEnchants.LOGGER.info("Could not save " + config.name + " config because the file is in use.");
+			SoManyEnchants.LOGGER.error("Could not save " + config.name + " config because the file is in use. Retrying");
+			setIsEnabled(config, value);
 		}
 
 	}
@@ -72,7 +75,11 @@ public class ConfigMenu extends Screen {
 
 		this.optionsRowList = new OptionsList(this.minecraft, this.width, this.height, OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.de", 1, Config.damageEnchantments.absoluteMax, 1, get -> (double) Config.damageEnchantments.maxLevel.get(), (set, val) -> setMaxLevel(Config.damageEnchantments, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.de") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.damageEnchantments.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.damageEnchantments, val)));
+		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.de", 1, Config.damageEnchantments.absoluteMax, 1, get -> (double) Config.damageEnchantments.maxLevel.get(), (set, val) -> setMaxLevel(Config.damageEnchantments, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.de") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.damageEnchantments.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.damageEnchantments, val)).setTooltip((p_167722_) -> {
+			return (p_167728_) -> {
+				return ImmutableList.of(new TextComponent("test").getVisualOrderText());
+			};
+		}));
 
 		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.e", 1, Config.efficiency.absoluteMax, 1, get -> (double) Config.efficiency.maxLevel.get(), (set, val) -> setMaxLevel(Config.efficiency, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.e") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.efficiency.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.efficiency, val)));
 
