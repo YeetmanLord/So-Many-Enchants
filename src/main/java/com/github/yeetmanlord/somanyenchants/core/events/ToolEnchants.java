@@ -49,7 +49,7 @@ public class ToolEnchants {
 											event.setCanceled(true);
 											return;
 										}
-										block.dropResources(event.getState(), player.level, event.getPos());
+										Block.dropResources(event.getState(), player.level, event.getPos());
 										player.level.setBlockAndUpdate(event.getPos(), block.defaultBlockState());
 										player.inventory.removeItem(x, 1);
 										event.setCanceled(true);
