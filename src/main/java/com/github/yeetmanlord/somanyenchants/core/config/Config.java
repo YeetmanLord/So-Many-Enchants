@@ -3,6 +3,8 @@ package com.github.yeetmanlord.somanyenchants.core.config;
 import java.util.HashMap;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.WritingException;
+import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -214,177 +216,186 @@ public class Config {
 
 	public static void load(CommentedFileConfig file) {
 
-		file.load();
-		Config.damageEnchantments.maxLevel.set(file.get("Damage Enchantments" + ".maxLevel"));
-		Config.damageEnchantments.isEnabled.set(file.get("Damage Enchantments" + ".isEnabled"));
 
-		Config.efficiency.maxLevel.set(file.get("Efficiency" + ".maxLevel"));
-		Config.efficiency.isEnabled.set(file.get("Efficiency" + ".isEnabled"));
+		try {
+			file.load();
 
-		Config.fireAspect.maxLevel.set(file.get("Fire Aspect" + ".maxLevel"));
-		Config.fireAspect.isEnabled.set(file.get("Fire Aspect" + ".isEnabled"));
+			Config.damageEnchantments.maxLevel.set(file.get("Damage Enchantments" + ".maxLevel"));
+			Config.damageEnchantments.isEnabled.set(file.get("Damage Enchantments" + ".isEnabled"));
 
-		Config.impaling.maxLevel.set(file.get("Impaling" + ".maxLevel"));
-		Config.impaling.isEnabled.set(file.get("Impaling" + ".isEnabled"));
+			Config.efficiency.maxLevel.set(file.get("Efficiency" + ".maxLevel"));
+			Config.efficiency.isEnabled.set(file.get("Efficiency" + ".isEnabled"));
 
-		Config.knockback.maxLevel.set(file.get("Knockback" + ".maxLevel"));
-		Config.knockback.isEnabled.set(file.get("Knockback" + ".isEnabled"));
+			Config.fireAspect.maxLevel.set(file.get("Fire Aspect" + ".maxLevel"));
+			Config.fireAspect.isEnabled.set(file.get("Fire Aspect" + ".isEnabled"));
 
-		Config.lootBonusEnchantments.maxLevel.set(file.get("Loot Bonus Enchantments" + ".maxLevel"));
-		Config.lootBonusEnchantments.isEnabled.set(file.get("Loot Bonus Enchantments" + ".isEnabled"));
+			Config.impaling.maxLevel.set(file.get("Impaling" + ".maxLevel"));
+			Config.impaling.isEnabled.set(file.get("Impaling" + ".isEnabled"));
 
-		Config.loyalty.maxLevel.set(file.get("Loyalty" + ".maxLevel"));
-		Config.loyalty.isEnabled.set(file.get("Loyalty" + ".isEnabled"));
+			Config.knockback.maxLevel.set(file.get("Knockback" + ".maxLevel"));
+			Config.knockback.isEnabled.set(file.get("Knockback" + ".isEnabled"));
 
-		Config.lure.maxLevel.set(file.get("Lure" + ".maxLevel"));
-		Config.lure.isEnabled.set(file.get("Lure" + ".isEnabled"));
+			Config.lootBonusEnchantments.maxLevel.set(file.get("Loot Bonus Enchantments" + ".maxLevel"));
+			Config.lootBonusEnchantments.isEnabled.set(file.get("Loot Bonus Enchantments" + ".isEnabled"));
 
-		Config.piercing.maxLevel.set(file.get("Piercing" + ".maxLevel"));
-		Config.piercing.isEnabled.set(file.get("Piercing" + ".isEnabled"));
+			Config.loyalty.maxLevel.set(file.get("Loyalty" + ".maxLevel"));
+			Config.loyalty.isEnabled.set(file.get("Loyalty" + ".isEnabled"));
 
-		Config.power.maxLevel.set(file.get("Power" + ".maxLevel"));
-		Config.power.isEnabled.set(file.get("Power" + ".isEnabled"));
+			Config.lure.maxLevel.set(file.get("Lure" + ".maxLevel"));
+			Config.lure.isEnabled.set(file.get("Lure" + ".isEnabled"));
 
-		Config.protectionEnchantments.maxLevel.set(file.get("Protection Enchantments" + ".maxLevel"));
-		Config.protectionEnchantments.isEnabled.set(file.get("Protection Enchantments" + ".isEnabled"));
+			Config.piercing.maxLevel.set(file.get("Piercing" + ".maxLevel"));
+			Config.piercing.isEnabled.set(file.get("Piercing" + ".isEnabled"));
 
-		Config.punch.maxLevel.set(file.get("Punch" + ".maxLevel"));
-		Config.punch.isEnabled.set(file.get("Punch" + ".isEnabled"));
+			Config.power.maxLevel.set(file.get("Power" + ".maxLevel"));
+			Config.power.isEnabled.set(file.get("Power" + ".isEnabled"));
 
-		Config.quickCharge.maxLevel.set(file.get("Quick Charge" + ".maxLevel"));
-		Config.quickCharge.isEnabled.set(file.get("Quick Charge" + ".isEnabled"));
+			Config.protectionEnchantments.maxLevel.set(file.get("Protection Enchantments" + ".maxLevel"));
+			Config.protectionEnchantments.isEnabled.set(file.get("Protection Enchantments" + ".isEnabled"));
 
-		Config.respiration.maxLevel.set(file.get("Respiration" + ".maxLevel"));
-		Config.respiration.isEnabled.set(file.get("Respiration" + ".isEnabled"));
+			Config.punch.maxLevel.set(file.get("Punch" + ".maxLevel"));
+			Config.punch.isEnabled.set(file.get("Punch" + ".isEnabled"));
 
-		Config.riptide.maxLevel.set(file.get("Riptide" + ".maxLevel"));
-		Config.riptide.isEnabled.set(file.get("Riptide" + ".isEnabled"));
+			Config.quickCharge.maxLevel.set(file.get("Quick Charge" + ".maxLevel"));
+			Config.quickCharge.isEnabled.set(file.get("Quick Charge" + ".isEnabled"));
 
-		Config.soulSpeed.maxLevel.set(file.get("Soul Speed" + ".maxLevel"));
-		Config.soulSpeed.isEnabled.set(file.get("Soul Speed" + ".isEnabled"));
+			Config.respiration.maxLevel.set(file.get("Respiration" + ".maxLevel"));
+			Config.respiration.isEnabled.set(file.get("Respiration" + ".isEnabled"));
 
-		Config.sweeping.maxLevel.set(file.get("Sweeping Edge" + ".maxLevel"));
-		Config.sweeping.isEnabled.set(file.get("Sweeping Edge" + ".isEnabled"));
+			Config.riptide.maxLevel.set(file.get("Riptide" + ".maxLevel"));
+			Config.riptide.isEnabled.set(file.get("Riptide" + ".isEnabled"));
 
-		Config.thorns.maxLevel.set(file.get("Thorns" + ".maxLevel"));
-		Config.thorns.isEnabled.set(file.get("Thorns" + ".isEnabled"));
+			Config.soulSpeed.maxLevel.set(file.get("Soul Speed" + ".maxLevel"));
+			Config.soulSpeed.isEnabled.set(file.get("Soul Speed" + ".isEnabled"));
 
-		Config.unbreaking.maxLevel.set(file.get("Unbreaking" + ".maxLevel"));
-		Config.unbreaking.isEnabled.set(file.get("Unbreaking" + ".isEnabled"));
+			Config.sweeping.maxLevel.set(file.get("Sweeping Edge" + ".maxLevel"));
+			Config.sweeping.isEnabled.set(file.get("Sweeping Edge" + ".isEnabled"));
 
-		Config.heavyArmor.maxLevel.set(file.get("Heavy" + ".maxLevel"));
-		Config.heavyArmor.isEnabled.set(file.get("Heavy" + ".isEnabled"));
+			Config.thorns.maxLevel.set(file.get("Thorns" + ".maxLevel"));
+			Config.thorns.isEnabled.set(file.get("Thorns" + ".isEnabled"));
 
-		Config.reinforcement.maxLevel.set(file.get("Reinforcement" + ".maxLevel"));
-		Config.reinforcement.isEnabled.set(file.get("Reinforcement" + ".isEnabled"));
+			Config.unbreaking.maxLevel.set(file.get("Unbreaking" + ".maxLevel"));
+			Config.unbreaking.isEnabled.set(file.get("Unbreaking" + ".isEnabled"));
 
-		Config.temper.maxLevel.set(file.get("Temper" + ".maxLevel"));
-		Config.temper.isEnabled.set(file.get("Temper" + ".isEnabled"));
+			Config.heavyArmor.maxLevel.set(file.get("Heavy" + ".maxLevel"));
+			Config.heavyArmor.isEnabled.set(file.get("Heavy" + ".isEnabled"));
 
-		Config.catVision.isEnabled.set(file.get("Cat Vision" + ".isEnabled"));
+			Config.reinforcement.maxLevel.set(file.get("Reinforcement" + ".maxLevel"));
+			Config.reinforcement.isEnabled.set(file.get("Reinforcement" + ".isEnabled"));
 
-		Config.flight.maxLevel.set(file.get("Flight" + ".maxLevel"));
-		Config.flight.isEnabled.set(file.get("Flight" + ".isEnabled"));
+			Config.temper.maxLevel.set(file.get("Temper" + ".maxLevel"));
+			Config.temper.isEnabled.set(file.get("Temper" + ".isEnabled"));
 
-		Config.healthBoost.maxLevel.set(file.get("Health Boost" + ".maxLevel"));
-		Config.healthBoost.isEnabled.set(file.get("Health Boost" + ".isEnabled"));
+			Config.catVision.isEnabled.set(file.get("Cat Vision" + ".isEnabled"));
 
-		Config.stepAssist.maxLevel.set(file.get("Step Assist" + ".maxLevel"));
-		Config.stepAssist.isEnabled.set(file.get("Step Assist" + ".isEnabled"));
+			Config.flight.maxLevel.set(file.get("Flight" + ".maxLevel"));
+			Config.flight.isEnabled.set(file.get("Flight" + ".isEnabled"));
 
-		Config.fastHopper.isEnabled.set(file.get("Fast Hopper" + ".isEnabled"));
+			Config.healthBoost.maxLevel.set(file.get("Health Boost" + ".maxLevel"));
+			Config.healthBoost.isEnabled.set(file.get("Health Boost" + ".isEnabled"));
 
-		Config.blockReach.maxLevel.set(file.get("Block Reach" + ".maxLevel"));
-		Config.blockReach.isEnabled.set(file.get("Block Reach" + ".isEnabled"));
+			Config.stepAssist.maxLevel.set(file.get("Step Assist" + ".maxLevel"));
+			Config.stepAssist.isEnabled.set(file.get("Step Assist" + ".isEnabled"));
 
-		Config.doubleBreak.maxLevel.set(file.get("Double Break" + ".maxLevel"));
-		Config.doubleBreak.isEnabled.set(file.get("Double Break" + ".isEnabled"));
+			Config.fastHopper.isEnabled.set(file.get("Fast Hopper" + ".isEnabled"));
 
-		Config.replanting.isEnabled.set(file.get("Replanting" + ".isEnabled"));
+			Config.blockReach.maxLevel.set(file.get("Block Reach" + ".maxLevel"));
+			Config.blockReach.isEnabled.set(file.get("Block Reach" + ".isEnabled"));
 
-		Config.attackReach.maxLevel.set(file.get("Attack Reach" + ".maxLevel"));
-		Config.attackReach.isEnabled.set(file.get("Attack Reach" + ".isEnabled"));
+			Config.doubleBreak.maxLevel.set(file.get("Double Break" + ".maxLevel"));
+			Config.doubleBreak.isEnabled.set(file.get("Double Break" + ".isEnabled"));
 
-		Config.critical.maxLevel.set(file.get("Critical" + ".maxLevel"));
-		Config.critical.isEnabled.set(file.get("Critical" + ".isEnabled"));
+			Config.replanting.isEnabled.set(file.get("Replanting" + ".isEnabled"));
 
-		Config.freezing.maxLevel.set(file.get("Freezing" + ".maxLevel"));
-		Config.freezing.isEnabled.set(file.get("Freezing" + ".isEnabled"));
+			Config.attackReach.maxLevel.set(file.get("Attack Reach" + ".maxLevel"));
+			Config.attackReach.isEnabled.set(file.get("Attack Reach" + ".isEnabled"));
 
-		Config.villager.isEnabled.set(file.get("Enchanter Villager" + ".isEnabled"));
+			Config.critical.maxLevel.set(file.get("Critical" + ".maxLevel"));
+			Config.critical.isEnabled.set(file.get("Critical" + ".isEnabled"));
 
-		Config.cavernousStorage.isEnabled.set(file.get("Cavernous Storage" + ".isEnabled"));
+			Config.freezing.maxLevel.set(file.get("Freezing" + ".maxLevel"));
+			Config.freezing.isEnabled.set(file.get("Freezing" + ".isEnabled"));
 
-		Config.camouflage.isEnabled.set(file.get("Camouflage" + ".isEnabled"));
+			Config.villager.isEnabled.set(file.get("Enchanter Villager" + ".isEnabled"));
 
-		Config.fastSmelt.maxLevel.set(file.getInt(fastSmelt.name + ".maxLevel"));
-		Config.fastSmelt.isEnabled.set(file.get(fastSmelt.name + ".isEnabled"));
+			Config.cavernousStorage.isEnabled.set(file.get("Cavernous Storage" + ".isEnabled"));
 
-		Config.heavyBlade.maxLevel.set(file.get(heavyBlade.name + ".maxLevel"));
-		Config.heavyBlade.isEnabled.set(file.get(heavyBlade.name + ".isEnabled"));
+			Config.camouflage.isEnabled.set(file.get("Camouflage" + ".isEnabled"));
 
-		Config.fuelEfficient.maxLevel.set(file.getInt(fuelEfficient.name + ".maxLevel"));
-		Config.fuelEfficient.isEnabled.set(file.get(fuelEfficient.name + ".isEnabled"));
+			Config.fastSmelt.maxLevel.set(file.getInt(fastSmelt.name + ".maxLevel"));
+			Config.fastSmelt.isEnabled.set(file.get(fastSmelt.name + ".isEnabled"));
 
-		Config.extraExperience.maxLevel.set(file.getInt(extraExperience.name + ".maxLevel"));
-		Config.extraExperience.isEnabled.set(file.get(extraExperience.name + ".isEnabled"));
+			Config.heavyBlade.maxLevel.set(file.get(heavyBlade.name + ".maxLevel"));
+			Config.heavyBlade.isEnabled.set(file.get(heavyBlade.name + ".isEnabled"));
 
-		Config.lightBlade.maxLevel.set(file.get(lightBlade.name + ".maxLevel"));
-		Config.lightBlade.isEnabled.set(file.get(lightBlade.name + ".isEnabled"));
+			Config.fuelEfficient.maxLevel.set(file.getInt(fuelEfficient.name + ".maxLevel"));
+			Config.fuelEfficient.isEnabled.set(file.get(fuelEfficient.name + ".isEnabled"));
 
-		Config.blindness.maxLevel.set(file.get(blindness.name + ".maxLevel"));
-		Config.blindness.isEnabled.set(file.get(blindness.name + ".isEnabled"));
+			Config.extraExperience.maxLevel.set(file.getInt(extraExperience.name + ".maxLevel"));
+			Config.extraExperience.isEnabled.set(file.get(extraExperience.name + ".isEnabled"));
 
-		Config.fireResistance.maxLevel.set(file.get(fireResistance.name + ".maxLevel"));
-		Config.fireResistance.isEnabled.set(file.get(fireResistance.name + ".isEnabled"));
+			Config.lightBlade.maxLevel.set(file.get(lightBlade.name + ".maxLevel"));
+			Config.lightBlade.isEnabled.set(file.get(lightBlade.name + ".isEnabled"));
 
-		Config.haste.maxLevel.set(file.get(haste.name + ".maxLevel"));
-		Config.haste.isEnabled.set(file.get(haste.name + ".isEnabled"));
+			Config.blindness.maxLevel.set(file.get(blindness.name + ".maxLevel"));
+			Config.blindness.isEnabled.set(file.get(blindness.name + ".isEnabled"));
 
-		Config.hunger.maxLevel.set(file.get(hunger.name + ".maxLevel"));
-		Config.hunger.isEnabled.set(file.get(hunger.name + ".isEnabled"));
+			Config.fireResistance.maxLevel.set(file.get(fireResistance.name + ".maxLevel"));
+			Config.fireResistance.isEnabled.set(file.get(fireResistance.name + ".isEnabled"));
 
-		Config.invisibility.maxLevel.set(file.get(invisibility.name + ".maxLevel"));
-		Config.invisibility.isEnabled.set(file.get(invisibility.name + ".isEnabled"));
+			Config.haste.maxLevel.set(file.get(haste.name + ".maxLevel"));
+			Config.haste.isEnabled.set(file.get(haste.name + ".isEnabled"));
 
-		Config.jumpBoost.maxLevel.set(file.get(jumpBoost.name + ".maxLevel"));
-		Config.jumpBoost.isEnabled.set(file.get(jumpBoost.name + ".isEnabled"));
+			Config.hunger.maxLevel.set(file.get(hunger.name + ".maxLevel"));
+			Config.hunger.isEnabled.set(file.get(hunger.name + ".isEnabled"));
 
-		Config.miningFatigue.maxLevel.set(file.get(miningFatigue.name + ".maxLevel"));
-		Config.miningFatigue.isEnabled.set(file.get(miningFatigue.name + ".isEnabled"));
+			Config.invisibility.maxLevel.set(file.get(invisibility.name + ".maxLevel"));
+			Config.invisibility.isEnabled.set(file.get(invisibility.name + ".isEnabled"));
 
-		Config.nausea.maxLevel.set(file.get(nausea.name + ".maxLevel"));
-		Config.nausea.isEnabled.set(file.get(nausea.name + ".isEnabled"));
+			Config.jumpBoost.maxLevel.set(file.get(jumpBoost.name + ".maxLevel"));
+			Config.jumpBoost.isEnabled.set(file.get(jumpBoost.name + ".isEnabled"));
 
-		Config.poison.maxLevel.set(file.get(poison.name + ".maxLevel"));
-		Config.poison.isEnabled.set(file.get(poison.name + ".isEnabled"));
+			Config.miningFatigue.maxLevel.set(file.get(miningFatigue.name + ".maxLevel"));
+			Config.miningFatigue.isEnabled.set(file.get(miningFatigue.name + ".isEnabled"));
 
-		Config.regeneration.maxLevel.set(file.get(regeneration.name + ".maxLevel"));
-		Config.regeneration.isEnabled.set(file.get(regeneration.name + ".isEnabled"));
+			Config.nausea.maxLevel.set(file.get(nausea.name + ".maxLevel"));
+			Config.nausea.isEnabled.set(file.get(nausea.name + ".isEnabled"));
 
-		Config.resistance.maxLevel.set(file.get(resistance.name + ".maxLevel"));
-		Config.resistance.isEnabled.set(file.get(resistance.name + ".isEnabled"));
+			Config.poison.maxLevel.set(file.get(poison.name + ".maxLevel"));
+			Config.poison.isEnabled.set(file.get(poison.name + ".isEnabled"));
 
-		Config.saturation.maxLevel.set(file.get(saturation.name + ".maxLevel"));
-		Config.saturation.isEnabled.set(file.get(saturation.name + ".isEnabled"));
+			Config.regeneration.maxLevel.set(file.get(regeneration.name + ".maxLevel"));
+			Config.regeneration.isEnabled.set(file.get(regeneration.name + ".isEnabled"));
 
-		Config.slowFalling.maxLevel.set(file.get(slowFalling.name + ".maxLevel"));
-		Config.slowFalling.isEnabled.set(file.get(slowFalling.name + ".isEnabled"));
+			Config.resistance.maxLevel.set(file.get(resistance.name + ".maxLevel"));
+			Config.resistance.isEnabled.set(file.get(resistance.name + ".isEnabled"));
 
-		Config.slowness.maxLevel.set(file.get(slowness.name + ".maxLevel"));
-		Config.slowness.isEnabled.set(file.get(slowness.name + ".isEnabled"));
+			Config.saturation.maxLevel.set(file.get(saturation.name + ".maxLevel"));
+			Config.saturation.isEnabled.set(file.get(saturation.name + ".isEnabled"));
 
-		Config.speed.maxLevel.set(file.get(speed.name + ".maxLevel"));
-		Config.speed.isEnabled.set(file.get(speed.name + ".isEnabled"));
+			Config.slowFalling.maxLevel.set(file.get(slowFalling.name + ".maxLevel"));
+			Config.slowFalling.isEnabled.set(file.get(slowFalling.name + ".isEnabled"));
 
-		Config.strength.maxLevel.set(file.get(strength.name + ".maxLevel"));
-		Config.strength.isEnabled.set(file.get(strength.name + ".isEnabled"));
+			Config.slowness.maxLevel.set(file.get(slowness.name + ".maxLevel"));
+			Config.slowness.isEnabled.set(file.get(slowness.name + ".isEnabled"));
 
-		Config.waterBreathing.maxLevel.set(file.get(waterBreathing.name + ".maxLevel"));
-		Config.waterBreathing.isEnabled.set(file.get(waterBreathing.name + ".isEnabled"));
+			Config.speed.maxLevel.set(file.get(speed.name + ".maxLevel"));
+			Config.speed.isEnabled.set(file.get(speed.name + ".isEnabled"));
 
-		Config.weakness.maxLevel.set(file.get(weakness.name + ".maxLevel"));
-		Config.weakness.isEnabled.set(file.get(weakness.name + ".isEnabled"));
+			Config.strength.maxLevel.set(file.get(strength.name + ".maxLevel"));
+			Config.strength.isEnabled.set(file.get(strength.name + ".isEnabled"));
+
+			Config.waterBreathing.maxLevel.set(file.get(waterBreathing.name + ".maxLevel"));
+			Config.waterBreathing.isEnabled.set(file.get(waterBreathing.name + ".isEnabled"));
+
+			Config.weakness.maxLevel.set(file.get(weakness.name + ".maxLevel"));
+			Config.weakness.isEnabled.set(file.get(weakness.name + ".isEnabled"));
+
+		}
+		catch (WritingException exc) {
+			SoManyEnchants.LOGGER.error("Could not write to config retrying...");
+			load(file);
+		}
 
 	}
 
