@@ -32,7 +32,9 @@ public class EffectEnchantment extends ModEnchantment {
 
 	public void applyEffect(Player player, int level) {
 
-		player.addEffect(new MobEffectInstance(effect, 600, level - 1, false, false, false));
+		if (this.config.isEnabled.get()) {
+			player.addEffect(new MobEffectInstance(effect, 600, level - 1, false, false, false));
+		}
 
 	}
 

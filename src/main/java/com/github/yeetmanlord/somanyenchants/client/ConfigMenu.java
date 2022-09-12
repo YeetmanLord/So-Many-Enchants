@@ -1,6 +1,7 @@
 package com.github.yeetmanlord.somanyenchants.client;
 
-import com.electronwill.nightconfig.core.io.WritingException;
+import java.io.IOException;
+
 import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.config.EnchantmentConfig;
@@ -51,8 +52,8 @@ public class ConfigMenu extends Screen {
 		try {
 			config.maxLevel.set((int) val);
 		}
-		catch (WritingException exc) {
-			SoManyEnchants.LOGGER.error("Could not save " + config.name + " config because the file is in use. Retrying");
+		catch (IOException exc) {
+			SoManyEnchants.LOGGER.error("Could not save " + config.name + " config because the file is in use. Retrying...");
 			setMaxLevel(config, val);
 		}
 
@@ -63,8 +64,8 @@ public class ConfigMenu extends Screen {
 		try {
 			config.isEnabled.set(value);
 		}
-		catch (WritingException exc) {
-			SoManyEnchants.LOGGER.error("Could not save " + config.name + " config because the file is in use. Retrying");
+		catch (IOException exc) {
+			SoManyEnchants.LOGGER.error("Could not save " + config.name + " config because the file is in use. Retrying...");
 			setIsEnabled(config, value);
 		}
 
@@ -150,7 +151,7 @@ public class ConfigMenu extends Screen {
 			try {
 				Config.villager.isEnabled.set(val);
 			}
-			catch (WritingException exc) {
+			catch (IOException exc) {
 				SoManyEnchants.LOGGER.info("Could not save villager config because the file is in use.");
 			}
 
@@ -214,184 +215,14 @@ public class ConfigMenu extends Screen {
 
 	}
 
-	/**
-	 * 
-	 */
 	private void setDefault() {
 
-		Config.damageEnchantments.maxLevel.set(10);
-		Config.damageEnchantments.isEnabled.set(true);
+		Config.configSections.values().forEach((value) -> {
+			value.isEnabled.setNoUpdate(value.isEnabled.getDefault());
+			value.maxLevel.setNoUpdate(value.maxLevel.getDefault());
+		});
 
-		Config.efficiency.maxLevel.set(10);
-		Config.efficiency.isEnabled.set(true);
-
-		Config.fireAspect.maxLevel.set(10);
-		Config.fireAspect.isEnabled.set(true);
-
-		Config.impaling.maxLevel.set(10);
-		Config.impaling.isEnabled.set(true);
-
-		Config.knockback.maxLevel.set(10);
-		Config.knockback.isEnabled.set(true);
-
-		Config.lootBonusEnchantments.maxLevel.set(10);
-		Config.lootBonusEnchantments.isEnabled.set(true);
-
-		Config.loyalty.maxLevel.set(5);
-		Config.loyalty.isEnabled.set(true);
-
-		Config.lure.maxLevel.set(5);
-		Config.lure.isEnabled.set(true);
-
-		Config.piercing.maxLevel.set(10);
-		Config.piercing.isEnabled.set(true);
-
-		Config.power.maxLevel.set(10);
-		Config.power.isEnabled.set(true);
-
-		Config.protectionEnchantments.maxLevel.set(10);
-		Config.protectionEnchantments.isEnabled.set(true);
-
-		Config.punch.maxLevel.set(10);
-		Config.punch.isEnabled.set(true);
-
-		Config.quickCharge.maxLevel.set(5);
-		Config.quickCharge.isEnabled.set(true);
-
-		Config.respiration.maxLevel.set(5);
-		Config.respiration.isEnabled.set(true);
-
-		Config.riptide.maxLevel.set(5);
-		Config.riptide.isEnabled.set(true);
-
-		Config.soulSpeed.maxLevel.set(5);
-		Config.soulSpeed.isEnabled.set(true);
-
-		Config.sweeping.maxLevel.set(10);
-		Config.sweeping.isEnabled.set(true);
-
-		Config.thorns.maxLevel.set(10);
-		Config.thorns.isEnabled.set(true);
-
-		Config.unbreaking.maxLevel.set(10);
-		Config.unbreaking.isEnabled.set(true);
-
-		Config.heavyArmor.maxLevel.set(1);
-		Config.heavyArmor.isEnabled.set(true);
-
-		Config.reinforcement.maxLevel.set(1);
-		Config.reinforcement.isEnabled.set(true);
-
-		Config.temper.maxLevel.set(1);
-		Config.temper.isEnabled.set(true);
-
-		Config.catVision.maxLevel.set(1);
-		Config.catVision.isEnabled.set(true);
-
-		Config.flight.maxLevel.set(3);
-		Config.flight.isEnabled.set(false);
-
-		Config.healthBoost.maxLevel.set(5);
-		Config.healthBoost.isEnabled.set(true);
-
-		Config.stepAssist.maxLevel.set(1);
-		Config.stepAssist.isEnabled.set(false);
-
-		Config.fastHopper.isEnabled.set(true);
-
-		Config.blockReach.maxLevel.set(3);
-		Config.blockReach.isEnabled.set(true);
-
-		Config.doubleBreak.maxLevel.set(5);
-		Config.doubleBreak.isEnabled.set(false);
-
-		Config.replanting.maxLevel.set(1);
-		Config.replanting.isEnabled.set(true);
-
-		Config.attackReach.maxLevel.set(1);
-		Config.attackReach.isEnabled.set(false);
-
-		Config.critical.maxLevel.set(5);
-		Config.critical.isEnabled.set(false);
-
-		Config.freezing.maxLevel.set(3);
-		Config.freezing.isEnabled.set(true);
-
-		Config.villager.isEnabled.set(true);
-
-		Config.cavernousStorage.isEnabled.set(true);
-
-		Config.camouflage.isEnabled.set(true);
-
-		Config.heavyBlade.maxLevel.set(5);
-		Config.heavyBlade.isEnabled.set(true);
-
-		Config.lightBlade.maxLevel.set(3);
-		Config.lightBlade.isEnabled.set(true);
-
-		Config.fastSmelt.maxLevel.set(1);
-		Config.fastSmelt.isEnabled.set(true);
-
-		Config.fuelEfficient.maxLevel.set(1);
-		Config.fuelEfficient.isEnabled.set(true);
-
-		Config.extraExperience.maxLevel.set(1);
-		Config.extraExperience.isEnabled.set(true);
-
-		Config.blindness.maxLevel.set(1);
-		Config.blindness.isEnabled.set(true);
-
-		Config.fireResistance.maxLevel.set(1);
-		Config.fireResistance.isEnabled.set(true);
-
-		Config.haste.maxLevel.set(3);
-		Config.haste.isEnabled.set(true);
-
-		Config.hunger.maxLevel.set(3);
-		Config.hunger.isEnabled.set(true);
-
-		Config.invisibility.maxLevel.set(1);
-		Config.invisibility.isEnabled.set(true);
-
-		Config.jumpBoost.maxLevel.set(3);
-		Config.jumpBoost.isEnabled.set(true);
-
-		Config.miningFatigue.maxLevel.set(3);
-		Config.miningFatigue.isEnabled.set(true);
-
-		Config.nausea.maxLevel.set(1);
-		Config.nausea.isEnabled.set(true);
-
-		Config.poison.maxLevel.set(3);
-		Config.poison.isEnabled.set(true);
-
-		Config.regeneration.maxLevel.set(3);
-		Config.regeneration.isEnabled.set(true);
-
-		Config.resistance.maxLevel.set(3);
-		Config.resistance.isEnabled.set(true);
-
-		Config.saturation.maxLevel.set(3);
-		Config.saturation.isEnabled.set(true);
-
-		Config.slowFalling.maxLevel.set(1);
-		Config.slowFalling.isEnabled.set(true);
-
-		Config.slowness.maxLevel.set(3);
-		Config.slowness.isEnabled.set(true);
-
-		Config.speed.maxLevel.set(3);
-		Config.speed.isEnabled.set(true);
-
-		Config.strength.maxLevel.set(3);
-		Config.strength.isEnabled.set(true);
-
-		Config.waterBreathing.maxLevel.set(1);
-		Config.waterBreathing.isEnabled.set(true);
-
-		Config.weakness.maxLevel.set(3);
-		Config.weakness.isEnabled.set(true);
-
+		Config.villager.isEnabled.setNoUpdate(true);
 		this.refresh();
 
 	}
@@ -409,11 +240,25 @@ public class ConfigMenu extends Screen {
 	@Override
 	public void onClose() {
 
+		try {
+			Config.sendChanges();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		this.minecraft.setScreen((Screen) null);
 
 	}
 
 	private void refresh() {
+
+		try {
+			Config.sendChanges();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		this.minecraft.setScreen(new ConfigMenu());
 

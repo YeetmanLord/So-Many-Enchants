@@ -1,13 +1,10 @@
 package com.github.yeetmanlord.somanyenchants;
 
-import java.io.File;
 import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
 import com.github.yeetmanlord.somanyenchants.client.ConfigMenu;
 import com.github.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedChestTileEntityRenderer;
 import com.github.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedShulkerBoxTileEntityRenderer;
@@ -37,15 +34,15 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
 
 @Mod("so_many_enchants")
 @Mod.EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.MOD)
 public class SoManyEnchants {
+
+	public static final Scheduler MOD_SCHEDULER = new Scheduler(null);
 
 	public static final Logger LOGGER = LogManager.getLogger();
 
@@ -61,9 +58,20 @@ public class SoManyEnchants {
 
 		playerUtils = new HashMap<>();
 		instance = this;
-		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> new DistExecutor.SafeRunnable() {
 
-		modEventBus.addListener(this::setup);
+			private static final long serialVersionUID = 5789682203789505777L;
+
+			@Override
+			public void run() {
+
+				ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, () -> new ConfigGuiHandler.ConfigGuiFactory(((minecraft, screen) -> new ConfigMenu())));
+				Config.load();
+
+			}
+
+		});
+		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
 		modEventBus.addListener(this::doClientStuff);
 
@@ -79,29 +87,7 @@ public class SoManyEnchants {
 		ParticleTypesInit.PARTICLES.register(modEventBus);
 		AttributeInit.ATTRIBUTES.register(modEventBus);
 
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.config);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SyncedServerConfig);
-
-		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> new DistExecutor.SafeRunnable() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 5789682203789505777L;
-
-			@Override
-			public void run() {
-
-				final CommentedFileConfig file = CommentedFileConfig.builder(new File(FMLPaths.CONFIGDIR.get().resolve("so_many_enchants-common.toml").toString())).sync().autosave().writingMode(WritingMode.REPLACE).build();
-				file.load();
-				Config.SyncedServerConfig.setConfig(file);
-
-				ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, () -> new ConfigGuiHandler.ConfigGuiFactory(((minecraft, screen) -> new ConfigMenu())));
-
-			}
-
-		});
-
+		modEventBus.addListener(this::setup);
 		MinecraftForge.EVENT_BUS.register(this);
 
 	}
@@ -159,4 +145,5 @@ public class SoManyEnchants {
 		}
 
 	}
+
 }

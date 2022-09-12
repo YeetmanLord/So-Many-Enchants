@@ -22,7 +22,7 @@ public class ModEnchantment extends Enchantment {
 	public int getMaxLevel() {
 
 		if (config.isEnabled.get()) {
-			return super.getMaxLevel();
+			return config.maxLevel.get();
 		}
 		else {
 			return 0;
