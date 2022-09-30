@@ -171,7 +171,8 @@ public class BlockEnchants {
                         }
                     }
                 }
-            } else if (event.getPlacedBlock().getBlock() == Blocks.HOPPER && Config.fastHopper.isEnabled.get()) {
+            }
+            else if (event.getPlacedBlock().getBlock() == Blocks.HOPPER && Config.fastHopper.isEnabled.get()) {
 
                 if (mainhand.getItem() == Items.HOPPER) {
 
