@@ -92,8 +92,7 @@ public class ModEnchantment extends Enchantment {
 		if (ench instanceof ModEnchantment modEnch) {
 			return this.config.isEnabled.get() && modEnch.config.isEnabled.get() && super.checkCompatibility(ench);
 		}
-
-		return false;
+		return this.config.isEnabled.get() && super.checkCompatibility(ench);
 
 	}
 

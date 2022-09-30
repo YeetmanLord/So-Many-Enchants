@@ -21,7 +21,10 @@ public class MixinItem {
 			Item item = ((Item) (Object) this);
 
 			if (EnchantmentTypesInit.isModdedEnchantable(item)) {
-				cir.setReturnValue(1);
+				if (EnchantmentTypesInit.isSmelter(item)) {
+					cir.setReturnValue(15);
+				}
+				else cir.setReturnValue(1);
 			}
 
 		}

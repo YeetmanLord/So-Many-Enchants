@@ -5,7 +5,7 @@ This is licensed under an MIT license
 
 This source code is for the 1.16 version.
 
-Source code for 1.18: https://github.com/YeetmanLord/SME-1.16
+Source code for 1.16: https://github.com/YeetmanLord/SME-1.16
 
 Source code for 1.19: https://github.com/YeetmanLord/SME-1.19
 

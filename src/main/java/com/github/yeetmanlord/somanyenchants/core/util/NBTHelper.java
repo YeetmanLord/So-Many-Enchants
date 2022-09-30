@@ -45,7 +45,7 @@ public class NBTHelper
 			CompoundTag tag = stack.getTag();
 			if (tag.contains("AttributeData")) {
 				CompoundTag data = tag.getCompound("AttributeData");
-				return data.getDouble(attr.getDescriptionId());
+				return data.getDouble(attr.getRegistryName().toString());
 			}
 		}
 		return 0d;
@@ -57,7 +57,7 @@ public class NBTHelper
 		if(nbt.contains("AttributeData")) {
 			tag = nbt.getCompound("AttributeData");
 		}
-		tag.putDouble(attr.getDescriptionId(), value);
+		tag.putDouble(attr.getRegistryName().toString(), value);
 		nbt.put("AttributeData", tag);
 	}
 

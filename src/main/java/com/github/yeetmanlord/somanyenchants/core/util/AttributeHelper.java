@@ -56,8 +56,6 @@ public class AttributeHelper {
 
 		}
 
-		return;
-
 	}
 
 	public static void removeAttribute(ItemStack stack, Attribute attribute, String name) {

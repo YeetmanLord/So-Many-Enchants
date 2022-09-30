@@ -11,16 +11,10 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
-public class HandlePlayerJoins 
-{
-	@SubscribeEvent
-	public static void onPlayerJoin(final PlayerLoggedInEvent event)
-	{
-		if(event.getEntity() instanceof Player)
-		{
-			Player player = (Player)event.getEntity();
-			PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
-			PlayerAttributeHandler.reset(player); 
-		}
-	}
+public class HandlePlayerJoins {
+    @SubscribeEvent
+    public static void onPlayerJoin(final PlayerLoggedInEvent event) {
+        Player player = event.getPlayer();
+        PlayerAttributeHandler.reset(player);
+    }
 }
