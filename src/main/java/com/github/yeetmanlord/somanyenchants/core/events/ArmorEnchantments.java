@@ -44,9 +44,7 @@ public class ArmorEnchantments {
 		LivingEntity living = event.getEntityLiving();
 
 		if (living instanceof Player player) {
-			boolean flag = event.getSlot() != EquipmentSlot.MAINHAND && event.getSlot() != EquipmentSlot.OFFHAND;
-			ItemStack to = event.getTo();
-			ItemStack from = event.getFrom();
+			boolean flag = event.getSlot().getType() == EquipmentSlot.Type.ARMOR;
 
 			if (flag) {
 				AttributeHelper.apply(EnchantmentInit.HEALTH_BOOST.get(), Attributes.MAX_HEALTH, Config.healthBoost, event, 2d);
