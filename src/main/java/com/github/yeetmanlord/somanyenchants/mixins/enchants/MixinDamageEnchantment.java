@@ -39,7 +39,7 @@ public abstract class MixinDamageEnchantment {
 	private void canEnchant(ItemStack stack, CallbackInfoReturnable<Boolean> callback) {
 
 		if (Config.damageEnchantments.isEnabled.get()) {
-			callback.setReturnValue(stack.getItem() instanceof TridentItem ? true : stack.getItem() instanceof AxeItem ? true : ((DamageEnchantment) (Object) this).canApplyAtEnchantingTable(stack));
+			callback.setReturnValue(stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem || ((DamageEnchantment) (Object) this).canApplyAtEnchantingTable(stack));
 		}
 
 	}

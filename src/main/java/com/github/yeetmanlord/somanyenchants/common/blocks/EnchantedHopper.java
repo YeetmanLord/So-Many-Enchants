@@ -56,7 +56,7 @@ public class EnchantedHopper extends HopperBlock {
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		switch ((Direction) state.getValue(FACING)) {
+		switch (state.getValue(FACING)) {
 		case DOWN:
 			return DOWN_SHAPE;
 		case NORTH:
@@ -82,7 +82,7 @@ public class EnchantedHopper extends HopperBlock {
 
 	@Override
 	public VoxelShape getInteractionShape(BlockState state, BlockGetter worldIn, BlockPos pos) {
-		switch ((Direction) state.getValue(FACING)) {
+		switch (state.getValue(FACING)) {
 		case DOWN:
 			return DOWN_RAYTRACE_SHAPE;
 		case NORTH:

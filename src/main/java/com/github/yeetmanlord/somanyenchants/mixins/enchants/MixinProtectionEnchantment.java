@@ -54,7 +54,7 @@ public class MixinProtectionEnchantment {
 					callback.setReturnValue((int) ((level - 4) * 0.5) + 4);
 				}
 				else if (level <= 10) {
-					callback.setReturnValue((int) ((int) ((level - 6) * 0.1875) + 5));
+					callback.setReturnValue((int) ((level - 6) * 0.1875) + 5);
 				}
 				else {
 					callback.setReturnValue(7);

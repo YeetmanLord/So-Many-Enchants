@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import org.jetbrains.annotations.NotNull;
 
 public class AttackReachEnchant extends ModEnchantment {
 
@@ -20,16 +21,16 @@ public class AttackReachEnchant extends ModEnchantment {
 	}
 
 	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack) {
+	public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack) {
 
 		return false;
 
 	}
 
 	@Override
-	public boolean canEnchant(ItemStack stack) {
+	public boolean canEnchant(@NotNull ItemStack stack) {
 
-		boolean flag = stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem ? true : EnchantmentCategory.WEAPON.canEnchant(stack.getItem());
+		boolean flag = stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem || EnchantmentCategory.WEAPON.canEnchant(stack.getItem());
 		return flag && this.config.isEnabled.get();
 
 	}
@@ -49,7 +50,7 @@ public class AttackReachEnchant extends ModEnchantment {
 	}
 
 	@Override
-	protected boolean checkCompatibility(Enchantment ench) {
+	protected boolean checkCompatibility(@NotNull Enchantment ench) {
 
 		return super.checkCompatibility(ench) && ench != EnchantmentInit.BLOCK_REACH.get();
 

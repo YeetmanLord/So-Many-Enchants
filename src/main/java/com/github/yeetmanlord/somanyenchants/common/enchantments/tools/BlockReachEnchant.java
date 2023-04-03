@@ -7,6 +7,7 @@ import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockReachEnchant extends ModEnchantment {
 
@@ -31,7 +32,7 @@ public class BlockReachEnchant extends ModEnchantment {
 	}
 
 	@Override
-	protected boolean checkCompatibility(Enchantment ench) {
+	protected boolean checkCompatibility(@NotNull Enchantment ench) {
 
 		return super.checkCompatibility(ench) && ench != EnchantmentInit.ATTACK_REACH.get();
 

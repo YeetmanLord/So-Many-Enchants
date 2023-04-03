@@ -8,6 +8,7 @@ import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import org.jetbrains.annotations.NotNull;
 
 public class ReplantingEnchant extends ModEnchantment {
 
@@ -25,14 +26,14 @@ public class ReplantingEnchant extends ModEnchantment {
 	}
 
 	@Override
-	public boolean canEnchant(ItemStack stack) {
+	public boolean canEnchant(@NotNull ItemStack stack) {
 
 		return stack.getItem() instanceof HoeItem || stack.getItem() instanceof AxeItem ? this.config.isEnabled.get() : false;
 
 	}
 
 	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack) {
+	public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack) {
 
 		return stack.getItem() instanceof HoeItem ? this.config.isEnabled.get() : false;
 

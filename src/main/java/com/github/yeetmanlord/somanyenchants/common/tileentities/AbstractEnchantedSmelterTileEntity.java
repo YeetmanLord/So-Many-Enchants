@@ -221,7 +221,7 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 		if (isNeverAFurnaceFuel(item)) {
 
 			if (SharedConstants.IS_RUNNING_IN_IDE) {
-				throw (IllegalStateException) Util.pauseInIde(new IllegalStateException("A developer tried to explicitly make fire resistant item " + item.getName((ItemStack) null).getString() + " a furnace fuel. That will not work!"));
+				throw Util.pauseInIde(new IllegalStateException("A developer tried to explicitly make fire resistant item " + item.getName(null).getString() + " a furnace fuel. That will not work!"));
 			}
 
 		}
@@ -469,9 +469,7 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 		if (direction == Direction.DOWN && index == 1) {
 			Item item = stack.getItem();
 
-			if (item != Items.WATER_BUCKET && item != Items.BUCKET) {
-				return false;
-			}
+			return item == Items.WATER_BUCKET || item == Items.BUCKET;
 
 		}
 

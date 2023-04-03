@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.MOD)
 public class AddAttributesToEntities {
-	
+
 	@SubscribeEvent
 	public static void addAttribute(final EntityAttributeModificationEvent event)
 	{

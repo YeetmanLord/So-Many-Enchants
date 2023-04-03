@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
+import org.jetbrains.annotations.NotNull;
 
 public class FlightEnchant extends ModEnchantment {
 
@@ -32,21 +33,21 @@ public class FlightEnchant extends ModEnchantment {
 	}
 
 	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack) {
+	public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack) {
 
 		return false;
 
 	}
 
 	@Override
-	public boolean canEnchant(ItemStack stack) {
+	public boolean canEnchant(@NotNull ItemStack stack) {
 
 		return EnchantmentCategory.ARMOR_FEET.canEnchant(stack.getItem()) && this.config.isEnabled.get();
 
 	}
 
 	@Override
-	public boolean checkCompatibility(Enchantment ench) {
+	public boolean checkCompatibility(@NotNull Enchantment ench) {
 
 		return super.checkCompatibility(ench) && ench != Enchantments.SOUL_SPEED;
 

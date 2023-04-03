@@ -164,11 +164,11 @@ public class PlayerAttributeHandler {
                     if (x != null) {
 
                         if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.ATTACK_REACH.get(), stack)) {
-                            event.getToolTip().add(x, (new TextComponent(" " + String.valueOf(ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(playerIn.getAttributeBaseValue(AttributeInit.ATTACK_DISTANCE.get()))) + " ").append(new TranslatableComponent(AttributeInit.ATTACK_DISTANCE.get().getDescriptionId())).withStyle(ChatFormatting.DARK_GREEN)));
+                            event.getToolTip().add(x, (new TextComponent(" " + ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(playerIn.getAttributeBaseValue(AttributeInit.ATTACK_DISTANCE.get())) + " ").append(new TranslatableComponent(AttributeInit.ATTACK_DISTANCE.get().getDescriptionId())).withStyle(ChatFormatting.DARK_GREEN)));
                         }
 
                         if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.BLOCK_REACH.get(), stack)) {
-                            event.getToolTip().add(x, (new TextComponent(" " + String.valueOf(ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(playerIn.getAttributeBaseValue(ForgeMod.REACH_DISTANCE.get()))) + " Block reach distance")).withStyle(ChatFormatting.DARK_GREEN));
+                            event.getToolTip().add(x, (new TextComponent(" " + ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(playerIn.getAttributeBaseValue(ForgeMod.REACH_DISTANCE.get())) + " Block reach distance")).withStyle(ChatFormatting.DARK_GREEN));
                         }
 
                     }

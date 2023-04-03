@@ -18,9 +18,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class FreezeParticle extends TextureSheetParticle {
    private FreezeParticle(ClientLevel world, double x, double y, double z, double motionX, double motionY, double motionZ) {
       super(world, x, y, z, 0.0D, 0.0D, 0.0D);
-      this.xd *= (double)0.1F;
-      this.yd *= (double)0.1F;
-      this.zd *= (double)0.1F;
+      this.xd *= 0.1F;
+      this.yd *= 0.1F;
+      this.zd *= 0.1F;
       this.xd += motionX * 0.4D;
       this.yd += motionY * 0.4D;
       this.zd += motionZ * 0.4D;
@@ -50,13 +50,13 @@ public void tick() {
          this.move(this.xd, this.yd, this.zd);
          this.gCol = (float)((double)this.gCol * 0.96D);
          this.bCol = (float)((double)this.bCol * 0.9D);
-         this.xd *= (double)0.7F;
-         this.yd *= (double)0.7F;
-         this.zd *= (double)0.7F;
-         this.yd -= (double)0.02F;
+         this.xd *= 0.7F;
+         this.yd *= 0.7F;
+         this.zd *= 0.7F;
+         this.yd -= 0.02F;
          if (this.onGround) {
-            this.xd *= (double)0.7F;
-            this.zd *= (double)0.7F;
+            this.xd *= 0.7F;
+            this.zd *= 0.7F;
          }
 
       }

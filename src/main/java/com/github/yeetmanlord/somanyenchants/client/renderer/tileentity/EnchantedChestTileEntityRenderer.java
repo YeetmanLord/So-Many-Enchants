@@ -123,8 +123,7 @@ public class EnchantedChestTileEntityRenderer<T extends BlockEntity & LidBlockEn
 		ChestType chesttype = blockstate.hasProperty(EnchantedChestBlock.TYPE) ? blockstate.getValue(EnchantedChestBlock.TYPE)
 				: ChestType.SINGLE;
 		Block block = blockstate.getBlock();
-		if (block instanceof EnchantedChestBlock) {
-			EnchantedChestBlock abstractchestblock = (EnchantedChestBlock) block;
+		if (block instanceof EnchantedChestBlock abstractchestblock) {
 			boolean flag1 = chesttype != ChestType.SINGLE;
 			p_112365_.pushPose();
 			float f = blockstate.getValue(EnchantedChestBlock.FACING).toYRot();
@@ -138,11 +137,11 @@ public class EnchantedChestTileEntityRenderer<T extends BlockEntity & LidBlockEn
 				neighborcombineresult = DoubleBlockCombiner.Combiner::acceptNone;
 			}
 
-			float f1 = neighborcombineresult.<Float2FloatFunction>apply(EnchantedChestBlock.opennessCombiner(p_112363_))
+			float f1 = neighborcombineresult.apply(EnchantedChestBlock.opennessCombiner(p_112363_))
 					.get(p_112364_);
 			f1 = 1.0F - f1;
 			f1 = 1.0F - f1 * f1 * f1;
-			int i = neighborcombineresult.<Int2IntFunction>apply(new BrightnessCombiner<>()).applyAsInt(p_112367_);
+			int i = neighborcombineresult.apply(new BrightnessCombiner<>()).applyAsInt(p_112367_);
 			Material material = this.getMaterial(p_112363_, chesttype);
 			VertexConsumer vertexconsumer = material.buffer(p_112366_, RenderType::entityCutout);
 			if (flag1) {

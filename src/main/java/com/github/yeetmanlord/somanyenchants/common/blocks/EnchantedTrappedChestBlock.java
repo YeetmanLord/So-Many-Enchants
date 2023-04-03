@@ -39,7 +39,7 @@ import net.minecraft.world.level.Level;
 
 public class EnchantedTrappedChestBlock extends EnchantedChestBlock {
 
-	private boolean hidden;
+	private final boolean hidden;
 
 	public EnchantedTrappedChestBlock(Properties builder,
 			Supplier<BlockEntityType<? extends EnchantedChestTileEntity>> tileEntityTypeIn, boolean hidden) {
@@ -136,8 +136,8 @@ public class EnchantedTrappedChestBlock extends EnchantedChestBlock {
 					if (p_225539_1_.hasCustomName()) {
 						return p_225539_1_.getDisplayName();
 					} else {
-						return (Component) (p_225539_2_.hasCustomName() ? p_225539_2_.getDisplayName()
-								: new TranslatableComponent("container.enchantedChestDouble"));
+						return p_225539_2_.hasCustomName() ? p_225539_2_.getDisplayName()
+								: new TranslatableComponent("container.enchantedChestDouble");
 					}
 				}
 			});
@@ -157,7 +157,7 @@ public class EnchantedTrappedChestBlock extends EnchantedChestBlock {
 	@Nullable
 	@Override
 	public MenuProvider getMenuProvider(BlockState state, Level worldIn, BlockPos pos) {
-		return this.combine(state, worldIn, pos, false).<Optional<MenuProvider>>apply(CONTAINER_MERGER)
-				.orElse((MenuProvider) null);
+		return this.combine(state, worldIn, pos, false).apply(CONTAINER_MERGER)
+				.orElse(null);
 	}
 }

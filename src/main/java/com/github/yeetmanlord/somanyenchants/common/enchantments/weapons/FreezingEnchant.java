@@ -10,6 +10,7 @@ import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.Enchantments;
+import org.jetbrains.annotations.NotNull;
 
 public class FreezingEnchant extends ModEnchantment {
 
@@ -20,14 +21,14 @@ public class FreezingEnchant extends ModEnchantment {
 	}
 
 	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack) {
+	public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack) {
 
 		return EnchantmentCategory.WEAPON.canEnchant(stack.getItem());
 
 	}
 
 	@Override
-	public boolean canEnchant(ItemStack stack) {
+	public boolean canEnchant(@NotNull ItemStack stack) {
 
 		boolean flag = canApplyAtEnchantingTable(stack) || stack.getItem() instanceof TridentItem;
 		return flag && this.config.isEnabled.get();
@@ -49,7 +50,7 @@ public class FreezingEnchant extends ModEnchantment {
 	}
 
 	@Override
-	protected boolean checkCompatibility(Enchantment ench) {
+	protected boolean checkCompatibility(@NotNull Enchantment ench) {
 
 		return super.checkCompatibility(ench) && ench != Enchantments.SWEEPING_EDGE && ench != EnchantmentInit.CRITICAL.get();
 

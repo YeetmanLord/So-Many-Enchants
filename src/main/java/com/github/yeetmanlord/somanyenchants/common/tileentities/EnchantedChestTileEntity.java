@@ -121,7 +121,7 @@ public class EnchantedChestTileEntity extends RandomizableContainerBlockEntity i
 				d2 += (double) direction.getStepZ() * 0.5D;
 			}
 
-			p_155339_.playSound((Player) null, d0, d1, d2, p_155342_, SoundSource.BLOCKS, 0.5F,
+			p_155339_.playSound(null, d0, d1, d2, p_155342_, SoundSource.BLOCKS, 0.5F,
 					p_155339_.random.nextFloat() * 0.1F + 0.9F);
 		}
 	}

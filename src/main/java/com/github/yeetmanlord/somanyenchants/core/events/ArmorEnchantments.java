@@ -63,8 +63,7 @@ public class ArmorEnchantments {
 
 		LivingEntity living = event.getEntityLiving();
 
-		if (living instanceof Player && Config.flight.isEnabled.get() == true) {
-			Player player = (Player) living;
+		if (living instanceof Player player && Config.flight.isEnabled.get()) {
 
 			if (event.getSlot() == EquipmentSlot.FEET && !player.isCreative() && !player.isSpectator()) {
 				ItemStack newSlot = event.getTo();
@@ -108,7 +107,7 @@ public class ArmorEnchantments {
 
 		Player player = event.player;
 
-		if (ModEnchantmentHelper.hasCatVision(player) && Config.catVision.isEnabled.get() == true) {
+		if (ModEnchantmentHelper.hasCatVision(player) && Config.catVision.isEnabled.get()) {
 			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 220, 0, false, false, false));
 		}
 
@@ -119,8 +118,7 @@ public class ArmorEnchantments {
 
 		LivingEntity e = event.getEntityLiving();
 
-		if (e instanceof Player && Config.stepAssist.isEnabled.get() == true) {
-			Player player = (Player) e;
+		if (e instanceof Player player && Config.stepAssist.isEnabled.get()) {
 			ItemStack a = event.getFrom();
 			ItemStack b = event.getTo();
 			PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
@@ -161,10 +159,10 @@ public class ArmorEnchantments {
 		Player player = event.player;
 		PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
 
-		if (ModEnchantmentHelper.getStepAssistLevel(player) > 0 && Config.stepAssist.isEnabled.get() == true) {
+		if (ModEnchantmentHelper.getStepAssistLevel(player) > 0 && Config.stepAssist.isEnabled.get()) {
 			player.maxUpStep = util.getStepHeight();
 		}
-		else if (MathUtils.roundNearestPlace(util.getStepHeight(), -1) == 0.6f && MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) != MathUtils.roundNearestPlace(util.getStepHeight(), -1) && ModEnchantmentHelper.getStepAssistLevel(player) == 0 && MathUtils.roundNearestPlace(player.maxUpStep, -1) == MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) && Config.stepAssist.isEnabled.get() == true) {
+		else if (MathUtils.roundNearestPlace(util.getStepHeight(), -1) == 0.6f && MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) != MathUtils.roundNearestPlace(util.getStepHeight(), -1) && ModEnchantmentHelper.getStepAssistLevel(player) == 0 && MathUtils.roundNearestPlace(player.maxUpStep, -1) == MathUtils.roundNearestPlace(util.getLastModifiedStepHeight(), -1) && Config.stepAssist.isEnabled.get()) {
 			player.maxUpStep = 0.6f;
 		}
 

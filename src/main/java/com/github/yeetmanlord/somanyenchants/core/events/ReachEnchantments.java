@@ -76,7 +76,6 @@ public class ReachEnchantments {
 					NetworkHandler.CHANNEL.sendToServer(new AttackPacket(tracedEntity.getId()));
 				}
 
-				return;
 			}
 			else if (entityRayTrace == null || player.isSpectator()) {
 
@@ -84,7 +83,6 @@ public class ReachEnchantments {
 			else {
 				SoManyEnchants.LOGGER.error("Ray trace failed. This is not a good thing!!");
 				SoManyEnchants.LOGGER.error(entityRayTrace);
-				return;
 			}
 
 		}

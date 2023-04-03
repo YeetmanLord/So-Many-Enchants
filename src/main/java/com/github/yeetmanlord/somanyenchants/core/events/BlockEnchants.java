@@ -1,5 +1,6 @@
 package com.github.yeetmanlord.somanyenchants.core.events;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
@@ -26,17 +27,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.commands.EnchantCommand;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.BarrelBlock;
@@ -69,8 +69,7 @@ public class BlockEnchants {
 
         Entity e = event.getEntity();
 
-        if (e instanceof Player) {
-            Player player = (Player) e;
+        if (e instanceof Player player) {
             ItemStack mainhand = player.getMainHandItem();
             ItemStack offhand = player.getOffhandItem();
             HitResult r = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0.5f, false);
@@ -240,8 +239,7 @@ public class BlockEnchants {
 
                 }
 
-            } else if (event.getPlacedBlock().getBlock() instanceof EnchantedShulkerBoxBlock) {
-                EnchantedShulkerBoxBlock shulker = (EnchantedShulkerBoxBlock) event.getPlacedBlock().getBlock();
+            } else if (event.getPlacedBlock().getBlock() instanceof EnchantedShulkerBoxBlock shulker) {
 
                 if (!mainhand.isEnchanted()) {
                     event.getWorld().setBlock(event.getPos(), ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)), 1);
@@ -329,8 +327,7 @@ public class BlockEnchants {
 
                         BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
 
-                        if (t != null && t instanceof EnchantedTrappedChestTileEntity) {
-                            EnchantedTrappedChestTileEntity tile = (EnchantedTrappedChestTileEntity) t;
+                        if (t != null && t instanceof EnchantedTrappedChestTileEntity tile) {
                             tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
                         }
 
@@ -343,8 +340,7 @@ public class BlockEnchants {
 
                         BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
 
-                        if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity) {
-                            EnchantedHiddenTrappedChestTileEntity tile = (EnchantedHiddenTrappedChestTileEntity) t;
+                        if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity tile) {
                             tile.addEnchant(EnchantmentInit.CAMOUFLAGE.get(), (short) 1);
 
                             if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand) && Config.cavernousStorage.isEnabled.get()) {
@@ -417,8 +413,7 @@ public class BlockEnchants {
 
                             BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
 
-                            if (t != null && t instanceof EnchantedTrappedChestTileEntity) {
-                                EnchantedTrappedChestTileEntity tile = (EnchantedTrappedChestTileEntity) t;
+                            if (t != null && t instanceof EnchantedTrappedChestTileEntity tile) {
                                 tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
                             }
 
@@ -431,8 +426,7 @@ public class BlockEnchants {
 
                             BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
 
-                            if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity) {
-                                EnchantedHiddenTrappedChestTileEntity tile = (EnchantedHiddenTrappedChestTileEntity) t;
+                            if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity tile) {
                                 tile.addEnchant(EnchantmentInit.CAMOUFLAGE.get(), (short) 1);
 
                                 if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), offhand) && Config.cavernousStorage.isEnabled.get()) {
@@ -523,7 +517,7 @@ public class BlockEnchants {
         if (block == checkBlock && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level, pos, player)) {
             ItemStack stack = new ItemStack(drop);
             stack.enchant(ench, 1);
-            ItemEntity item = new ItemEntity((Level) world, pos.getX(), pos.getY(), pos.getZ(), stack);
+            ItemEntity item = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
             item.setPickUpDelay(10);
 
             world.addFreshEntity(item);
@@ -537,8 +531,7 @@ public class BlockEnchants {
             ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
             BlockEntity tile = world.getBlockEntity(pos);
 
-            if (tile instanceof EnchantedTrappedChestTileEntity) {
-                EnchantedTrappedChestTileEntity eTile = (EnchantedTrappedChestTileEntity) tile;
+            if (tile instanceof EnchantedTrappedChestTileEntity eTile) {
                 ListTag nbt = eTile.getEnchants();
 
                 if (ModEnchantmentHelper.hasCamouflage(nbt)) {
@@ -557,8 +550,7 @@ public class BlockEnchants {
             ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
             BlockEntity tile = world.getBlockEntity(pos);
 
-            if (tile instanceof EnchantedHiddenTrappedChestTileEntity) {
-                EnchantedHiddenTrappedChestTileEntity eTile = (EnchantedHiddenTrappedChestTileEntity) tile;
+            if (tile instanceof EnchantedHiddenTrappedChestTileEntity eTile) {
                 ListTag nbt = eTile.getEnchants();
 
                 if (ModEnchantmentHelper.hasCamouflage(nbt)) {
@@ -571,7 +563,7 @@ public class BlockEnchants {
 
             }
 
-            ItemEntity item = new ItemEntity((Level) world, pos.getX(), pos.getY(), pos.getZ(), stack);
+            ItemEntity item = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
 
             item.setPickUpDelay(10);
 
@@ -582,12 +574,11 @@ public class BlockEnchants {
 
     @SubscribeEvent
     public static void onEnchant(final CommandEvent event) {
-
         CommandContext<CommandSourceStack> command = event.getParseResults().getContext().build(null);
 
         if (command.getCommand() != null) {
 
-            if (command.getCommand().toString().contains("net.minecraft.server.commands.EnchantCommand$$Lambda$")) {
+            if (command.getCommand().toString().contains("server.commands.EnchantCommand")) {
                 Enchantment enchant = command.getArgument("enchantment", Enchantment.class);
                 EntitySelector e = command.getArgument("targets", EntitySelector.class);
                 List<? extends Entity> entities;
@@ -598,15 +589,17 @@ public class BlockEnchants {
                     for (int x = 0; x < entities.size(); x++) {
                         Entity entity = entities.get(x);
 
-                        if (entity instanceof LivingEntity) {
-                            LivingEntity living = (LivingEntity) entity;
+                        if (entity instanceof LivingEntity living) {
+
+                            if (!EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(living.getMainHandItem()).keySet(), enchant) || !enchant.category.canEnchant(living.getMainHandItem().getItem())) {
+                                return;
+                            }
 
                             if (EnchantmentTypesInit.STORAGE.canEnchant(living.getMainHandItem().getItem()) && enchant == EnchantmentInit.CAVERNOUS_STORAGE.get() && Config.cavernousStorage.isEnabled.get()) {
                                 ItemStack stack = living.getMainHandItem();
                                 Item item = stack.getItem();
 
-                                if (item instanceof BlockItem) {
-                                    BlockItem blockItem = (BlockItem) item;
+                                if (item instanceof BlockItem blockItem) {
                                     Block block = blockItem.getBlock();
 
                                     if (block instanceof ShulkerBoxBlock) {
@@ -614,8 +607,7 @@ public class BlockEnchants {
                                         newStack.setTag(stack.getTag());
                                         newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 
-                                        if (living instanceof Player) {
-                                            Player player = (Player) living;
+                                        if (living instanceof Player player) {
                                             player.setItemInHand(InteractionHand.MAIN_HAND, newStack);
                                         } else {
                                             living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
@@ -645,8 +637,7 @@ public class BlockEnchants {
                                     level = 1;
                                 }
 
-                                if (item instanceof BlockItem) {
-                                    BlockItem blockItem = (BlockItem) item;
+                                if (item instanceof BlockItem blockItem) {
                                     Block block = blockItem.getBlock();
 
                                     if (block instanceof AbstractFurnaceBlock) {
@@ -667,8 +658,7 @@ public class BlockEnchants {
 
                                         if (newStack.isEnchanted()) {
 
-                                            if (living instanceof Player) {
-                                                Player player = (Player) living;
+                                            if (living instanceof Player player) {
                                                 player.setItemInHand(InteractionHand.MAIN_HAND, newStack);
                                             } else {
                                                 living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
@@ -704,8 +694,7 @@ public class BlockEnchants {
 
                                         if (newStack.isEnchanted()) {
 
-                                            if (living instanceof Player) {
-                                                Player player = (Player) living;
+                                            if (living instanceof Player player) {
                                                 player.setItemInHand(InteractionHand.MAIN_HAND, newStack);
                                             } else {
                                                 living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
@@ -750,6 +739,10 @@ public class BlockEnchants {
         ItemStack initial = event.getItemInput();
         ItemStack ingredient = event.getIngredientInput();
         ItemStack stack = event.getPlayer().inventory.getSelected();
+
+        if (!ingredient.isEnchanted()) {
+            return;
+        }
 
         if (ItemStack.isSame(initial, stack)) {
 

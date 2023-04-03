@@ -6,6 +6,7 @@ import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentTypesInit;
 
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class ExtraExperienceSmelterEnchant extends ModEnchantment {
 
@@ -16,14 +17,14 @@ public class ExtraExperienceSmelterEnchant extends ModEnchantment {
 	}
 
 	@Override
-	public boolean canEnchant(ItemStack stack) {
+	public boolean canEnchant(@NotNull ItemStack stack) {
 
 		return canApplyAtEnchantingTable(stack);
 
 	}
 
 	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack) {
+	public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack) {
 
 		return EnchantmentTypesInit.SMELTER.canEnchant(stack.getItem());
 

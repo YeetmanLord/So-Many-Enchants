@@ -53,7 +53,7 @@ public class BlockInit {
 			}, true));
 
 	public static final RegistryObject<Block> ENCHANTED_SHULKER_BOX = BLOCKS.register("enchanted_shulker_box",
-			() -> createEnchantedShulkerBoxFromColorAndProperties((DyeColor) null,
+			() -> createEnchantedShulkerBoxFromColorAndProperties(null,
 					BlockBehaviour.Properties.of(Material.SHULKER_SHELL)));
 	public static final RegistryObject<Block> ENCHANTED_WHITE_SHULKER_BOX = BLOCKS.register(
 			"enchanted_white_shulker_box", () -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.WHITE,
@@ -118,11 +118,10 @@ public class BlockInit {
 			BlockBehaviour.Properties properties) {
 		BlockBehaviour.StatePredicate abstractblock$ipositionpredicate = (state, reader, pos) -> {
 			BlockEntity tileentity = reader.getBlockEntity(pos);
-			if (!(tileentity instanceof EnchantedShulkerBoxTileEntity)) {
+			if (!(tileentity instanceof EnchantedShulkerBoxTileEntity shulkerboxtileentity)) {
 				return true;
 			} else {
-				EnchantedShulkerBoxTileEntity shulkerboxtileentity = (EnchantedShulkerBoxTileEntity) tileentity;
-				return shulkerboxtileentity.isVisuallyClosed();
+                return shulkerboxtileentity.isVisuallyClosed();
 			}
 		};
 		return new EnchantedShulkerBoxBlock(color, properties.strength(2.0F).dynamicShape().noOcclusion()

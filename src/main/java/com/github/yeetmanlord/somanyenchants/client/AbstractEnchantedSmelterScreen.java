@@ -93,8 +93,7 @@ public abstract class AbstractEnchantedSmelterScreen<T extends AbstractEnchanted
 		if (this.recipeBookComponent.mouseClicked(p_97834_, p_97835_, p_97836_)) {
 			return true;
 		} else {
-			return this.widthTooNarrow && this.recipeBookComponent.isVisible() ? true
-					: super.mouseClicked(p_97834_, p_97835_, p_97836_);
+			return this.widthTooNarrow && this.recipeBookComponent.isVisible() || super.mouseClicked(p_97834_, p_97835_, p_97836_);
 		}
 	}
 
@@ -106,8 +105,7 @@ public abstract class AbstractEnchantedSmelterScreen<T extends AbstractEnchanted
 
 	@Override
 	public boolean keyPressed(int p_97844_, int p_97845_, int p_97846_) {
-		return this.recipeBookComponent.keyPressed(p_97844_, p_97845_, p_97846_) ? false
-				: super.keyPressed(p_97844_, p_97845_, p_97846_);
+		return !this.recipeBookComponent.keyPressed(p_97844_, p_97845_, p_97846_) && super.keyPressed(p_97844_, p_97845_, p_97846_);
 	}
 
 	@Override
@@ -121,7 +119,7 @@ public abstract class AbstractEnchantedSmelterScreen<T extends AbstractEnchanted
 
 	@Override
 	public boolean charTyped(char p_97831_, int p_97832_) {
-		return this.recipeBookComponent.charTyped(p_97831_, p_97832_) ? true : super.charTyped(p_97831_, p_97832_);
+		return this.recipeBookComponent.charTyped(p_97831_, p_97832_) || super.charTyped(p_97831_, p_97832_);
 	}
 
 	@Override

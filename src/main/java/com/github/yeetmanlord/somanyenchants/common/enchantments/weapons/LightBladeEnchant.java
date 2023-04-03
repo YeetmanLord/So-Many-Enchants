@@ -12,6 +12,7 @@ import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.item.enchantment.DamageEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import org.jetbrains.annotations.NotNull;
 
 public class LightBladeEnchant extends ModEnchantment {
 
@@ -22,14 +23,14 @@ public class LightBladeEnchant extends ModEnchantment {
 	}
 
 	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack) {
+	public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack) {
 
 		return this.category.canEnchant(stack.getItem());
 
 	}
 
 	@Override
-	public boolean canEnchant(ItemStack stack) {
+	public boolean canEnchant(@NotNull ItemStack stack) {
 
 		boolean flag = canApplyAtEnchantingTable(stack) || stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem;
 		return flag && this.config.isEnabled.get();
@@ -51,9 +52,9 @@ public class LightBladeEnchant extends ModEnchantment {
 	}
 
 	@Override
-	protected boolean checkCompatibility(Enchantment ench) {
+	protected boolean checkCompatibility(@NotNull Enchantment ench) {
 
-		return ench == EnchantmentInit.HEAVY_BLADE.get() || ench instanceof DamageEnchantment || ench == EnchantmentInit.ATTACK_REACH.get() || ench == EnchantmentInit.BLOCK_REACH.get() ? false : super.checkCompatibility(ench);
+		return ench != EnchantmentInit.HEAVY_BLADE.get() && !(ench instanceof DamageEnchantment) && ench != EnchantmentInit.ATTACK_REACH.get() && ench != EnchantmentInit.BLOCK_REACH.get() && super.checkCompatibility(ench);
 
 	}
 

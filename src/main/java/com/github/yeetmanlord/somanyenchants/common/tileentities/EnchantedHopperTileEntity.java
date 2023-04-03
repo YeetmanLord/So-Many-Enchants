@@ -80,13 +80,13 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 
 	@Override
 	public ItemStack removeItem(int p_59309_, int p_59310_) {
-		this.unpackLootTable((Player) null);
+		this.unpackLootTable(null);
 		return ContainerHelper.removeItem(this.getItems(), p_59309_, p_59310_);
 	}
 
 	@Override
 	public void setItem(int p_59315_, ItemStack p_59316_) {
-		this.unpackLootTable((Player) null);
+		this.unpackLootTable(null);
 		this.getItems().set(p_59315_, p_59316_);
 		if (p_59316_.getCount() > this.getMaxStackSize()) {
 			p_59316_.setCount(this.getMaxStackSize());
@@ -204,10 +204,9 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 		Container container = getSourceContainer(p_155553_, p_155554_);
 		if (container != null) {
 			Direction direction = Direction.DOWN;
-			return isEmptyContainer(container, direction) ? false
-					: getSlots(container, direction).anyMatch((p_59363_) -> {
-						return tryTakeInItemFromSlot(p_155554_, container, p_59363_, direction);
-					});
+			return !isEmptyContainer(container, direction) && getSlots(container, direction).anyMatch((p_59363_) -> {
+				return tryTakeInItemFromSlot(p_155554_, container, p_59363_, direction);
+			});
 		} else {
 			for (ItemEntity itementity : getItemsAtAndAbove(p_155553_, p_155554_)) {
 				if (addItem(p_155554_, itementity)) {
@@ -224,7 +223,7 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 		ItemStack itemstack = p_59356_.getItem(p_59357_);
 		if (!itemstack.isEmpty() && canTakeItemFromContainer(p_59356_, itemstack, p_59357_, p_59358_)) {
 			ItemStack itemstack1 = itemstack.copy();
-			ItemStack itemstack2 = addItem(p_59356_, p_59355_, p_59356_.removeItem(p_59357_, 1), (Direction) null);
+			ItemStack itemstack2 = addItem(p_59356_, p_59355_, p_59356_.removeItem(p_59357_, 1), null);
 			if (itemstack2.isEmpty()) {
 				p_59356_.setChanged();
 				return true;
@@ -239,7 +238,7 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 	public static boolean addItem(Container p_59332_, ItemEntity p_59333_) {
 		boolean flag = false;
 		ItemStack itemstack = p_59333_.getItem().copy();
-		ItemStack itemstack1 = addItem((Container) null, p_59332_, itemstack, (Direction) null);
+		ItemStack itemstack1 = addItem(null, p_59332_, itemstack, null);
 		if (itemstack1.isEmpty()) {
 			flag = true;
 			p_59333_.discard();
@@ -252,8 +251,7 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 
 	public static ItemStack addItem(@Nullable Container p_59327_, Container p_59328_, ItemStack p_59329_,
 			@Nullable Direction p_59330_) {
-		if (p_59328_ instanceof WorldlyContainer && p_59330_ != null) {
-			WorldlyContainer worldlycontainer = (WorldlyContainer) p_59328_;
+		if (p_59328_ instanceof WorldlyContainer worldlycontainer && p_59330_ != null) {
 			int[] aint = worldlycontainer.getSlotsForFace(p_59330_);
 
 			for (int k = 0; k < aint.length && !p_59329_.isEmpty(); ++k) {
@@ -305,12 +303,10 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 			}
 
 			if (flag) {
-				if (flag1 && p_59322_ instanceof EnchantedHopperTileEntity) {
-					EnchantedHopperTileEntity EnchantedHopperTileEntity1 = (EnchantedHopperTileEntity) p_59322_;
+				if (flag1 && p_59322_ instanceof EnchantedHopperTileEntity EnchantedHopperTileEntity1) {
 					if (!EnchantedHopperTileEntity1.isOnCustomCooldown()) {
 						int k = 0;
-						if (p_59321_ instanceof EnchantedHopperTileEntity) {
-							EnchantedHopperTileEntity EnchantedHopperTileEntity = (EnchantedHopperTileEntity) p_59321_;
+						if (p_59321_ instanceof EnchantedHopperTileEntity EnchantedHopperTileEntity) {
 							if (EnchantedHopperTileEntity1.tickedGameTime >= EnchantedHopperTileEntity.tickedGameTime) {
 								k = 1;
 							}
@@ -437,8 +433,8 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 	public static void entityInside(Level p_155568_, BlockPos p_155569_, BlockState p_155570_, Entity p_155571_,
 			EnchantedHopperTileEntity p_155572_) {
 		if (p_155571_ instanceof ItemEntity && Shapes.joinIsNotEmpty(
-				Shapes.create(p_155571_.getBoundingBox().move((double) (-p_155569_.getX()),
-						(double) (-p_155569_.getY()), (double) (-p_155569_.getZ()))),
+				Shapes.create(p_155571_.getBoundingBox().move(-p_155569_.getX(),
+						-p_155569_.getY(), -p_155569_.getZ())),
 				p_155572_.getSuckShape(), BooleanOp.AND)) {
 			tryMoveItems(p_155568_, p_155569_, p_155570_, p_155572_, () -> {
 				return addItem(p_155572_, (ItemEntity) p_155571_);

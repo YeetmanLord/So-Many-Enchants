@@ -25,12 +25,10 @@ public class Frostbite {
 	public static void frostBite(final LivingAttackEvent event) {
 		DamageSource source = event.getSource();
 		Entity e = event.getEntity();
-		if (e instanceof LivingEntity && Config.freezing.isEnabled.get() == true) {
-			LivingEntity attacked = (LivingEntity) e;
+		if (e instanceof LivingEntity attacked && Config.freezing.isEnabled.get()) {
 			if (source instanceof EntityDamageSource) {
 				Entity attackerEntity = source.getEntity();
-				if (attackerEntity instanceof LivingEntity) {
-					LivingEntity livingAttacker = (LivingEntity) attackerEntity;
+				if (attackerEntity instanceof LivingEntity livingAttacker) {
 					int frostBite = ModEnchantmentHelper.getFreezingEnchant(livingAttacker);
 					if (frostBite > 1) {
 						if (attacked.level instanceof ServerLevel) {
@@ -55,7 +53,6 @@ public class Frostbite {
 				}
 			}
 		} else {
-			return;
 		}
 
 	}

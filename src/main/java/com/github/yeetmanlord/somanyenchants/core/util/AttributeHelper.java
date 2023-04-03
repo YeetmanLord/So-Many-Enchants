@@ -81,8 +81,6 @@ public class AttributeHelper {
 
 		}
 
-		return;
-
 	}
 
 	public static void newAttribute(ItemStack stack, Attribute attribute, String name, double amount, boolean isBaseAttribute, Player player, @Nullable EquipmentSlot slot, UUID uuid) {
@@ -146,8 +144,7 @@ public class AttributeHelper {
 
 	public static void setBaseArmor(ItemStack stack, EquipmentSlot slotIn, UUID uuid) {
 
-		if (stack.getItem() instanceof ArmorItem) {
-			ArmorItem armor = (ArmorItem) stack.getItem();
+		if (stack.getItem() instanceof ArmorItem armor) {
 			float baseArmor = armor.getMaterial().getDefenseForSlot(slotIn);
 			float kbresistance = armor.getMaterial().getKnockbackResistance();
 			float toughness = armor.getMaterial().getToughness();

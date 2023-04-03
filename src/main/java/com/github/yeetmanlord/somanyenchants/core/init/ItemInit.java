@@ -10,7 +10,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ItemInit {
 
-	private static Item.Properties p = new Item.Properties().stacksTo(1);
+	private static final Item.Properties p = new Item.Properties().stacksTo(1);
 
 	public static final DeferredRegister<Item> BLOCK_ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, SoManyEnchants.MOD_ID);
 

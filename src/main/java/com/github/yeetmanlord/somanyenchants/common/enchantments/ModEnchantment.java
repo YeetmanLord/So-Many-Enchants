@@ -1,13 +1,18 @@
 package com.github.yeetmanlord.somanyenchants.common.enchantments;
 
+import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.config.EnchantmentConfig;
-
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 public class ModEnchantment extends Enchantment {
+
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	protected EnchantmentConfig config;
 
@@ -43,7 +48,7 @@ public class ModEnchantment extends Enchantment {
 	}
 
 	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack) {
+	public boolean canApplyAtEnchantingTable(@NotNull ItemStack stack) {
 
 		if (config.isEnabled.get()) {
 			return super.canApplyAtEnchantingTable(stack);
@@ -54,7 +59,7 @@ public class ModEnchantment extends Enchantment {
 	}
 
 	@Override
-	public boolean canEnchant(ItemStack stack) {
+	public boolean canEnchant(@NotNull ItemStack stack) {
 
 		if (config.isEnabled.get()) {
 			return super.canEnchant(stack);
@@ -87,7 +92,9 @@ public class ModEnchantment extends Enchantment {
 	}
 
 	@Override
-	protected boolean checkCompatibility(Enchantment ench) {
+	protected boolean checkCompatibility(@NotNull Enchantment ench) {
+
+		LOGGER.info("Checking compatibility for " + this.getDescriptionId() + " and " + ench.getDescriptionId());
 
 		if (ench instanceof ModEnchantment modEnch) {
 			return this.config.isEnabled.get() && modEnch.config.isEnabled.get() && super.checkCompatibility(ench);

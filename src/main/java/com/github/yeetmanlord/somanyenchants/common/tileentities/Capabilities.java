@@ -78,7 +78,7 @@ public class Capabilities {
             if (tileentity != null)
             {
                 return tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)
-                    .map(capability -> ImmutablePair.<IItemHandler, Object>of(capability, tileentity));
+                    .map(capability -> ImmutablePair.of(capability, tileentity));
             }
         }
 
@@ -118,9 +118,8 @@ public class Capabilities {
 
             if (insertedItem)
             {
-            	if (inventoryWasEmpty && destination instanceof HopperBlockEntity)
+            	if (inventoryWasEmpty && destination instanceof HopperBlockEntity destinationHopper)
                 {
-                    HopperBlockEntity destinationHopper = (HopperBlockEntity)destination;
 
                     if (!destinationHopper.isOnCustomCooldown())
                     {
@@ -135,9 +134,8 @@ public class Capabilities {
                         destinationHopper.setCooldown(8 - k);
                     }
                 }
-            	if (inventoryWasEmpty && destination instanceof EnchantedHopperTileEntity)
+            	if (inventoryWasEmpty && destination instanceof EnchantedHopperTileEntity destinationHopper)
                 {
-            		EnchantedHopperTileEntity destinationHopper = (EnchantedHopperTileEntity)destination;
 
                     if (!destinationHopper.isOnCustomCooldown())
                     {

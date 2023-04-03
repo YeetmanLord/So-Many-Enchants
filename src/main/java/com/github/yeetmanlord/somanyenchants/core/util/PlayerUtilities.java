@@ -6,7 +6,7 @@ public class PlayerUtilities {
 
 	private float stepHeight;
 	private float lastModifiedStepHeight;
-	private Player player;
+	private final Player player;
 	
 	
 	public PlayerUtilities(Player owner) 

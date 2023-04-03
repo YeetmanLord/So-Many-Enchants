@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 public class ToolEnchants {
 	@SubscribeEvent
 	public static void replant(final BreakEvent event) {
-		if (event.getState().getBlock() != Blocks.AIR && Config.replanting.isEnabled.get() == true) {
+		if (event.getState().getBlock() != Blocks.AIR && Config.replanting.isEnabled.get()) {
 			Block block = event.getState().getBlock();
 			Player player = event.getPlayer();
 			if (block instanceof CropBlock) {
@@ -75,13 +75,13 @@ public class ToolEnchants {
 										player.level.setBlock(event.getPos(), Blocks.AIR.defaultBlockState(), 16);
 										if (player.isCreative()) {
 											player.level.setBlockAndUpdate(event.getPos(),
-													event.getState().setValue(((CocoaBlock) block).AGE, 0));
+													event.getState().setValue(CocoaBlock.AGE, 0));
 											event.setCanceled(true);
 											return;
 										}
-										block.dropResources(event.getState(), player.level, event.getPos());
+										Block.dropResources(event.getState(), player.level, event.getPos());
 										player.level.setBlockAndUpdate(event.getPos(),
-												event.getState().setValue(((CocoaBlock) block).AGE, 0));
+												event.getState().setValue(CocoaBlock.AGE, 0));
 										player.inventory.removeItem(x, 1);
 										event.setCanceled(true);
 										return;
@@ -105,7 +105,7 @@ public class ToolEnchants {
 		BlockState newState;
 		HitResult raytrace = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0, false);
 		int enchant = ModEnchantmentHelper.getDoubleBreakLevel(player);
-		if (enchant > 0 && Config.doubleBreak.isEnabled.get() == true) {
+		if (enchant > 0 && Config.doubleBreak.isEnabled.get()) {
 			int chance = (int) (rand.nextFloat() * 100);
 			if (chance <= enchant * 20) {
 				// Handles raytracing
@@ -116,7 +116,7 @@ public class ToolEnchants {
 						newPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
 						newState = player.level.getBlockState(newPos);
 						if ((newState.getBlock().canHarvestBlock(newState, player.level, newPos, player)
-								|| newState.requiresCorrectToolForDrops() == false)
+								|| !newState.requiresCorrectToolForDrops())
 								&& newState.getDestroySpeed(player.level, newPos) >= 0.0F) {
 							if (!creative) {
 								Block.dropResources(newState, player.level, newPos);
@@ -127,7 +127,7 @@ public class ToolEnchants {
 						newPos = new BlockPos(pos.getX(), pos.getY() - 1, pos.getZ());
 						newState = player.level.getBlockState(newPos);
 						if ((newState.getBlock().canHarvestBlock(newState, player.level, newPos, player)
-								|| newState.requiresCorrectToolForDrops() == false)
+								|| !newState.requiresCorrectToolForDrops())
 								&& newState.getDestroySpeed(player.level, newPos) >= 0.0F) {
 							if (!creative) {
 								Block.dropResources(newState, player.level, newPos);
@@ -138,7 +138,7 @@ public class ToolEnchants {
 						newPos = new BlockPos(pos.getX(), pos.getY(), pos.getZ() - 1);
 						newState = player.level.getBlockState(newPos);
 						if ((newState.getBlock().canHarvestBlock(newState, player.level, newPos, player)
-								|| newState.requiresCorrectToolForDrops() == false)
+								|| !newState.requiresCorrectToolForDrops())
 								&& newState.getDestroySpeed(player.level, newPos) >= 0.0F) {
 							if (!creative) {
 								Block.dropResources(newState, player.level, newPos);
@@ -149,7 +149,7 @@ public class ToolEnchants {
 						newPos = new BlockPos(pos.getX(), pos.getY(), pos.getZ() + 1);
 						newState = player.level.getBlockState(newPos);
 						if ((newState.getBlock().canHarvestBlock(newState, player.level, newPos, player)
-								|| newState.requiresCorrectToolForDrops() == false)
+								|| !newState.requiresCorrectToolForDrops())
 								&& newState.getDestroySpeed(player.level, newPos) >= 0.0F) {
 							if (!creative) {
 								Block.dropResources(newState, player.level, newPos);
@@ -160,7 +160,7 @@ public class ToolEnchants {
 						newPos = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ());
 						newState = player.level.getBlockState(newPos);
 						if ((newState.getBlock().canHarvestBlock(newState, player.level, newPos, player)
-								|| newState.requiresCorrectToolForDrops() == false)
+								|| !newState.requiresCorrectToolForDrops())
 								&& newState.getDestroySpeed(player.level, newPos) >= 0.0F) {
 							if (!creative) {
 								Block.dropResources(newState, player.level, newPos);
@@ -171,7 +171,7 @@ public class ToolEnchants {
 						newPos = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ());
 						newState = player.level.getBlockState(newPos);
 						if ((newState.getBlock().canHarvestBlock(newState, player.level, newPos, player)
-								|| newState.requiresCorrectToolForDrops() == false)
+								|| !newState.requiresCorrectToolForDrops())
 								&& newState.getDestroySpeed(player.level, newPos) >= 0.0F) {
 							if (!creative) {
 								Block.dropResources(newState, player.level, newPos);

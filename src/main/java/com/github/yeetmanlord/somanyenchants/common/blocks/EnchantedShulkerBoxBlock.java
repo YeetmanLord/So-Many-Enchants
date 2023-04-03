@@ -110,8 +110,7 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 			return InteractionResult.CONSUME;
 		} else {
 			BlockEntity tileentity = worldIn.getBlockEntity(pos);
-			if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
-				EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) tileentity;
+			if (tileentity instanceof EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity) {
 				if (canOpen(state, worldIn, pos, EnchantedShulkerBoxTileEntity)) {
 					player.openMenu(EnchantedShulkerBoxTileEntity);
 					player.awardStat(Stats.OPEN_SHULKER_BOX);
@@ -153,8 +152,7 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 	@Override
 	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
 		BlockEntity tileentity = worldIn.getBlockEntity(pos);
-		if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
-			EnchantedShulkerBoxTileEntity enchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) tileentity;
+		if (tileentity instanceof EnchantedShulkerBoxTileEntity enchantedShulkerBoxTileEntity) {
 			if (!worldIn.isClientSide && player.isCreative() && !enchantedShulkerBoxTileEntity.isEmpty()) {
 				ItemStack itemstack = getColoredItemStack(this.getColor());
 				CompoundTag compoundnbt = enchantedShulkerBoxTileEntity.saveToNbt(new CompoundTag());
@@ -181,8 +179,7 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 	@Override
 	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
 		BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
-		if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
-			EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) tileentity;
+		if (tileentity instanceof EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity) {
 			builder = builder.withDynamicDrop(CONTENTS, (context, stackConsumer) -> {
 				for (int i = 0; i < EnchantedShulkerBoxTileEntity.getContainerSize(); ++i) {
 					stackConsumer.accept(EnchantedShulkerBoxTileEntity.getItem(i));
