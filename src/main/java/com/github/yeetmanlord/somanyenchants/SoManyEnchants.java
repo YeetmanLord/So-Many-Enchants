@@ -6,7 +6,6 @@ import net.minecraftforge.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.yeetmanlord.somanyenchants.client.ConfigMenu;
 import com.github.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedChestTileEntityRenderer;
 import com.github.yeetmanlord.somanyenchants.client.renderer.tileentity.EnchantedShulkerBoxTileEntityRenderer;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
