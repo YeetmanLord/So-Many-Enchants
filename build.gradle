@@ -16,7 +16,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
-version = '1.7.1 (1.16)'
+version = '1.8.0 (1.16)'
 group = 'com.yeetmanlord.so_many_enchants' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'so_many_enchants'
 

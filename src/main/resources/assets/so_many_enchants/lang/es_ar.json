@@ -130,5 +130,6 @@
 	"enchantment.so_many_enchants.fuel_efficient.desc": "Hace hornos, los hornos de explosión, y los fumadores eliminan el combustible menos rápidamente. (Durará más tiempo)",
 	"enchantment.so_many_enchants.extra_experience.desc": "Hace hornos, los hornos de explosión, y los fumadores hacen más experiencia cuando toma artículos.",
 	"enchantment.so_many_enchants.heavy_blade.desc": "Las armas hacen mucho más daño de ataque, pero la velocidad de ataque se reduce.",
-	"enchantment.so_many_enchants.light_blade.desc": "Las armas son mucho más rápidas, pero hacen menos daño. "
+	"enchantment.so_many_enchants.light_blade.desc": "Las armas son mucho más rápidas, pero hacen menos daño.",
+	"enchantment.so_many_enchants.camouflage.desc": "Disfraza un cofre atrapado como un cofre normal."
 }

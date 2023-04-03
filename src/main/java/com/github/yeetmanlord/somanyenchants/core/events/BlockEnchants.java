@@ -22,6 +22,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.EntitySelector;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.Direction;
 import net.minecraft.nbt.ListNBT;
@@ -609,7 +610,7 @@ public class BlockEnchants {
 
 		if (command.getCommand() != null) {
 
-			if (command.getCommand().toString().contains("net.minecraft.server.commands.EnchantCommand$$Lambda$")) {
+			if (command.getCommand().toString().contains("server.commands.EnchantCommand")) {
 				Enchantment enchant = command.getArgument("enchantment", Enchantment.class);
 				EntitySelector e = command.getArgument("targets", EntitySelector.class);
 				List<? extends Entity> entities;
@@ -622,6 +623,10 @@ public class BlockEnchants {
 
 						if (entity instanceof LivingEntity) {
 							LivingEntity living = (LivingEntity) entity;
+
+							if (!EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(living.getMainHandItem()).keySet(), enchant) || !enchant.category.canEnchant(living.getMainHandItem().getItem())) {
+								continue;
+							}
 
 							if (EnchantmentTypesInit.STORAGE.canEnchant(living.getMainHandItem().getItem()) && enchant == EnchantmentInit.CAVERNOUS_STORAGE.get() && Config.cavernousStorage.isEnabled.get()) {
 								ItemStack stack = living.getMainHandItem();
@@ -783,6 +788,10 @@ public class BlockEnchants {
 		ItemStack initial = event.getItemInput();
 		ItemStack ingredient = event.getIngredientInput();
 		ItemStack stack = event.getPlayer().inventory.getSelected();
+
+		if (!ingredient.isEnchanted()) {
+			return;
+		}
 
 		if (ItemStack.isSame(initial, stack)) {
 

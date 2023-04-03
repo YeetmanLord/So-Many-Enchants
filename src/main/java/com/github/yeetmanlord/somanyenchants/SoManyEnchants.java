@@ -2,6 +2,7 @@ package com.github.yeetmanlord.somanyenchants;
 
 import java.util.HashMap;
 
+import net.minecraftforge.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,19 +58,6 @@ public class SoManyEnchants {
 
 		playerUtils = new HashMap<>();
 		instance = this;
-		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> new DistExecutor.SafeRunnable() {
-
-			private static final long serialVersionUID = 5789682203789505777L;
-
-			@Override
-			public void run() {
-
-				ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (mc, screen) -> new ConfigMenu());
-				Config.load();
-
-			}
-
-		});
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
 		modEventBus.addListener(this::setup);
@@ -87,6 +75,7 @@ public class SoManyEnchants {
 		AttributeInit.ATTRIBUTES.register(modEventBus);
 
 		MinecraftForge.EVENT_BUS.register(this);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.serverConfig);
 
 	}
 
@@ -99,7 +88,7 @@ public class SoManyEnchants {
 
 //        event.enqueueWork(() ->
 //        {
-//        	
+//
 //        });
 
 	}

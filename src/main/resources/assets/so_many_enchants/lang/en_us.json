@@ -172,5 +172,6 @@
 	"enchantment.so_many_enchants.speed_enchantment.desc": "An enchantment that when applied to armor will give the player the Speed effect at the level of the enchantment. Does not stack.",
 	"enchantment.so_many_enchants.strength_enchantment.desc": "An enchantment that when applied to armor will give the player the Strength effect at the level of the enchantment. Does not stack.",
 	"enchantment.so_many_enchants.water_breathing_enchantment.desc": "An enchantment that when applied to armor will give the player the Water Breathing effect at the level of the enchantment. Does not stack.",
-	"enchantment.so_many_enchants.weakness_enchantment.desc": "An enchantment that when applied to armor will give the player the Weakness effect at the level of the enchantment. Does not stack."
+	"enchantment.so_many_enchants.weakness_enchantment.desc": "An enchantment that when applied to armor will give the player the Weakness effect at the level of the enchantment. Does not stack.",
+	"enchantment.so_many_enchants.camouflage.desc": "Disguises a trapped chest as a normal chest."
 }

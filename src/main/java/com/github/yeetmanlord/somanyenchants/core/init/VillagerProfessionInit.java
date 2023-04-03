@@ -35,135 +35,108 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class VillagerProfessionInit {
 
-	public static final DeferredRegister<VillagerProfession> JOBS = DeferredRegister.create(ForgeRegistries.PROFESSIONS, SoManyEnchants.MOD_ID);
+    public static final DeferredRegister<VillagerProfession> JOBS = DeferredRegister.create(ForgeRegistries.PROFESSIONS, SoManyEnchants.MOD_ID);
 
-	public static final DeferredRegister<PointOfInterestType> POI_TYPE = DeferredRegister.create(ForgeRegistries.POI_TYPES, SoManyEnchants.MOD_ID);
+    public static final DeferredRegister<PointOfInterestType> POI_TYPE = DeferredRegister.create(ForgeRegistries.POI_TYPES, SoManyEnchants.MOD_ID);
 
-	public static final RegistryObject<PointOfInterestType> ENCHANTMENT_TABLE = registerPOI();
+    public static final RegistryObject<PointOfInterestType> ENCHANTMENT_TABLE = POI_TYPE.register("enchantment_table", () -> new PointOfInterestType("enchantment_table", getAllStates(Blocks.ENCHANTING_TABLE), 1, 1));
 
-	public static final RegistryObject<VillagerProfession> ENCHANTER = registerVillager();
+    public static final RegistryObject<VillagerProfession> ENCHANTER = JOBS.register("enchanter", () -> new VillagerProfession("enchanter", VillagerProfessionInit.ENCHANTMENT_TABLE.get(), ImmutableSet.of(), ImmutableSet.of(), SoundEvents.ENCHANTMENT_TABLE_USE));
 
-	private static RegistryObject<PointOfInterestType> registerPOI() {
+    public static Set<BlockState> getAllStates(Block blockIn) {
 
-		if (Config.villager.isEnabled.get()) {
-			return POI_TYPE.register("enchantment_table", () -> new PointOfInterestType("enchantment_table", getAllStates(Blocks.ENCHANTING_TABLE), 1, 1));
-		}
+        return ImmutableSet.copyOf(blockIn.getStateDefinition().getPossibleStates());
 
-		return null;
+    }
 
-	}
+    public static void fillTradeData() {
 
-	private static RegistryObject<VillagerProfession> registerVillager() {
+        VillagerTrades.ITrade[] level1 = new VillagerTrades.ITrade[]{new EnchantedBookForEmeraldsTrade(5), new ExperienceBottleTrade(), new VillagerTrades.ItemsForEmeraldsTrade(Items.BOOKSHELF, new Random().nextInt(3) + 9, 3, 5), new EnchantedBookForEmeraldsTrade(5)};
+        VillagerTrades.ITrade[] level2 = new VillagerTrades.ITrade[]{new EnchantedBookForEmeraldsTrade(10), new EnchantedBookForEmeraldsTrade(10), new VillagerTrades.ItemsForEmeraldsTrade(Blocks.ENCHANTING_TABLE, 16, 1, 1, 10)};
+        VillagerTrades.ITrade[] level3 = new VillagerTrades.ITrade[]{new EnchantedBookForEmeraldsTrade(15), new EnchantedBookForEmeraldsTrade(15)};
+        VillagerTrades.ITrade[] level4 = new VillagerTrades.ITrade[]{new EnchantedBookForEmeraldsTrade(20), new EnchantedBookForEmeraldsTrade(20)};
+        VillagerTrades.ITrade[] level5 = new VillagerTrades.ITrade[]{new EnchantedBookForEmeraldsTrade(25), new EnchantedBookForEmeraldsTrade(25), new VillagerTrades.ItemsForEmeraldsAndItemsTrade(Items.GOLD_BLOCK, new Random().nextInt(8) + 16, Items.ENCHANTED_GOLDEN_APPLE, 64, 1, 24)};
 
-		if (Config.villager.isEnabled.get()) {
-			return JOBS.register("enchanter", () -> new VillagerProfession("enchanter", VillagerProfessionInit.ENCHANTMENT_TABLE.get(), ImmutableSet.of(), ImmutableSet.of(), SoundEvents.ENCHANTMENT_TABLE_USE));
-		}
+        VillagerTrades.TRADES.put(VillagerProfessionInit.ENCHANTER.get(), gatAsIntMap(ImmutableMap.of(1, level1, 2, level2, 3, level3, 4, level4, 5, level5)));
 
-		return null;
+    }
 
-	}
+    public static class EnchantedBookForEmeraldsTrade implements VillagerTrades.ITrade {
 
-	public static Set<BlockState> getAllStates(Block blockIn) {
+        private final int xpValue;
 
-		return ImmutableSet.copyOf(blockIn.getStateDefinition().getPossibleStates());
+        public EnchantedBookForEmeraldsTrade(int xpValueIn) {
 
-	}
+            this.xpValue = xpValueIn;
 
-	public static void fillTradeData() {
+        }
 
-		if (Config.villager.isEnabled.get() == false) {
-			return;
-		}
-		else {
-			VillagerTrades.ITrade[] level1 = new VillagerTrades.ITrade[] { new EnchantedBookForEmeraldsTrade(5), new ExperienceBottleTrade(), new VillagerTrades.ItemsForEmeraldsTrade(Items.BOOKSHELF, new Random().nextInt(3) + 9, 3, 5), new EnchantedBookForEmeraldsTrade(5) };
-			VillagerTrades.ITrade[] level2 = new VillagerTrades.ITrade[] { new EnchantedBookForEmeraldsTrade(10), new EnchantedBookForEmeraldsTrade(10), new VillagerTrades.ItemsForEmeraldsTrade(Blocks.ENCHANTING_TABLE, 16, 1, 1, 10) };
-			VillagerTrades.ITrade[] level3 = new VillagerTrades.ITrade[] { new EnchantedBookForEmeraldsTrade(15), new EnchantedBookForEmeraldsTrade(15) };
-			VillagerTrades.ITrade[] level4 = new VillagerTrades.ITrade[] { new EnchantedBookForEmeraldsTrade(20), new EnchantedBookForEmeraldsTrade(20) };
-			VillagerTrades.ITrade[] level5 = new VillagerTrades.ITrade[] { new EnchantedBookForEmeraldsTrade(25), new EnchantedBookForEmeraldsTrade(25), new VillagerTrades.ItemsForEmeraldsAndItemsTrade(Items.GOLD_BLOCK, new Random().nextInt(8) + 16, Items.ENCHANTED_GOLDEN_APPLE, 64, 1, 24) };
+        @Override
+        public MerchantOffer getOffer(Entity trader, Random rand) {
 
-			VillagerTrades.TRADES.put(VillagerProfessionInit.ENCHANTER.get(), gatAsIntMap(ImmutableMap.of(1, level1, 2, level2, 3, level3, 4, level4, 5, level5)));
-		}
+            List<Enchantment> list = Registry.ENCHANTMENT.stream().collect(Collectors.toList());
+            Enchantment enchantment = list.get(rand.nextInt(list.size()));
+            int i = MathHelper.nextInt(rand, enchantment.getMaxLevel(), enchantment.getMaxLevel());
 
-	}
+            if (enchantment.getMaxLevel() > 5) {
+                i = MathHelper.nextInt(rand, enchantment.getMinLevel() + 5, enchantment.getMaxLevel());
+            } else if (enchantment.getMaxLevel() == 0) {
+                return getOffer(trader, rand);
+            }
 
-	public static class EnchantedBookForEmeraldsTrade implements VillagerTrades.ITrade {
+            ItemStack itemstack = EnchantedBookItem.createForEnchantment(new EnchantmentData(enchantment, i));
+            int j = 0;
 
-		private final int xpValue;
+            if (enchantment.getMaxLevel() > 5) {
+                j = 2 + rand.nextInt(5 + i * 10) + 3 * i - 5;
+            } else {
+                j = 2 + rand.nextInt(5 + i * 10) + 3 * i;
+            }
 
-		public EnchantedBookForEmeraldsTrade(int xpValueIn) {
+            if (enchantment.isTreasureOnly()) {
+                j *= 2;
+            }
 
-			this.xpValue = xpValueIn;
+            if (j > 64) {
+                j = 64;
+            }
 
-		}
+            return new MerchantOffer(new ItemStack(Items.EMERALD, j), new ItemStack(Items.BOOK), itemstack, 12, this.xpValue, 0.2F);
 
-		@Override
-		public MerchantOffer getOffer(Entity trader, Random rand) {
+        }
 
-			List<Enchantment> list = Registry.ENCHANTMENT.stream().collect(Collectors.toList());
-			Enchantment enchantment = list.get(rand.nextInt(list.size()));
-			int i = MathHelper.nextInt(rand, enchantment.getMaxLevel(), enchantment.getMaxLevel());
+    }
 
-			if (enchantment.getMaxLevel() > 5) {
-				i = MathHelper.nextInt(rand, enchantment.getMinLevel() + 5, enchantment.getMaxLevel());
-			}
-			else if (enchantment.getMaxLevel() == 0) {
-				return getOffer(trader, rand);
-			}
+    public static class ExperienceBottleTrade implements VillagerTrades.ITrade {
 
-			ItemStack itemstack = EnchantedBookItem.createForEnchantment(new EnchantmentData(enchantment, i));
-			int j = 0;
+        private final Item tradeItem = new ItemStack(Items.EXPERIENCE_BOTTLE).getItem();
 
-			if (enchantment.getMaxLevel() > 5) {
-				j = 2 + rand.nextInt(5 + i * 10) + 3 * i - 5;
-			}
-			else {
-				j = 2 + rand.nextInt(5 + i * 10) + 3 * i;
-			}
+        private final int maxUses = 12;
 
-			if (enchantment.isTreasureOnly()) {
-				j *= 2;
-			}
+        private final int xpValue = 1;
 
-			if (j > 64) {
-				j = 64;
-			}
+        private final float priceMultiplier;
 
-			return new MerchantOffer(new ItemStack(Items.EMERALD, j), new ItemStack(Items.BOOK), itemstack, 12, this.xpValue, 0.2F);
+        public ExperienceBottleTrade() {
 
-		}
+            this.priceMultiplier = 0.05F;
 
-	}
+        }
 
-	public static class ExperienceBottleTrade implements VillagerTrades.ITrade {
+        @Override
+        public MerchantOffer getOffer(Entity trader, Random rand) {
 
-		private final Item tradeItem = new ItemStack(Items.EXPERIENCE_BOTTLE).getItem();
+            ItemStack itemstack = new ItemStack(this.tradeItem, 1 + rand.nextInt(12));
+            return new MerchantOffer(new ItemStack(Items.EMERALD, 3), itemstack, this.maxUses, this.xpValue, this.priceMultiplier);
 
-		private final int maxUses = 12;
+        }
 
-		private final int xpValue = 1;
+    }
 
-		private final float priceMultiplier;
+    private static Int2ObjectMap<VillagerTrades.ITrade[]> gatAsIntMap(ImmutableMap<Integer, VillagerTrades.ITrade[]> p_221238_0_) {
 
-		public ExperienceBottleTrade() {
+        return new Int2ObjectOpenHashMap<>(p_221238_0_);
 
-			this.priceMultiplier = 0.05F;
-
-		}
-
-		@Override
-		public MerchantOffer getOffer(Entity trader, Random rand) {
-
-			ItemStack itemstack = new ItemStack(this.tradeItem, 1 + rand.nextInt(12));
-			return new MerchantOffer(new ItemStack(Items.EMERALD, 3), itemstack, this.maxUses, this.xpValue, this.priceMultiplier);
-
-		}
-
-	}
-
-	private static Int2ObjectMap<VillagerTrades.ITrade[]> gatAsIntMap(ImmutableMap<Integer, VillagerTrades.ITrade[]> p_221238_0_) {
-
-		return new Int2ObjectOpenHashMap<>(p_221238_0_);
-
-	}
+    }
 
 }
