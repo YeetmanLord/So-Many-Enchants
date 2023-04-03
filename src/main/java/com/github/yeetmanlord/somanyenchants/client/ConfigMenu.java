@@ -1,21 +1,21 @@
 package com.github.yeetmanlord.somanyenchants.client;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.config.EnchantmentConfig;
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.CycleOption;
-import net.minecraft.client.ProgressOption;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -43,7 +43,7 @@ public class ConfigMenu extends Screen {
 
 	public ConfigMenu() {
 
-		super(new TranslatableComponent("so_many_enchants.screen.config"));
+		super(Component.translatable("so_many_enchants.screen.config"));
 
 	}
 
@@ -71,150 +71,206 @@ public class ConfigMenu extends Screen {
 
 	}
 
+	private OptionInstance<Integer> createMaxLevelOption(String textComponent, EnchantmentConfig configEntry, String tooltip) {
+
+		if (tooltip == null) {
+			return new OptionInstance<Integer>("so_many_enchants.screen.config.max_level." + textComponent, OptionInstance.noTooltip(), (component, value) -> {
+				return Options.genericValueLabel(component, value);
+			}, new OptionInstance.IntRange(1, configEntry.absoluteMax), configEntry.maxLevel.get(), (value) -> {
+				setMaxLevel(configEntry, value);
+			});
+		}
+		else {
+			return new OptionInstance<Integer>("so_many_enchants.screen.config.max_level." + textComponent, (p_231858_) -> {
+				List<FormattedCharSequence> list = p_231858_.font.split(Component.translatable(tooltip), 200);
+				return (p_231883_) -> {
+					return list;
+				};
+			}, (component, value) -> {
+				return Options.genericValueLabel(component, value);
+			}, new OptionInstance.IntRange(1, configEntry.absoluteMax), configEntry.maxLevel.get(), (value) -> {
+				setMaxLevel(configEntry, value);
+			});
+		}
+
+	}
+
+	private OptionInstance<Boolean> createEnabledOption(String textComponent, EnchantmentConfig configEntry, String tooltipOn, String tooltipOff) {
+
+		if (tooltipOn == null || tooltipOff == null) {
+			return OptionInstance.createBoolean("so_many_enchants.screen.config.enabled." + textComponent, configEntry.isEnabled.get(), (value) -> {
+				setIsEnabled(configEntry, value);
+			});
+		}
+		else {
+			return OptionInstance.createBoolean("so_many_enchants.screen.config.enabled." + textComponent, (p_231858_) -> {
+				List<FormattedCharSequence> list = p_231858_.font.split(Component.translatable(tooltipOn), 200);
+				List<FormattedCharSequence> list1 = p_231858_.font.split(Component.translatable(tooltipOff), 200);
+				return (p_231883_) -> {
+					return p_231883_ ? list : list1;
+				};
+			}, configEntry.isEnabled.get(), (value) -> {
+				setIsEnabled(configEntry, value);
+			});
+		}
+
+	}
+
+	private OptionInstance<Boolean> createEnabledOption(String textComponent, EnchantmentConfig configEntry) {
+
+		return createEnabledOption(textComponent, configEntry, null, null);
+
+	}
+
+	private OptionInstance<Integer> createMaxLevelOption(String textComponent, EnchantmentConfig configEntry) {
+
+		return createMaxLevelOption(textComponent, configEntry, null);
+
+	}
+
 	@Override
 	protected void init() {
 
 		this.optionsRowList = new OptionsList(this.minecraft, this.width, this.height, OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.de", 1, Config.damageEnchantments.absoluteMax, 1, get -> (double) Config.damageEnchantments.maxLevel.get(), (set, val) -> setMaxLevel(Config.damageEnchantments, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.de") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.damageEnchantments.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.damageEnchantments, val)).setTooltip((p_167722_) -> {
-			return (p_167728_) -> {
-				return ImmutableList.of(new TextComponent("test").getVisualOrderText());
-			};
-		}));
+		this.optionsRowList.addSmall(createMaxLevelOption("de", Config.damageEnchantments), createEnabledOption("vanilla", Config.damageEnchantments));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.e", 1, Config.efficiency.absoluteMax, 1, get -> (double) Config.efficiency.maxLevel.get(), (set, val) -> setMaxLevel(Config.efficiency, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.e") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.efficiency.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.efficiency, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("e", Config.efficiency), createEnabledOption("vanilla", Config.efficiency));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.fa", 1, Config.fireAspect.absoluteMax, 1, get -> (double) Config.fireAspect.maxLevel.get(), (set, val) -> setMaxLevel(Config.fireAspect, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.fa") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.fireAspect.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.fireAspect, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("fa", Config.fireAspect), createEnabledOption("vanilla", Config.fireAspect));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.i", 1, Config.impaling.absoluteMax, 1, get -> (double) Config.impaling.maxLevel.get(), (set, val) -> setMaxLevel(Config.impaling, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.i") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.impaling.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.impaling, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("i", Config.impaling), createEnabledOption("vanilla", Config.impaling));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.k", 1, Config.knockback.absoluteMax, 1, get -> (double) Config.knockback.maxLevel.get(), (set, val) -> setMaxLevel(Config.knockback, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.k") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.knockback.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.knockback, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("k", Config.knockback), createEnabledOption("vanilla", Config.knockback));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.lbe", 1, Config.lootBonusEnchantments.absoluteMax, 1, get -> (double) Config.lootBonusEnchantments.maxLevel.get(), (set, val) -> setMaxLevel(Config.lootBonusEnchantments, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.lbe") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.lootBonusEnchantments.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.lootBonusEnchantments, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("lbe", Config.lootBonusEnchantments), createEnabledOption("vanilla", Config.lootBonusEnchantments));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.lo", 1, Config.loyalty.absoluteMax, 1, get -> (double) Config.loyalty.maxLevel.get(), (set, val) -> setMaxLevel(Config.loyalty, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.lo") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.loyalty.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.loyalty, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("lo", Config.loyalty), createEnabledOption("vanilla", Config.loyalty));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.l", 1, Config.lure.absoluteMax, 1, get -> (double) Config.lure.maxLevel.get(), (set, val) -> setMaxLevel(Config.lure, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.l") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.lure.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.lure, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("l", Config.lure), createEnabledOption("vanilla", Config.lure));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.p", 1, Config.piercing.absoluteMax, 1, get -> (double) Config.piercing.maxLevel.get(), (set, val) -> setMaxLevel(Config.piercing, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.p") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.piercing.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.piercing, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("p", Config.piercing), createEnabledOption("vanilla", Config.piercing));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.po", 1, Config.power.absoluteMax, 1, get -> (double) Config.power.maxLevel.get(), (set, val) -> setMaxLevel(Config.power, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.po") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.power.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.power, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("po", Config.power), createEnabledOption("vanilla", Config.power));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.pr", 1, Config.protectionEnchantments.absoluteMax, 1, get -> (double) Config.protectionEnchantments.maxLevel.get(), (set, val) -> setMaxLevel(Config.protectionEnchantments, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.pr") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.protectionEnchantments.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.protectionEnchantments, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("pr", Config.protectionEnchantments), createEnabledOption("vanilla", Config.protectionEnchantments));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.pu", 1, Config.punch.absoluteMax, 1, get -> (double) Config.punch.maxLevel.get(), (set, val) -> setMaxLevel(Config.punch, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.pu") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.punch.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.punch, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("pu", Config.punch), createEnabledOption("vanilla", Config.punch));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.q", 1, Config.quickCharge.absoluteMax, 1, get -> (double) Config.quickCharge.maxLevel.get(), (set, val) -> setMaxLevel(Config.quickCharge, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.q") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.quickCharge.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.quickCharge, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("q", Config.quickCharge), createEnabledOption("vanilla", Config.quickCharge));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.r", 1, Config.respiration.absoluteMax, 1, get -> (double) Config.respiration.maxLevel.get(), (set, val) -> setMaxLevel(Config.respiration, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.r") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.respiration.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.respiration, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("r", Config.respiration), createEnabledOption("vanilla", Config.respiration));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.ri", 1, Config.riptide.absoluteMax, 1, get -> (double) Config.riptide.maxLevel.get(), (set, val) -> setMaxLevel(Config.riptide, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.ri") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.riptide.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.riptide, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("ri", Config.riptide), createEnabledOption("vanilla", Config.riptide));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.ss", 1, Config.soulSpeed.absoluteMax, 1, get -> (double) Config.soulSpeed.maxLevel.get(), (set, val) -> setMaxLevel(Config.soulSpeed, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.ss") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.soulSpeed.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.soulSpeed, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("ss", Config.soulSpeed), createEnabledOption("vanilla", Config.soulSpeed));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.s", 1, Config.sweeping.absoluteMax, 1, get -> (double) Config.sweeping.maxLevel.get(), (set, val) -> setMaxLevel(Config.sweeping, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.s") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.sweeping.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.sweeping, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("s", Config.sweeping), createEnabledOption("vanilla", Config.sweeping));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.t", 1, Config.thorns.absoluteMax, 1, get -> (double) Config.thorns.maxLevel.get(), (set, val) -> setMaxLevel(Config.thorns, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.t") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.thorns.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.thorns, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("t", Config.thorns), createEnabledOption("vanilla", Config.thorns));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.u", 1, Config.unbreaking.absoluteMax, 1, get -> (double) Config.unbreaking.maxLevel.get(), (set, val) -> setMaxLevel(Config.unbreaking, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.u") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.vanilla", get -> (boolean) Config.unbreaking.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.unbreaking, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("u", Config.unbreaking), createEnabledOption("vanilla", Config.unbreaking));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.he", 1, Config.heavyArmor.absoluteMax, 1, get -> (double) Config.heavyArmor.maxLevel.get(), (set, val) -> setMaxLevel(Config.heavyArmor, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.he") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.heavyArmor.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.heavyArmor, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("he", Config.heavyArmor), createEnabledOption("modded", Config.heavyArmor));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.rei", 1, Config.reinforcement.absoluteMax, 1, get -> (double) Config.reinforcement.maxLevel.get(), (set, val) -> setMaxLevel(Config.reinforcement, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.rei") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.reinforcement.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.reinforcement, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("rei", Config.reinforcement), createEnabledOption("modded", Config.reinforcement));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.te", 1, Config.temper.absoluteMax, 1, get -> (double) Config.temper.maxLevel.get(), (set, val) -> setMaxLevel(Config.temper, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.te") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.temper.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.temper, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("te", Config.temper), createEnabledOption("modded", Config.temper));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.c", get -> (boolean) Config.catVision.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.catVision, val)));
+		this.optionsRowList.addBig(createEnabledOption("c", Config.catVision));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.fl", 1, Config.flight.absoluteMax, 1, get -> (double) Config.flight.maxLevel.get(), (set, val) -> setMaxLevel(Config.flight, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.fl") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.flight.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.flight, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("fl", Config.flight), createEnabledOption("modded", Config.flight));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.h", 1, Config.healthBoost.absoluteMax, 1, get -> (double) Config.healthBoost.maxLevel.get(), (set, val) -> setMaxLevel(Config.healthBoost, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.h") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.healthBoost.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.healthBoost, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("h", Config.healthBoost), createEnabledOption("modded", Config.healthBoost));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.sa", 1, Config.stepAssist.absoluteMax, 1, get -> (double) Config.stepAssist.maxLevel.get(), (set, val) -> setMaxLevel(Config.stepAssist, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.sa") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.stepAssist.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.stepAssist, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("sa", Config.stepAssist), createEnabledOption("modded", Config.stepAssist));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.f", get -> (boolean) Config.fastHopper.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.fastHopper, val)));
+		this.optionsRowList.addBig(createEnabledOption("f", Config.fastHopper));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.b", 1, Config.blockReach.absoluteMax, 1, get -> (double) Config.blockReach.maxLevel.get(), (set, val) -> setMaxLevel(Config.blockReach, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.b") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.blockReach.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.blockReach, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("b", Config.blockReach), createEnabledOption("modded", Config.blockReach));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.d", 1, Config.doubleBreak.absoluteMax, 1, get -> (double) Config.doubleBreak.maxLevel.get(), (set, val) -> setMaxLevel(Config.doubleBreak, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.d") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.doubleBreak.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.doubleBreak, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("d", Config.doubleBreak), createEnabledOption("modded", Config.doubleBreak));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.re", get -> (boolean) Config.replanting.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.replanting, val)));
+		this.optionsRowList.addBig(createEnabledOption("re", Config.replanting));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.a", 1, Config.attackReach.absoluteMax, 1, get -> (double) Config.attackReach.maxLevel.get(), (set, val) -> setMaxLevel(Config.attackReach, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.a") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.attackReach.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.attackReach, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("a", Config.attackReach), createEnabledOption("modded", Config.attackReach));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.cr", 1, Config.critical.absoluteMax, 1, get -> (double) Config.critical.maxLevel.get(), (set, val) -> setMaxLevel(Config.critical, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.cr") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.critical.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.critical, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("cr", Config.critical), createEnabledOption("modded", Config.critical));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.fr", 1, Config.freezing.absoluteMax, 1, get -> (double) Config.freezing.maxLevel.get(), (set, val) -> setMaxLevel(Config.freezing, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.fr") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.freezing.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.freezing, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("fr", Config.freezing), createEnabledOption("modded", Config.freezing));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.v", get -> (boolean) Config.villager.isEnabled.get(), (options, set, val) -> {
+		this.optionsRowList.addBig(OptionInstance.createBoolean("so_many_enchants.screen.config.enabled.v", Config.villager.isEnabled.getDefault(), (value) -> {
 
 			try {
-				Config.villager.isEnabled.set(val);
+				Config.villager.isEnabled.set(value);
 			}
 			catch (IOException exc) {
-				SoManyEnchants.LOGGER.info("Could not save villager config because the file is in use.");
+				SoManyEnchants.LOGGER.error("Could not save villager config because the file is in use. Retrying");
 			}
 
 		}));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.cs", get -> (boolean) Config.cavernousStorage.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.cavernousStorage, val)));
+		this.optionsRowList.addBig(createEnabledOption("cs", Config.cavernousStorage));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.cf", get -> (boolean) Config.camouflage.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.camouflage, val)));
+		this.optionsRowList.addBig(createEnabledOption("cf", Config.camouflage));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.fs", 1, Config.fastSmelt.absoluteMax, 1, get -> (double) Config.fastSmelt.maxLevel.get(), (set, val) -> setMaxLevel(Config.fastSmelt, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.fs") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.fastSmelt.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.fastSmelt, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("fs", Config.fastSmelt), createEnabledOption("modded", Config.fastSmelt));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.fuelE", 1, Config.fuelEfficient.absoluteMax, 1, get -> (double) Config.fuelEfficient.maxLevel.get(), (set, val) -> setMaxLevel(Config.fuelEfficient, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.fuelE") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.fuelEfficient.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.fuelEfficient, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("fuelE", Config.fuelEfficient), createEnabledOption("modded", Config.fuelEfficient));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.eExp", 1, Config.extraExperience.absoluteMax, 1, get -> (double) Config.extraExperience.maxLevel.get(), (set, val) -> setMaxLevel(Config.extraExperience, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.eExp") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.extraExperience.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.extraExperience, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("eExp", Config.extraExperience), createEnabledOption("modded", Config.extraExperience));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.hb", 1, Config.heavyBlade.absoluteMax, 1, get -> (double) Config.heavyBlade.maxLevel.get(), (set, val) -> setMaxLevel(Config.heavyBlade, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.hb") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.heavyBlade.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.heavyBlade, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("hb", Config.heavyBlade), createEnabledOption("modded", Config.heavyBlade));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.lightBlade", 1, Config.lightBlade.absoluteMax, 1, get -> (double) Config.lightBlade.maxLevel.get(), (set, val) -> setMaxLevel(Config.lightBlade, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.lightBlade") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.lightBlade.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.lightBlade, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("lightBlade", Config.lightBlade), createEnabledOption("modded", Config.lightBlade));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.blindness", get -> (boolean) Config.blindness.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.blindness, val)));
+		this.optionsRowList.addBig(createEnabledOption("blindness", Config.blindness));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.fireResistance", get -> (boolean) Config.fireResistance.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.fireResistance, val)));
+		this.optionsRowList.addBig(createEnabledOption("fireResistance", Config.fireResistance));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.haste", 1, Config.haste.absoluteMax, 1, get -> (double) Config.haste.maxLevel.get(), (set, val) -> setMaxLevel(Config.haste, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.haste") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.haste.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.haste, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("haste", Config.haste), createEnabledOption("modded", Config.haste));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.hunger", 1, Config.hunger.absoluteMax, 1, get -> (double) Config.hunger.maxLevel.get(), (set, val) -> setMaxLevel(Config.hunger, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.hunger") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.hunger.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.hunger, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("hunger", Config.hunger), createEnabledOption("modded", Config.hunger));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.invisibility", get -> (boolean) Config.invisibility.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.invisibility, val)));
+		this.optionsRowList.addBig(createEnabledOption("invisibility", Config.invisibility));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.jumpBoost", 1, Config.jumpBoost.absoluteMax, 1, get -> (double) Config.jumpBoost.maxLevel.get(), (set, val) -> setMaxLevel(Config.jumpBoost, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.jumpBoost") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.jumpBoost.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.jumpBoost, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("hunger", Config.hunger), createEnabledOption("modded", Config.hunger));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.miningFatigue", 1, Config.miningFatigue.absoluteMax, 1, get -> (double) Config.miningFatigue.maxLevel.get(), (set, val) -> setMaxLevel(Config.miningFatigue, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.miningFatigue") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.miningFatigue.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.miningFatigue, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("miningFatigue", Config.miningFatigue), createEnabledOption("modded", Config.miningFatigue));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.nausea", get -> (boolean) Config.nausea.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.nausea, val)));
+		this.optionsRowList.addBig(createEnabledOption("nausea", Config.nausea));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.poison", 1, Config.poison.absoluteMax, 1, get -> (double) Config.poison.maxLevel.get(), (set, val) -> setMaxLevel(Config.poison, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.poison") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.poison.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.poison, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("poison", Config.poison), createEnabledOption("modded", Config.poison));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.regeneration", 1, Config.regeneration.absoluteMax, 1, get -> (double) Config.regeneration.maxLevel.get(), (set, val) -> setMaxLevel(Config.regeneration, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.regeneration") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.regeneration.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.regeneration, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("regeneration", Config.regeneration), createEnabledOption("modded", Config.regeneration));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.resistance", 1, Config.resistance.absoluteMax, 1, get -> (double) Config.resistance.maxLevel.get(), (set, val) -> setMaxLevel(Config.resistance, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.resistance") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.resistance.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.resistance, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("resistance", Config.resistance), createEnabledOption("modded", Config.resistance));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.saturation", 1, Config.saturation.absoluteMax, 1, get -> (double) Config.saturation.maxLevel.get(), (set, val) -> setMaxLevel(Config.saturation, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.saturation") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.saturation.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.saturation, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("saturation", Config.saturation), createEnabledOption("modded", Config.saturation));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.slowFalling", get -> (boolean) Config.slowFalling.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.slowFalling, val)));
+		this.optionsRowList.addBig(createEnabledOption("slowFalling", Config.slowFalling));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.slowness", 1, Config.slowness.absoluteMax, 1, get -> (double) Config.slowness.maxLevel.get(), (set, val) -> setMaxLevel(Config.slowness, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.slowness") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.slowness.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.slowness, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("slowness", Config.slowness), createEnabledOption("modded", Config.slowness));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.speed", 1, Config.speed.absoluteMax, 1, get -> (double) Config.speed.maxLevel.get(), (set, val) -> setMaxLevel(Config.speed, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.speed") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.speed.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.speed, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("speed", Config.speed), createEnabledOption("modded", Config.speed));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.strength", 1, Config.strength.absoluteMax, 1, get -> (double) Config.strength.maxLevel.get(), (set, val) -> setMaxLevel(Config.strength, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.strength") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.strength.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.strength, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("strength", Config.strength), createEnabledOption("modded", Config.strength));
 
-		this.optionsRowList.addBig(CycleOption.createOnOff("so_many_enchants.screen.config.enabled.waterBreathing", get -> (boolean) Config.waterBreathing.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.waterBreathing, val)));
+		this.optionsRowList.addBig(createEnabledOption("waterBreathing", Config.waterBreathing));
 
-		this.optionsRowList.addSmall(new ProgressOption("so_many_enchants.screen.config.max_level.weakness", 1, Config.weakness.absoluteMax, 1, get -> (double) Config.weakness.maxLevel.get(), (set, val) -> setMaxLevel(Config.weakness, val), (gs, option) -> new TextComponent(I18n.get("so_many_enchants.screen.config.max_level.weakness") + ": " + (int) option.get(gs))), CycleOption.createOnOff("so_many_enchants.screen.config.enabled.modded", get -> (boolean) Config.weakness.isEnabled.get(), (options, set, val) -> setIsEnabled(Config.weakness, val)));
+		this.optionsRowList.addSmall(createMaxLevelOption("weakness", Config.weakness), createEnabledOption("modded", Config.weakness));
 
 		this.addWidget(this.optionsRowList);
 
-		this.addRenderableWidget(new Button((this.width - BUTTON_WIDTH * 2) / 2, this.height - DONE_BUTTON_TOP_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("gui.done"), button -> this.onClose()));
+		this.addRenderableWidget(new Button((this.width - BUTTON_WIDTH * 2) / 2, this.height - DONE_BUTTON_TOP_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("gui.done"), button -> this.onClose()));
 
-		this.addRenderableWidget(new Button((this.width - BUTTON_WIDTH / 3 + 100) / 2, this.height - DONE_BUTTON_TOP_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT, new TranslatableComponent("so_many_enchants.screen.config.default"), button -> this.setDefault()));
+		this.addRenderableWidget(new Button((this.width - BUTTON_WIDTH / 3 + 100) / 2, this.height - DONE_BUTTON_TOP_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT, Component.translatable("so_many_enchants.screen.config.default"), button -> this.setDefault()));
 
 	}
 
+	/**
+	 * 
+	 */
 	private void setDefault() {
 
 		Config.configSections.values().forEach((value) -> {
@@ -234,6 +290,8 @@ public class ConfigMenu extends Screen {
 		this.optionsRowList.render(matrixStack, mouseX, mouseY, partialTicks);
 		drawCenteredString(matrixStack, this.font, this.title.getString(), this.width / 2, TITLE_HEIGHT, 0xFFFFFF);
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
+		List<FormattedCharSequence> list = OptionsSubScreen.tooltipAt(this.optionsRowList, mouseX, mouseY);
+		this.renderTooltip(matrixStack, list, mouseX, mouseY);
 
 	}
 

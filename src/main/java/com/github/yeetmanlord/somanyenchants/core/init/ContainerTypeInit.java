@@ -16,7 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class ContainerTypeInit {
 
 	public static final DeferredRegister<MenuType<?>> CONTAINER_TYPES = DeferredRegister
-			.create(ForgeRegistries.CONTAINERS, SoManyEnchants.MOD_ID);
+			.create(ForgeRegistries.MENU_TYPES, SoManyEnchants.MOD_ID);
 
 	public static final RegistryObject<MenuType<EnchantedHopperContainer>> ENCHANTED_HOPPER = CONTAINER_TYPES
 			.register("enchanted_hopper",

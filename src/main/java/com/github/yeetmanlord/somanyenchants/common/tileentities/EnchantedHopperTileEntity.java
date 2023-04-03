@@ -17,7 +17,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
@@ -96,7 +95,7 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 
 	@Override
 	protected Component getDefaultName() {
-		return new TranslatableComponent("container.enchanted_hopper");
+		return Component.translatable("container.enchanted_hopper");
 	}
 
 	public static void pushItemsTick(Level p_155574_, BlockPos p_155575_, BlockState p_155576_,

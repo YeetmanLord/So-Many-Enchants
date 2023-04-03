@@ -33,7 +33,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 
@@ -137,7 +136,7 @@ public class EnchantedTrappedChestBlock extends EnchantedChestBlock {
 						return p_225539_1_.getDisplayName();
 					} else {
 						return (Component) (p_225539_2_.hasCustomName() ? p_225539_2_.getDisplayName()
-								: new TranslatableComponent("container.enchantedChestDouble"));
+								: Component.translatable("container.enchantedChestDouble"));
 					}
 				}
 			});

@@ -2,7 +2,6 @@ package com.github.yeetmanlord.somanyenchants.common.blocks;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
@@ -15,11 +14,11 @@ import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
@@ -85,7 +84,7 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	@Override public Optional<Container>acceptNone(){return Optional.empty();}};
 	private static final DoubleBlockCombiner.Combiner<EnchantedChestTileEntity, Optional<MenuProvider>> MENU_PROVIDER_COMBINER=new DoubleBlockCombiner.Combiner<EnchantedChestTileEntity,Optional<MenuProvider>>(){@Override public Optional<MenuProvider>acceptDouble(final EnchantedChestTileEntity p_51604_,final EnchantedChestTileEntity p_51605_){final Container container=new CompoundContainer(p_51604_,p_51605_);return Optional.of(new MenuProvider(){@Override @Nullable public AbstractContainerMenu createMenu(int p_51622_,Inventory p_51623_,Player p_51624_){if(p_51604_.canOpen(p_51624_)&&p_51605_.canOpen(p_51624_)){p_51604_.unpackLootTable(p_51623_.player);p_51605_.unpackLootTable(p_51623_.player);return EnchantedChestContainer.createGeneric9X8(p_51622_,p_51623_,container);}else{return null;}}
 
-	@Override public Component getDisplayName(){if(p_51604_.hasCustomName()){return p_51604_.getDisplayName();}else{return(Component)(p_51605_.hasCustomName()?p_51605_.getDisplayName():new TranslatableComponent("container.enchantedChestDouble"));}}});}
+	@Override public Component getDisplayName(){if(p_51604_.hasCustomName()){return p_51604_.getDisplayName();}else{return(Component)(p_51605_.hasCustomName()?p_51605_.getDisplayName():Component.translatable("container.enchantedChestDouble"));}}});}
 
 	@Override public Optional<MenuProvider>acceptSingle(EnchantedChestTileEntity p_51602_){return Optional.of(p_51602_);}
 
@@ -383,7 +382,7 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	}
 
 	@Override
-	public void tick(BlockState p_153059_, ServerLevel p_153060_, BlockPos p_153061_, Random p_153062_) {
+	public void tick(BlockState p_153059_, ServerLevel p_153060_, BlockPos p_153061_, RandomSource p_153062_) {
 		BlockEntity blockentity = p_153060_.getBlockEntity(p_153061_);
 		if (blockentity instanceof EnchantedChestTileEntity) {
 			((EnchantedChestTileEntity) blockentity).recheckOpen();

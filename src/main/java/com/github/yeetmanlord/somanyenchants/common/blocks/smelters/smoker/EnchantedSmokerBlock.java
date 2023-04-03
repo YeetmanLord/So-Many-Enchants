@@ -1,7 +1,5 @@
 package com.github.yeetmanlord.somanyenchants.common.blocks.smelters.smoker;
 
-import java.util.Random;
-
 import com.github.yeetmanlord.somanyenchants.common.blocks.smelters.AbstractEnchantedSmelterBlock;
 import com.github.yeetmanlord.somanyenchants.core.init.BlockEntityTypeInit;
 
@@ -10,6 +8,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -51,7 +50,7 @@ public class EnchantedSmokerBlock extends AbstractEnchantedSmelterBlock
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand)
+	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand)
 	{
 
 		if (stateIn.getValue(LIT))

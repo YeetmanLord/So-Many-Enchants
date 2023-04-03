@@ -1,7 +1,5 @@
 package com.github.yeetmanlord.somanyenchants.common.blocks;
 
-import java.util.Random;
-
 import javax.annotation.Nullable;
 
 import com.github.yeetmanlord.somanyenchants.common.tileentities.EnchantedBarrelTileEntity;
@@ -10,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -77,7 +76,7 @@ public class EnchantedBarrelBlock extends BaseEntityBlock {
 	}
 
 	@Override
-	public void tick(BlockState p_49060_, ServerLevel p_49061_, BlockPos p_49062_, Random p_49063_) {
+	public void tick(BlockState p_49060_, ServerLevel p_49061_, BlockPos p_49062_, RandomSource p_49063_) {
 		BlockEntity blockentity = p_49061_.getBlockEntity(p_49062_);
 		if (blockentity instanceof EnchantedBarrelTileEntity) {
 			((EnchantedBarrelTileEntity) blockentity).recheckOpen();

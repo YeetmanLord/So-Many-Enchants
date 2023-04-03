@@ -16,8 +16,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.Container;
@@ -229,7 +227,7 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 		CompoundTag compoundnbt = stack.getTagElement("BlockEntityTag");
 		if (compoundnbt != null) {
 			if (compoundnbt.contains("LootTable", 8)) {
-				tooltip.add(new TextComponent("???????"));
+				tooltip.add(Component.literal("???????"));
 			}
 
 			if (compoundnbt.contains("Items", 9)) {
@@ -251,7 +249,7 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 				}
 
 				if (j - i > 0) {
-					tooltip.add((new TranslatableComponent("container.shulkerBox.more", j - i))
+					tooltip.add((Component.translatable("container.shulkerBox.more", j - i))
 							.withStyle(ChatFormatting.ITALIC));
 				}
 			}

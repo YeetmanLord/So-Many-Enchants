@@ -5,7 +5,6 @@ import com.github.yeetmanlord.somanyenchants.core.init.BlockEntityTypeInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +20,7 @@ public class EnchantedBlastFurnaceTileEntity extends AbstractEnchantedSmelterTil
 
 	@Override
 	protected Component getDefaultName()
-	{ return new TranslatableComponent("container.enchantedBlastFurnace"); }
+	{ return Component.translatable("container.enchantedBlastFurnace"); }
 
 	@Override
 	protected int getBurnDuration(ItemStack fuel)

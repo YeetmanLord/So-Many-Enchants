@@ -27,6 +27,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangeGameModeEvent;
@@ -41,10 +43,12 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void armorEnchantments(final LivingEquipmentChangeEvent event) {
 
-		LivingEntity living = event.getEntityLiving();
+		LivingEntity living = event.getEntity();
 
 		if (living instanceof Player player) {
-			boolean flag = event.getSlot().getType() == EquipmentSlot.Type.ARMOR;
+			boolean flag = event.getSlot() != EquipmentSlot.MAINHAND && event.getSlot() != EquipmentSlot.OFFHAND;
+			ItemStack to = event.getTo();
+			ItemStack from = event.getFrom();
 
 			if (flag) {
 				AttributeHelper.apply(EnchantmentInit.HEALTH_BOOST.get(), Attributes.MAX_HEALTH, Config.healthBoost, event, 2d);
@@ -61,7 +65,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void applyFlight(final LivingEquipmentChangeEvent event) {
 
-		LivingEntity living = event.getEntityLiving();
+		LivingEntity living = event.getEntity();
 
 		if (living instanceof Player && Config.flight.isEnabled.get() == true) {
 			Player player = (Player) living;
@@ -117,7 +121,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void stepAssist(final LivingEquipmentChangeEvent event) {
 
-		LivingEntity e = event.getEntityLiving();
+		LivingEntity e = event.getEntity();
 
 		if (e instanceof Player && Config.stepAssist.isEnabled.get() == true) {
 			Player player = (Player) e;
@@ -170,6 +174,7 @@ public class ArmorEnchantments {
 
 	}
 
+	@OnlyIn(Dist.CLIENT)
 	public static class ClientAccess {
 
 		public static void updatePlayerFlying(boolean flying) {
@@ -186,7 +191,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void switchGM(final PlayerChangeGameModeEvent event) {
 
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 		Scheduler sch = SoManyEnchants.getScheduler(player);
 		sch.schedule(() -> new Runnable() {
 

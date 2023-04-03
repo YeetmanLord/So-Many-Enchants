@@ -15,14 +15,14 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 public class SyncConfig {
 
 	@SubscribeEvent
-	public static void syncConfig(final ClientPlayerNetworkEvent.LoggedInEvent event) {
+	public static void syncConfig(final ClientPlayerNetworkEvent.LoggingIn event) {
 
 		NetworkHandler.CHANNEL.sendToServer(new ConfigSyncPacket(0));
 
 	}
 
 	@SubscribeEvent
-	public static void syncConfig(final ClientPlayerNetworkEvent.LoggedOutEvent event) {
+	public static void syncConfig(final ClientPlayerNetworkEvent.LoggingOut event) {
 
 		Config.unload();
 

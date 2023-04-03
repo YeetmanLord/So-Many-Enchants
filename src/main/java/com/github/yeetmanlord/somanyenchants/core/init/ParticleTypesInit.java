@@ -8,11 +8,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-public class ParticleTypesInit 
-{
-	public static final DeferredRegister<ParticleType<?>> 
-	PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, SoManyEnchants.MOD_ID);
-	
+public class ParticleTypesInit {
+
+	public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, SoManyEnchants.MOD_ID);
+
 	public static final RegistryObject<SimpleParticleType> FREEZE_PARTICLE = PARTICLES.register("freeze", () -> new SimpleParticleType(false));
 
 }

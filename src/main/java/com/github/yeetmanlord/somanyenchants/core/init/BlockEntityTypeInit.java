@@ -19,7 +19,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class BlockEntityTypeInit
 {
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister
-			.create(ForgeRegistries.BLOCK_ENTITIES, SoManyEnchants.MOD_ID);
+			.create(ForgeRegistries.BLOCK_ENTITY_TYPES, SoManyEnchants.MOD_ID);
 
 	public static final RegistryObject<BlockEntityType<EnchantedHopperTileEntity>> ENCHANTED_HOPPER = BLOCK_ENTITY_TYPES
 			.register("enchanted_hopper", () -> BlockEntityType.Builder

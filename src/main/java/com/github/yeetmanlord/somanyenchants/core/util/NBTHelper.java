@@ -4,6 +4,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 
 public class NBTHelper
@@ -45,7 +46,7 @@ public class NBTHelper
 			CompoundTag tag = stack.getTag();
 			if (tag.contains("AttributeData")) {
 				CompoundTag data = tag.getCompound("AttributeData");
-				return data.getDouble(attr.getRegistryName().toString());
+				return data.getDouble(Registry.ATTRIBUTE.getKey(attr).toString());
 			}
 		}
 		return 0d;
@@ -57,7 +58,7 @@ public class NBTHelper
 		if(nbt.contains("AttributeData")) {
 			tag = nbt.getCompound("AttributeData");
 		}
-		tag.putDouble(attr.getRegistryName().toString(), value);
+		tag.putDouble(Registry.ATTRIBUTE.getKey(attr).toString(), value);
 		nbt.put("AttributeData", tag);
 	}
 

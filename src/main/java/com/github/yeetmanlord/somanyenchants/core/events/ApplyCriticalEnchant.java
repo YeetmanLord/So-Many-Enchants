@@ -25,7 +25,7 @@ public class ApplyCriticalEnchant {
 
 		Random rand = new Random();
 		Entity target = event.getTarget();
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 		int criticalLevel = ModEnchantmentHelper.getCriticalLevel(player);
 
 		if (criticalLevel > 0 && Config.critical.isEnabled.get() == true) {
@@ -70,7 +70,7 @@ public class ApplyCriticalEnchant {
 	public static void applyEnchantmentToNonPlayer(final LivingHurtEvent event) {
 
 		Random rand = new Random();
-		LivingEntity target = event.getEntityLiving();
+		LivingEntity target = event.getEntity();
 
 		if (event.getSource() instanceof EntityDamageSource && Config.critical.isEnabled.get() == true) {
 			Entity attacker = event.getSource().getEntity();

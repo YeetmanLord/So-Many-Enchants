@@ -78,39 +78,58 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 
 	private int cookingTotalTime;
 
-	protected final ContainerData furnaceData=new ContainerData(){
+	protected final ContainerData furnaceData = new ContainerData() {
 
-	@Override public int get(int index){
+		@Override
+		public int get(int index) {
 
-	switch(index){case 0:return AbstractEnchantedSmelterTileEntity.this.litTime;
+			switch (index) {
+				case 0:
+					return AbstractEnchantedSmelterTileEntity.this.litTime;
 
-	case 1:return AbstractEnchantedSmelterTileEntity.this.litDuration;
+				case 1:
+					return AbstractEnchantedSmelterTileEntity.this.litDuration;
 
-	case 2:return AbstractEnchantedSmelterTileEntity.this.cookingProgress;
+				case 2:
+					return AbstractEnchantedSmelterTileEntity.this.cookingProgress;
 
-	case 3:return AbstractEnchantedSmelterTileEntity.this.cookingTotalTime;
+				case 3:
+					return AbstractEnchantedSmelterTileEntity.this.cookingTotalTime;
 
-	default:return 0;}
+				default:
+					return 0;
+			}
 
-	}
+		}
 
-	@Override public void set(int index,int value){
+		@Override
+		public void set(int index, int value) {
 
-	switch(index){case 0:AbstractEnchantedSmelterTileEntity.this.litTime=value;break;
+			switch (index) {
+				case 0:
+					AbstractEnchantedSmelterTileEntity.this.litTime = value;
+					break;
 
-	case 1:AbstractEnchantedSmelterTileEntity.this.litDuration=value;break;
+				case 1:
+					AbstractEnchantedSmelterTileEntity.this.litDuration = value;
+					break;
 
-	case 2:AbstractEnchantedSmelterTileEntity.this.cookingProgress=value;break;
+				case 2:
+					AbstractEnchantedSmelterTileEntity.this.cookingProgress = value;
+					break;
 
-	case 3:AbstractEnchantedSmelterTileEntity.this.cookingTotalTime=value;}
+				case 3:
+					AbstractEnchantedSmelterTileEntity.this.cookingTotalTime = value;
+			}
 
-	}
+		}
 
-	@Override public int getCount(){
+		@Override
+		public int getCount() {
 
-	return 4;
+			return 4;
 
-	}
+		}
 
 	};
 
@@ -180,7 +199,7 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 		add(map, Items.STICK, 100);
 		add(map, ItemTags.SAPLINGS, 100);
 		add(map, Items.BOWL, 100);
-		add(map, ItemTags.CARPETS, 67);
+		add(map, ItemTags.WOOL_CARPETS, 67);
 		add(map, Blocks.DRIED_KELP_BLOCK, 4001);
 		add(map, Items.CROSSBOW, 300);
 		add(map, Blocks.BAMBOO, 50);
@@ -295,13 +314,13 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 
 				if (smelter.isLit()) {
 					flag1 = true;
-					if (itemstack.hasContainerItem()) smelter.items.set(1, itemstack.getContainerItem());
+					if (itemstack.hasCraftingRemainingItem()) smelter.items.set(1, itemstack.getCraftingRemainingItem());
 					else if (!itemstack.isEmpty()) {
 						Item item = itemstack.getItem();
 						itemstack.shrink(1);
 
 						if (itemstack.isEmpty()) {
-							smelter.items.set(1, itemstack.getContainerItem());
+							smelter.items.set(1, itemstack.getCraftingRemainingItem());
 						}
 
 					}
@@ -607,7 +626,8 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 
 	}
 
-	@Override @Nullable
+	@Override
+	@Nullable
 	public Recipe<?> getRecipeUsed() {
 
 		return null;
@@ -697,7 +717,7 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 	public void addEnchantment(Enchantment ench, short lvl) {
 
 		CompoundTag nbt = new CompoundTag();
-		nbt.putString("id", ench.getRegistryName().toString());
+		nbt.putString("id", Registry.ENCHANTMENT.getKey(ench).toString());
 		nbt.putShort("lvl", lvl);
 		this.enchantmentNBT.add(nbt);
 		CompoundTag writeNBT = new CompoundTag();

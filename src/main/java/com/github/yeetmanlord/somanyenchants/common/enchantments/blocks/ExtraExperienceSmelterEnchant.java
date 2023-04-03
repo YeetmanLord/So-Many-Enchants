@@ -32,14 +32,14 @@ public class ExtraExperienceSmelterEnchant extends ModEnchantment {
 	@Override
 	public int getMinCost(int enchantmentLevel) {
 
-		return (enchantmentLevel - 1) * 3 + 5;
+		return 5 * enchantmentLevel;
 
 	}
 
 	@Override
 	public int getMaxCost(int enchantmentLevel) {
 
-		return this.getMinCost(enchantmentLevel) + 20;
+		return this.getMinCost(enchantmentLevel) + 40;
 
 	}
 

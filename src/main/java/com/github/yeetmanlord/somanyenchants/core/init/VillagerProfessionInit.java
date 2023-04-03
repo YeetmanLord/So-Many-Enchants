@@ -15,6 +15,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.Registry;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -35,7 +36,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class VillagerProfessionInit {
 
-	public static final DeferredRegister<VillagerProfession> JOBS = DeferredRegister.create(ForgeRegistries.PROFESSIONS, SoManyEnchants.MOD_ID);
+	public static final DeferredRegister<VillagerProfession> JOBS = DeferredRegister.create(ForgeRegistries.VILLAGER_PROFESSIONS, SoManyEnchants.MOD_ID);
 
 	public static final DeferredRegister<PoiType> POI_TYPE = DeferredRegister.create(ForgeRegistries.POI_TYPES, SoManyEnchants.MOD_ID);
 
@@ -45,21 +46,17 @@ public class VillagerProfessionInit {
 
 	private static RegistryObject<PoiType> registerPOI() {
 
-		if (Config.villager.isEnabled.get()) {
-			return POI_TYPE.register("enchantment_table", () -> new PoiType("enchantment_table", getAllStates(Blocks.ENCHANTING_TABLE), 1, 1));
-		}
-
-		return null;
+		return POI_TYPE.register("enchantment_table", () -> new PoiType(getAllStates(Blocks.ENCHANTING_TABLE), 1, 1));
 
 	}
 
 	private static RegistryObject<VillagerProfession> registerVillager() {
 
-		if (Config.villager.isEnabled.get()) {
-			return JOBS.register("enchanter", () -> new VillagerProfession("enchanter", VillagerProfessionInit.ENCHANTMENT_TABLE.get(), ImmutableSet.of(), ImmutableSet.of(), SoundEvents.ENCHANTMENT_TABLE_USE));
-		}
-
-		return null;
+		return JOBS.register("enchanter", () -> new VillagerProfession("enchanter", (holder) -> {
+			return holder.is(VillagerProfessionInit.ENCHANTMENT_TABLE.getKey());
+		}, (holder) -> {
+			return holder.is(VillagerProfessionInit.ENCHANTMENT_TABLE.getKey());
+		}, ImmutableSet.of(), ImmutableSet.of(), SoundEvents.ENCHANTMENT_TABLE_USE));
 
 	}
 
@@ -97,7 +94,7 @@ public class VillagerProfessionInit {
 		}
 
 		@Override
-		public MerchantOffer getOffer(Entity trader, Random rand) {
+		public MerchantOffer getOffer(Entity trader, RandomSource rand) {
 
 			List<Enchantment> list = Registry.ENCHANTMENT.stream().collect(Collectors.toList());
 			Enchantment enchantment = list.get(rand.nextInt(list.size()));
@@ -151,7 +148,7 @@ public class VillagerProfessionInit {
 		}
 
 		@Override
-		public MerchantOffer getOffer(Entity trader, Random rand) {
+		public MerchantOffer getOffer(Entity trader, RandomSource rand) {
 
 			ItemStack itemstack = new ItemStack(this.tradeItem, 1 + rand.nextInt(12));
 			return new MerchantOffer(new ItemStack(Items.EMERALD, 3), itemstack, this.maxUses, this.xpValue, this.priceMultiplier);

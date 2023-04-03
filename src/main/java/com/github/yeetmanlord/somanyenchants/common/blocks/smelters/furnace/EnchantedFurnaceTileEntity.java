@@ -5,7 +5,6 @@ import com.github.yeetmanlord.somanyenchants.core.init.BlockEntityTypeInit;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -20,7 +19,7 @@ public class EnchantedFurnaceTileEntity extends AbstractEnchantedSmelterTileEnti
 
 	@Override
 	protected Component getDefaultName() {
-		return new TranslatableComponent("container.enchantedFurnace");
+		return Component.translatable("container.enchantedFurnace");
 	}
 
 	@Override

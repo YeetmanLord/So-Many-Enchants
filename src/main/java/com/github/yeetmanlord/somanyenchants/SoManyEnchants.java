@@ -26,7 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -41,7 +41,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod("so_many_enchants")
 @Mod.EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.MOD)
 public class SoManyEnchants {
-
+	
 	public static final Scheduler MOD_SCHEDULER = new Scheduler(null);
 
 	public static final Logger LOGGER = LogManager.getLogger();
@@ -58,6 +58,7 @@ public class SoManyEnchants {
 
 		playerUtils = new HashMap<>();
 		instance = this;
+
 		DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> new DistExecutor.SafeRunnable() {
 
 			private static final long serialVersionUID = 5789682203789505777L;
@@ -65,12 +66,13 @@ public class SoManyEnchants {
 			@Override
 			public void run() {
 
-				ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, () -> new ConfigGuiHandler.ConfigGuiFactory(((minecraft, screen) -> new ConfigMenu())));
+				ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory(((minecraft, screen) -> new ConfigMenu())));
 				Config.load();
 
 			}
 
 		});
+
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
 		modEventBus.addListener(this::doClientStuff);
@@ -88,6 +90,7 @@ public class SoManyEnchants {
 		AttributeInit.ATTRIBUTES.register(modEventBus);
 
 		modEventBus.addListener(this::setup);
+
 		MinecraftForge.EVENT_BUS.register(this);
 
 	}
@@ -95,9 +98,9 @@ public class SoManyEnchants {
 	private void setup(final FMLCommonSetupEvent event) {
 
 		CreativeModeTab.TAB_DECORATIONS.setEnchantmentCategories(new EnchantmentCategory[] { EnchantmentTypesInit.HOPPER, EnchantmentTypesInit.STORAGE, EnchantmentTypesInit.TRAPPED_CHEST, EnchantmentTypesInit.SMELTER });
-		LOGGER.info("PREINIT IS FUNCTIONING");
 		VillagerProfessionInit.fillTradeData();
 		NetworkHandler.init();
+		LOGGER.info("PREINIT IS FUNCTIONING");
 
 //        event.enqueueWork(() ->
 //        {

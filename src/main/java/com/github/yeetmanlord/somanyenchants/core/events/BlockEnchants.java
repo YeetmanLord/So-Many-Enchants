@@ -25,8 +25,7 @@ import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,7 +45,6 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.TrappedChestBlock;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -55,916 +53,952 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.ItemPickupEvent;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
+import net.minecraftforge.event.level.BlockEvent.BreakEvent;
+import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class BlockEnchants {
+	
+	@SubscribeEvent
+	public static void placeEnchantedBlocks(final EntityPlaceEvent event) {
 
-    @SubscribeEvent
-    public static void placeEnchantedBlocks(final EntityPlaceEvent event) {
+		Entity e = event.getEntity();
+
+		if (e instanceof Player) {
+			Player player = (Player) e;
+			ItemStack mainhand = player.getMainHandItem();
+			ItemStack offhand = player.getOffhandItem();
+			HitResult r = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0.5f, false);
+
+			if (r.getType() != HitResult.Type.BLOCK) {
+				return;
+			}
 
-        Entity e = event.getEntity();
+			if ((event.getPlacedBlock().getBlock() instanceof AbstractEnchantedSmelterBlock || event.getPlacedBlock().getBlock() instanceof AbstractFurnaceBlock) && (Config.fastSmelt.isEnabled.get() || Config.fuelEfficient.isEnabled.get() || Config.extraExperience.isEnabled.get())) {
+
+				if (event.getPlacedBlock().getBlock() instanceof AbstractEnchantedSmelterBlock) {
+					if (Block.byItem(mainhand.getItem()) instanceof AbstractEnchantedSmelterBlock) {
 
-        if (e instanceof Player) {
-            Player player = (Player) e;
-            ItemStack mainhand = player.getMainHandItem();
-            ItemStack offhand = player.getOffhandItem();
-            HitResult r = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0.5f, false);
+						if (mainhand.isEnchanted()) {
+							AbstractEnchantedSmelterTileEntity tile = (AbstractEnchantedSmelterTileEntity) event.getLevel().getBlockEntity(event.getPos());
 
-            if (r.getType() != HitResult.Type.BLOCK) {
-                return;
-            }
+							if (Config.fastSmelt.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_SMELT.get(), mainhand)) {
+								tile.addEnchantment(EnchantmentInit.FAST_SMELT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), mainhand));
+							}
 
-            if ((event.getPlacedBlock().getBlock() instanceof AbstractEnchantedSmelterBlock || event.getPlacedBlock().getBlock() instanceof AbstractFurnaceBlock) && (Config.fastSmelt.isEnabled.get() || Config.fuelEfficient.isEnabled.get() || Config.extraExperience.isEnabled.get())) {
+							if (Config.fuelEfficient.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FUEL_EFFICIENT.get(), mainhand)) {
+								tile.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), mainhand));
+							}
 
-                if (event.getPlacedBlock().getBlock() instanceof AbstractEnchantedSmelterBlock) {
-                    if (Block.byItem(mainhand.getItem()) instanceof AbstractEnchantedSmelterBlock) {
+							if (Config.extraExperience.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), mainhand)) {
+								tile.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), mainhand));
+							}
 
-                        if (mainhand.isEnchanted()) {
-                            AbstractEnchantedSmelterTileEntity tile = (AbstractEnchantedSmelterTileEntity) event.getWorld().getBlockEntity(event.getPos());
+						} else {
+							event.getLevel().setBlock(event.getPos(), ((AbstractEnchantedSmelterBlock) Block.byItem(mainhand.getItem())).getUnenchantedBlock().defaultBlockState().setValue(AbstractFurnaceBlock.FACING, event.getState().getValue(AbstractEnchantedSmelterBlock.FACING)), 1);
+						}
 
-                            if (Config.fastSmelt.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_SMELT.get(), mainhand)) {
-                                tile.addEnchantment(EnchantmentInit.FAST_SMELT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), mainhand));
-                            }
+					} else if (!(mainhand.getItem() instanceof BlockItem)) {
 
-                            if (Config.fuelEfficient.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FUEL_EFFICIENT.get(), mainhand)) {
-                                tile.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), mainhand));
-                            }
+						if (Block.byItem(offhand.getItem()) instanceof AbstractEnchantedSmelterBlock) {
 
-                            if (Config.extraExperience.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), mainhand)) {
-                                tile.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), mainhand));
-                            }
+							if (offhand.isEnchanted()) {
+								AbstractEnchantedSmelterTileEntity tile = (AbstractEnchantedSmelterTileEntity) event.getLevel().getBlockEntity(event.getPos());
 
-                        } else {
-                            event.getWorld().setBlock(event.getPos(), ((AbstractEnchantedSmelterBlock) Block.byItem(mainhand.getItem())).getUnenchantedBlock().defaultBlockState().setValue(AbstractFurnaceBlock.FACING, event.getState().getValue(AbstractEnchantedSmelterBlock.FACING)), 1);
-                        }
+								if (Config.fastSmelt.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_SMELT.get(), offhand)) {
+									tile.addEnchantment(EnchantmentInit.FAST_SMELT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), offhand));
+								}
 
-                    } else if (!(mainhand.getItem() instanceof BlockItem)) {
+								if (Config.fuelEfficient.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FUEL_EFFICIENT.get(), offhand)) {
+									tile.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), offhand));
+								}
 
-                        if (Block.byItem(offhand.getItem()) instanceof AbstractEnchantedSmelterBlock) {
+								if (Config.extraExperience.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), offhand)) {
+									tile.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), offhand));
+								}
 
-                            if (offhand.isEnchanted()) {
-                                AbstractEnchantedSmelterTileEntity tile = (AbstractEnchantedSmelterTileEntity) event.getWorld().getBlockEntity(event.getPos());
+							} else {
+								event.getLevel().setBlock(event.getPos(), ((AbstractEnchantedSmelterBlock) Block.byItem(mainhand.getItem())).getUnenchantedBlock().defaultBlockState().setValue(AbstractFurnaceBlock.FACING, event.getState().getValue(AbstractEnchantedSmelterBlock.FACING)), 1);
+							}
 
-                                if (Config.fastSmelt.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_SMELT.get(), offhand)) {
-                                    tile.addEnchantment(EnchantmentInit.FAST_SMELT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), offhand));
-                                }
+						}
 
-                                if (Config.fuelEfficient.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FUEL_EFFICIENT.get(), offhand)) {
-                                    tile.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), offhand));
-                                }
+					}
+				} else {
+					if (mainhand.isEnchanted()) {
+						event.getLevel().setBlock(event.getPos(), AbstractEnchantedSmelterBlock.getSmelterFromBlock(event.getPlacedBlock().getBlock())
+								.defaultBlockState().setValue(AbstractEnchantedSmelterBlock.FACING,
+										event.getState().getValue(AbstractFurnaceBlock.FACING)), 1);
+						AbstractEnchantedSmelterTileEntity tile = (AbstractEnchantedSmelterTileEntity) event.getLevel().getBlockEntity(event.getPos());
 
-                                if (Config.extraExperience.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), offhand)) {
-                                    tile.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), offhand));
-                                }
+						if (Config.fastSmelt.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_SMELT.get(), mainhand)) {
+							tile.addEnchantment(EnchantmentInit.FAST_SMELT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), mainhand));
+						}
 
-                            } else {
-                                event.getWorld().setBlock(event.getPos(), ((AbstractEnchantedSmelterBlock) Block.byItem(mainhand.getItem())).getUnenchantedBlock().defaultBlockState().setValue(AbstractFurnaceBlock.FACING, event.getState().getValue(AbstractEnchantedSmelterBlock.FACING)), 1);
-                            }
+						if (Config.fuelEfficient.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FUEL_EFFICIENT.get(), mainhand)) {
+							tile.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), mainhand));
+						}
 
-                        }
+						if (Config.extraExperience.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), mainhand)) {
+							tile.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), mainhand));
+						}
 
-                    }
-                } else {
-                    if (mainhand.isEnchanted()) {
-                        event.getWorld().setBlock(event.getPos(), AbstractEnchantedSmelterBlock.getSmelterFromBlock(event.getPlacedBlock().getBlock())
-                                .defaultBlockState().setValue(AbstractEnchantedSmelterBlock.FACING,
-                                        event.getState().getValue(AbstractFurnaceBlock.FACING)), 1);
-                        AbstractEnchantedSmelterTileEntity tile = (AbstractEnchantedSmelterTileEntity) event.getWorld().getBlockEntity(event.getPos());
+					} else if (!(mainhand.getItem() instanceof BlockItem)) {
+						if (Block.byItem(offhand.getItem()) instanceof AbstractFurnaceBlock) {
+							if (offhand.isEnchanted()) {
+								event.getLevel().setBlock(event.getPos(), AbstractEnchantedSmelterBlock.getSmelterFromBlock(event.getPlacedBlock().getBlock())
+										.defaultBlockState().setValue(AbstractEnchantedSmelterBlock.FACING,
+												event.getState().getValue(AbstractFurnaceBlock.FACING)), 1);
+								AbstractEnchantedSmelterTileEntity tile = (AbstractEnchantedSmelterTileEntity) event.getLevel().getBlockEntity(event.getPos());
 
-                        if (Config.fastSmelt.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_SMELT.get(), mainhand)) {
-                            tile.addEnchantment(EnchantmentInit.FAST_SMELT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), mainhand));
-                        }
+								if (Config.fastSmelt.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_SMELT.get(), offhand)) {
+									tile.addEnchantment(EnchantmentInit.FAST_SMELT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), offhand));
+								}
 
-                        if (Config.fuelEfficient.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FUEL_EFFICIENT.get(), mainhand)) {
-                            tile.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), mainhand));
-                        }
+								if (Config.fuelEfficient.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FUEL_EFFICIENT.get(), offhand)) {
+									tile.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), offhand));
+								}
 
-                        if (Config.extraExperience.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), mainhand)) {
-                            tile.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), mainhand));
-                        }
+								if (Config.extraExperience.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), offhand)) {
+									tile.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), offhand));
+								}
+							}
+						}
+					}
+				}
+			}
 
-                    } else if (!(mainhand.getItem() instanceof BlockItem)) {
-                        if (Block.byItem(offhand.getItem()) instanceof AbstractFurnaceBlock) {
-                            if (offhand.isEnchanted()) {
-                                event.getWorld().setBlock(event.getPos(), AbstractEnchantedSmelterBlock.getSmelterFromBlock(event.getPlacedBlock().getBlock())
-                                        .defaultBlockState().setValue(AbstractEnchantedSmelterBlock.FACING,
-                                                event.getState().getValue(AbstractFurnaceBlock.FACING)), 1);
-                                AbstractEnchantedSmelterTileEntity tile = (AbstractEnchantedSmelterTileEntity) event.getWorld().getBlockEntity(event.getPos());
+			else if (event.getPlacedBlock().getBlock() == Blocks.HOPPER && Config.fastHopper.isEnabled.get()) {
 
-                                if (Config.fastSmelt.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_SMELT.get(), offhand)) {
-                                    tile.addEnchantment(EnchantmentInit.FAST_SMELT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), offhand));
-                                }
+				if (mainhand.getItem() == Items.HOPPER) {
 
-                                if (Config.fuelEfficient.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.FUEL_EFFICIENT.get(), offhand)) {
-                                    tile.addEnchantment(EnchantmentInit.FUEL_EFFICIENT.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), offhand));
-                                }
+					if (ModEnchantmentHelper.hasFastHopper(player)) {
+						event.getLevel().setBlock(event.getPos(), BlockInit.ENCHANTED_HOPPER.get().defaultBlockState().setValue(EnchantedHopper.FACING, event.getState().getValue(HopperBlock.FACING)), 1);
+					}
 
-                                if (Config.extraExperience.isEnabled.get() && ModEnchantmentHelper.hasEnchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), offhand)) {
-                                    tile.addEnchantment(EnchantmentInit.EXTRA_EXPERIENCE.get(), (short) ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), offhand));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else if (event.getPlacedBlock().getBlock() == Blocks.HOPPER && Config.fastHopper.isEnabled.get()) {
+				}
+				else if (!(mainhand.getItem() instanceof BlockItem)) {
 
-                if (mainhand.getItem() == Items.HOPPER) {
+					if (offhand.getItem() == Items.HOPPER) {
 
-                    if (ModEnchantmentHelper.hasFastHopper(player)) {
-                        event.getWorld().setBlock(event.getPos(), BlockInit.ENCHANTED_HOPPER.get().defaultBlockState().setValue(EnchantedHopper.FACING, event.getState().getValue(HopperBlock.FACING)), 1);
-                    }
+						if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_HOPPER.get(), offhand)) {
+							event.getLevel().setBlock(event.getPos(), BlockInit.ENCHANTED_HOPPER.get().defaultBlockState().setValue(EnchantedHopper.FACING, event.getState().getValue(HopperBlock.FACING)), 1);
+						}
 
-                } else if (!(mainhand.getItem() instanceof BlockItem)) {
+					}
 
-                    if (offhand.getItem() == Items.HOPPER) {
+				}
 
-                        if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.FAST_HOPPER.get(), offhand)) {
-                            event.getWorld().setBlock(event.getPos(), BlockInit.ENCHANTED_HOPPER.get().defaultBlockState().setValue(EnchantedHopper.FACING, event.getState().getValue(HopperBlock.FACING)), 1);
-                        }
+			}
 
-                    }
+			else if (event.getPlacedBlock().getBlock() instanceof ShulkerBoxBlock && Config.cavernousStorage.isEnabled.get()) {
 
-                }
+				if (mainhand.getItem() instanceof BlockItem) {
 
-            } else if (event.getPlacedBlock().getBlock() instanceof ShulkerBoxBlock && Config.cavernousStorage.isEnabled.get()) {
+					if (ModEnchantmentHelper.isCavernousStorage(mainhand.getEnchantmentTags())) {
+						BlockState state = EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) ((BlockItem) mainhand.getItem()).getBlock()).getColor()).defaultBlockState();
 
-                if (mainhand.getItem() instanceof BlockItem) {
+						event.getLevel().setBlock(event.getPos(), state.setValue(EnchantedShulkerBoxBlock.FACING, event.getState().getValue(ShulkerBoxBlock.FACING)), 1);
+					}
 
-                    if (ModEnchantmentHelper.isCavernousStorage(mainhand.getEnchantmentTags())) {
-                        BlockState state = EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) ((BlockItem) mainhand.getItem()).getBlock()).getColor()).defaultBlockState();
+				}
+				else if (!(mainhand.getItem() instanceof BlockItem)) {
 
-                        event.getWorld().setBlock(event.getPos(), state.setValue(EnchantedShulkerBoxBlock.FACING, event.getState().getValue(ShulkerBoxBlock.FACING)), 1);
-                    }
+					if (offhand.getItem() instanceof BlockItem) {
 
-                } else if (!(mainhand.getItem() instanceof BlockItem)) {
+						if (ModEnchantmentHelper.isCavernousStorage(offhand.getEnchantmentTags())) {
+							BlockState state = EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) ((BlockItem) offhand.getItem()).getBlock()).getColor()).defaultBlockState();
 
-                    if (offhand.getItem() instanceof BlockItem) {
+							event.getLevel().setBlock(event.getPos(), state.setValue(EnchantedShulkerBoxBlock.FACING, event.getState().getValue(ShulkerBoxBlock.FACING)), 1);
+						}
 
-                        if (ModEnchantmentHelper.isCavernousStorage(offhand.getEnchantmentTags())) {
-                            BlockState state = EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) ((BlockItem) offhand.getItem()).getBlock()).getColor()).defaultBlockState();
+					}
 
-                            event.getWorld().setBlock(event.getPos(), state.setValue(EnchantedShulkerBoxBlock.FACING, event.getState().getValue(ShulkerBoxBlock.FACING)), 1);
-                        }
+				}
 
-                    }
+			}
 
-                }
+			else if (event.getPlacedBlock().getBlock() instanceof BarrelBlock && Config.cavernousStorage.isEnabled.get()) {
 
-            } else if (event.getPlacedBlock().getBlock() instanceof BarrelBlock && Config.cavernousStorage.isEnabled.get()) {
+				if (mainhand.getItem() instanceof BlockItem) {
 
-                if (mainhand.getItem() instanceof BlockItem) {
+					if (ModEnchantmentHelper.isCavernousStorage(mainhand.getEnchantmentTags())) {
+						BlockState state = BlockInit.ENCHANTED_BARREL.get().defaultBlockState();
 
-                    if (ModEnchantmentHelper.isCavernousStorage(mainhand.getEnchantmentTags())) {
-                        BlockState state = BlockInit.ENCHANTED_BARREL.get().defaultBlockState();
+						event.getLevel().setBlock(event.getPos(), state.setValue(EnchantedBarrelBlock.FACING, event.getState().getValue(BarrelBlock.FACING)), 1);
+					}
 
-                        event.getWorld().setBlock(event.getPos(), state.setValue(EnchantedBarrelBlock.FACING, event.getState().getValue(BarrelBlock.FACING)), 1);
-                    }
+				}
+				else if (!(mainhand.getItem() instanceof BlockItem)) {
 
-                } else if (!(mainhand.getItem() instanceof BlockItem)) {
+					if (offhand.getItem() instanceof BlockItem) {
 
-                    if (offhand.getItem() instanceof BlockItem) {
+						if (ModEnchantmentHelper.isCavernousStorage(offhand.getEnchantmentTags())) {
+							BlockState state = BlockInit.ENCHANTED_BARREL.get().defaultBlockState();
 
-                        if (ModEnchantmentHelper.isCavernousStorage(offhand.getEnchantmentTags())) {
-                            BlockState state = BlockInit.ENCHANTED_BARREL.get().defaultBlockState();
+							event.getLevel().setBlock(event.getPos(), state.setValue(EnchantedBarrelBlock.FACING, event.getState().getValue(BarrelBlock.FACING)), 1);
+						}
 
-                            event.getWorld().setBlock(event.getPos(), state.setValue(EnchantedBarrelBlock.FACING, event.getState().getValue(BarrelBlock.FACING)), 1);
-                        }
+					}
 
-                    }
+				}
 
-                }
+			}
 
-            } else if (event.getPlacedBlock().getBlock() instanceof EnchantedShulkerBoxBlock) {
-                EnchantedShulkerBoxBlock shulker = (EnchantedShulkerBoxBlock) event.getPlacedBlock().getBlock();
+			else if (event.getPlacedBlock().getBlock() instanceof EnchantedShulkerBoxBlock) {
+				EnchantedShulkerBoxBlock shulker = (EnchantedShulkerBoxBlock) event.getPlacedBlock().getBlock();
 
-                if (!mainhand.isEnchanted()) {
-                    event.getWorld().setBlock(event.getPos(), ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)), 1);
-                } else if (!((mainhand.getItem()) instanceof BlockItem)) {
+				if (!mainhand.isEnchanted()) {
+					event.getLevel().setBlock(event.getPos(), ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)), 1);
+				}
+				else if (!((mainhand.getItem()) instanceof BlockItem)) {
 
-                    if (!offhand.isEnchanted()) {
-                        event.getWorld().setBlock(event.getPos(), ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)), 1);
-                    } else {
-                        event.setCanceled(true);
-                        SoManyEnchants.LOGGER.error("The player " + player.getName().getString() + " just placed a block illegally. He is likely hacking!");
-                    }
+					if (!offhand.isEnchanted()) {
+						event.getLevel().setBlock(event.getPos(), ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)), 1);
+					}
+					else {
+						event.setCanceled(true);
+						SoManyEnchants.LOGGER.error("The player " + player.getName().getString() + " just placed a block illegally. He is likely hacking!");
+					}
 
-                } else if (!offhand.isEnchanted() && !mainhand.isEnchanted()) {
-                    event.getWorld().setBlock(event.getPos(), ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)), 1);
-                }
+				}
+				else if (!offhand.isEnchanted() && !mainhand.isEnchanted()) {
+					event.getLevel().setBlock(event.getPos(), ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)), 1);
+				}
 
-            } else if (event.getPlacedBlock().getBlock() == Blocks.CHEST && Config.cavernousStorage.isEnabled.get()) {
+			}
 
-                if (mainhand.getItem() == Items.CHEST) {
+			else if (event.getPlacedBlock().getBlock() == Blocks.CHEST && Config.cavernousStorage.isEnabled.get()) {
 
-                    if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand)) {
-                        event.getWorld().setBlock(event.getPos(), BlockInit.ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING)), 1);
+				if (mainhand.getItem() == Items.CHEST) {
 
-                        Level world = (Level) event.getWorld();
-                        BlockState state = BlockInit.ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING));
+					if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand)) {
+						event.getLevel().setBlock(event.getPos(), BlockInit.ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING)), 1);
 
-                        Direction direction = state.getValue(EnchantedChestBlock.FACING);
-                        BlockPos initial = event.getPos();
-                        BlockState newstate = world.getBlockState(getOffset(initial, direction, true));
+						Level world = (Level) event.getLevel();
+						BlockState state = BlockInit.ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING));
 
-                        if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get() && newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING) && newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE) {
-                            state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
-                        }
+						Direction direction = state.getValue(EnchantedChestBlock.FACING);
+						BlockPos initial = event.getPos();
+						BlockState newstate = world.getBlockState(getOffset(initial, direction, true));
 
-                        newstate = world.getBlockState(getOffset(initial, direction, false));
+						if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get() && newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING) && newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE) {
+							state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+						}
 
-                        if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get() && newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING) && newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE) {
-                            state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
-                        }
+						newstate = world.getBlockState(getOffset(initial, direction, false));
 
-                        world.setBlockAndUpdate(event.getPos(), state);
+						if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get() && newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING) && newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE) {
+							state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
+						}
 
-                    }
+						world.setBlockAndUpdate(event.getPos(), state);
 
-                } else if (!(mainhand.getItem() instanceof BlockItem)) {
+					}
 
-                    if (offhand.getItem() == Items.CHEST) {
+				}
+				else if (!(mainhand.getItem() instanceof BlockItem)) {
 
-                        if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), offhand)) {
-                            event.getWorld().setBlock(event.getPos(), BlockInit.ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING)), 1);
+					if (offhand.getItem() == Items.CHEST) {
 
-                            Level world = (Level) event.getWorld();
-                            BlockState state = BlockInit.ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING));
+						if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), offhand)) {
+							event.getLevel().setBlock(event.getPos(), BlockInit.ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING)), 1);
 
-                            Direction direction = state.getValue(EnchantedChestBlock.FACING);
-                            BlockPos initial = event.getPos();
-                            BlockState newstate = world.getBlockState(getOffset(initial, direction, true));
+							Level world = (Level) event.getLevel();
+							BlockState state = BlockInit.ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedChestBlock.FACING, event.getState().getValue(ChestBlock.FACING));
 
-                            if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get() && newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING) && newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE) {
-                                state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
-                            }
+							Direction direction = state.getValue(EnchantedChestBlock.FACING);
+							BlockPos initial = event.getPos();
+							BlockState newstate = world.getBlockState(getOffset(initial, direction, true));
 
-                            newstate = world.getBlockState(getOffset(initial, direction, false));
+							if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get() && newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING) && newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE) {
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+							}
 
-                            if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get() && newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING) && newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE) {
-                                state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
-                            }
+							newstate = world.getBlockState(getOffset(initial, direction, false));
 
-                            world.setBlockAndUpdate(event.getPos(), state);
+							if (newstate.getBlock() == BlockInit.ENCHANTED_CHEST.get() && newstate.getValue(EnchantedChestBlock.FACING) == state.getValue(EnchantedChestBlock.FACING) && newstate.getValue(EnchantedChestBlock.TYPE) == ChestType.SINGLE) {
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
+							}
 
-                        }
+							world.setBlockAndUpdate(event.getPos(), state);
 
-                    }
+						}
 
-                }
+					}
 
-            } else if (event.getPlacedBlock().getBlock() == Blocks.TRAPPED_CHEST && (Config.cavernousStorage.isEnabled.get() || Config.camouflage.isEnabled.get())) {
-                boolean placed = false;
-                boolean hidden = false;
+				}
 
-                if (mainhand.getItem() == Items.TRAPPED_CHEST) {
+			}
 
-                    if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand) && !ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAMOUFLAGE.get(), mainhand) && Config.cavernousStorage.isEnabled.get()) {
-                        event.getWorld().setBlock(event.getPos(), BlockInit.TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedTrappedChestBlock.FACING, event.getState().getValue(TrappedChestBlock.FACING)), 1);
+			else if (event.getPlacedBlock().getBlock() == Blocks.TRAPPED_CHEST && (Config.cavernousStorage.isEnabled.get() || Config.camouflage.isEnabled.get())) {
+				boolean placed = false;
+				boolean hidden = false;
 
-                        BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
+				if (mainhand.getItem() == Items.TRAPPED_CHEST) {
 
-                        if (t != null && t instanceof EnchantedTrappedChestTileEntity) {
-                            EnchantedTrappedChestTileEntity tile = (EnchantedTrappedChestTileEntity) t;
-                            tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
-                        }
+					if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand) && !ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAMOUFLAGE.get(), mainhand) && Config.cavernousStorage.isEnabled.get()) {
+						event.getLevel().setBlock(event.getPos(), BlockInit.TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedTrappedChestBlock.FACING, event.getState().getValue(TrappedChestBlock.FACING)), 1);
 
-                        placed = true;
-                        hidden = false;
-                    }
+						BlockEntity t = event.getLevel().getBlockEntity(event.getPos());
 
-                    if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAMOUFLAGE.get(), mainhand) && Config.camouflage.isEnabled.get()) {
-                        event.getWorld().setBlock(event.getPos(), BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedTrappedChestBlock.FACING, event.getState().getValue(TrappedChestBlock.FACING)), 1);
+						if (t != null && t instanceof EnchantedTrappedChestTileEntity) {
+							EnchantedTrappedChestTileEntity tile = (EnchantedTrappedChestTileEntity) t;
+							tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
+						}
 
-                        BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
+						placed = true;
+						hidden = false;
+					}
 
-                        if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity) {
-                            EnchantedHiddenTrappedChestTileEntity tile = (EnchantedHiddenTrappedChestTileEntity) t;
-                            tile.addEnchant(EnchantmentInit.CAMOUFLAGE.get(), (short) 1);
+					if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAMOUFLAGE.get(), mainhand) && Config.camouflage.isEnabled.get()) {
+						event.getLevel().setBlock(event.getPos(), BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedTrappedChestBlock.FACING, event.getState().getValue(TrappedChestBlock.FACING)), 1);
 
-                            if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand) && Config.cavernousStorage.isEnabled.get()) {
-                                tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
-                            }
+						BlockEntity t = event.getLevel().getBlockEntity(event.getPos());
 
-                        }
+						if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity) {
+							EnchantedHiddenTrappedChestTileEntity tile = (EnchantedHiddenTrappedChestTileEntity) t;
+							tile.addEnchant(EnchantmentInit.CAMOUFLAGE.get(), (short) 1);
 
-                        placed = true;
-                        hidden = true;
-                    }
+							if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand) && Config.cavernousStorage.isEnabled.get()) {
+								tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
+							}
 
-                    Level world = (Level) event.getWorld();
-                    BlockState state = world.getBlockState(event.getPos());
+						}
 
-                    Direction initDirection = state.getValue(EnchantedChestBlock.FACING);
-                    BlockPos newPos = getOffset(event.getPos(), initDirection, true);
-                    BlockState newState = world.getBlockState(newPos);
-                    Direction newDirection = null;
-                    ChestType newType = null;
+						placed = true;
+						hidden = true;
+					}
 
-                    if (newState.getBlock() instanceof EnchantedChestBlock) {
-                        newDirection = newState.getValue(EnchantedChestBlock.FACING);
-                        newType = newState.getValue(EnchantedChestBlock.TYPE);
+					Level world = (Level) event.getLevel();
+					BlockState state = world.getBlockState(event.getPos());
 
-                        if (newState.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
-                            state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
-                        } else if (newState.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
-                            EnchantedHiddenTrappedChestTileEntity tile1 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(event.getPos());
-                            EnchantedHiddenTrappedChestTileEntity tile2 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(newPos);
+					Direction initDirection = state.getValue(EnchantedChestBlock.FACING);
+					BlockPos newPos = getOffset(event.getPos(), initDirection, true);
+					BlockState newState = world.getBlockState(newPos);
+					Direction newDirection = null;
+					ChestType newType = null;
 
-                            if (tile1.getEnchants().equals(tile2.getEnchants())) {
-                                state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
-                            }
+					if (newState.getBlock() instanceof EnchantedChestBlock) {
+						newDirection = newState.getValue(EnchantedChestBlock.FACING);
+						newType = newState.getValue(EnchantedChestBlock.TYPE);
 
-                        }
+						if (newState.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
+							state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+						}
+						else if (newState.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
+							EnchantedHiddenTrappedChestTileEntity tile1 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(event.getPos());
+							EnchantedHiddenTrappedChestTileEntity tile2 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(newPos);
 
-                    }
+							if (tile1.getEnchants().equals(tile2.getEnchants())) {
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+							}
 
-                    newPos = getOffset(event.getPos(), initDirection, false);
-                    newState = world.getBlockState(newPos);
+						}
 
-                    if (newState.getBlock() instanceof EnchantedChestBlock) {
-                        newDirection = newState.getValue(EnchantedChestBlock.FACING);
-                        newType = newState.getValue(EnchantedChestBlock.TYPE);
+					}
 
-                        if (newState.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
-                            state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
-                        } else if (newState.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
-                            EnchantedHiddenTrappedChestTileEntity tile1 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(event.getPos());
-                            EnchantedHiddenTrappedChestTileEntity tile2 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(newPos);
+					newPos = getOffset(event.getPos(), initDirection, false);
+					newState = world.getBlockState(newPos);
 
-                            if (tile1.getEnchants().equals(tile2.getEnchants())) {
-                                state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
-                            }
+					if (newState.getBlock() instanceof EnchantedChestBlock) {
+						newDirection = newState.getValue(EnchantedChestBlock.FACING);
+						newType = newState.getValue(EnchantedChestBlock.TYPE);
 
-                        }
+						if (newState.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
+							state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
+						}
+						else if (newState.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
+							EnchantedHiddenTrappedChestTileEntity tile1 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(event.getPos());
+							EnchantedHiddenTrappedChestTileEntity tile2 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(newPos);
 
-                    }
+							if (tile1.getEnchants().equals(tile2.getEnchants())) {
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
+							}
 
-                    world.setBlockAndUpdate(event.getPos(), state);
-                } else if (!(mainhand.getItem() instanceof BlockItem)) {
-                    placed = false;
-                    hidden = false;
+						}
 
-                    if (offhand.getItem() == Items.TRAPPED_CHEST) {
+					}
 
-                        if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), offhand) && !ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAMOUFLAGE.get(), offhand) && Config.cavernousStorage.isEnabled.get()) {
-                            event.getWorld().setBlock(event.getPos(), BlockInit.TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedTrappedChestBlock.FACING, event.getState().getValue(TrappedChestBlock.FACING)), 1);
+					world.setBlockAndUpdate(event.getPos(), state);
+				}
 
-                            BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
+				else if (!(mainhand.getItem() instanceof BlockItem)) {
+					placed = false;
+					hidden = false;
 
-                            if (t != null && t instanceof EnchantedTrappedChestTileEntity) {
-                                EnchantedTrappedChestTileEntity tile = (EnchantedTrappedChestTileEntity) t;
-                                tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
-                            }
+					if (offhand.getItem() == Items.TRAPPED_CHEST) {
 
-                            placed = true;
-                            hidden = false;
-                        }
+						if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), offhand) && !ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAMOUFLAGE.get(), offhand) && Config.cavernousStorage.isEnabled.get()) {
+							event.getLevel().setBlock(event.getPos(), BlockInit.TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedTrappedChestBlock.FACING, event.getState().getValue(TrappedChestBlock.FACING)), 1);
 
-                        if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAMOUFLAGE.get(), offhand) && Config.camouflage.isEnabled.get()) {
-                            event.getWorld().setBlock(event.getPos(), BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedTrappedChestBlock.FACING, event.getState().getValue(TrappedChestBlock.FACING)), 1);
+							BlockEntity t = event.getLevel().getBlockEntity(event.getPos());
 
-                            BlockEntity t = event.getWorld().getBlockEntity(event.getPos());
+							if (t != null && t instanceof EnchantedTrappedChestTileEntity) {
+								EnchantedTrappedChestTileEntity tile = (EnchantedTrappedChestTileEntity) t;
+								tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
+							}
 
-                            if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity) {
-                                EnchantedHiddenTrappedChestTileEntity tile = (EnchantedHiddenTrappedChestTileEntity) t;
-                                tile.addEnchant(EnchantmentInit.CAMOUFLAGE.get(), (short) 1);
+							placed = true;
+							hidden = false;
+						}
 
-                                if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), offhand) && Config.cavernousStorage.isEnabled.get()) {
-                                    tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
-                                }
+						if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAMOUFLAGE.get(), offhand) && Config.camouflage.isEnabled.get()) {
+							event.getLevel().setBlock(event.getPos(), BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get().defaultBlockState().setValue(EnchantedTrappedChestBlock.FACING, event.getState().getValue(TrappedChestBlock.FACING)), 1);
 
-                            }
+							BlockEntity t = event.getLevel().getBlockEntity(event.getPos());
 
-                            placed = true;
-                            hidden = true;
-                        }
+							if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity) {
+								EnchantedHiddenTrappedChestTileEntity tile = (EnchantedHiddenTrappedChestTileEntity) t;
+								tile.addEnchant(EnchantmentInit.CAMOUFLAGE.get(), (short) 1);
 
-                        Level world = (Level) event.getWorld();
-                        BlockState state = world.getBlockState(event.getPos());
+								if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), offhand) && Config.cavernousStorage.isEnabled.get()) {
+									tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
+								}
 
-                        Direction initDirection = state.getValue(EnchantedChestBlock.FACING);
-                        BlockPos newPos = getOffset(event.getPos(), initDirection, true);
-                        BlockState newState = world.getBlockState(newPos);
-                        Direction newDirection = null;
-                        ChestType newType = null;
+							}
 
-                        if (newState.getBlock() instanceof EnchantedChestBlock) {
-                            newDirection = newState.getValue(EnchantedChestBlock.FACING);
-                            newType = newState.getValue(EnchantedChestBlock.TYPE);
+							placed = true;
+							hidden = true;
+						}
 
-                            if (newState.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
-                                state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
-                            } else if (newState.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
-                                EnchantedHiddenTrappedChestTileEntity tile1 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(event.getPos());
-                                EnchantedHiddenTrappedChestTileEntity tile2 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(newPos);
+						Level world = (Level) event.getLevel();
+						BlockState state = world.getBlockState(event.getPos());
 
-                                if (tile1.getEnchants().equals(tile2.getEnchants())) {
-                                    state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
-                                }
+						Direction initDirection = state.getValue(EnchantedChestBlock.FACING);
+						BlockPos newPos = getOffset(event.getPos(), initDirection, true);
+						BlockState newState = world.getBlockState(newPos);
+						Direction newDirection = null;
+						ChestType newType = null;
 
-                            }
+						if (newState.getBlock() instanceof EnchantedChestBlock) {
+							newDirection = newState.getValue(EnchantedChestBlock.FACING);
+							newType = newState.getValue(EnchantedChestBlock.TYPE);
 
-                        }
+							if (newState.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+							}
+							else if (newState.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
+								EnchantedHiddenTrappedChestTileEntity tile1 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(event.getPos());
+								EnchantedHiddenTrappedChestTileEntity tile2 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(newPos);
 
-                        newPos = getOffset(event.getPos(), initDirection, false);
-                        newState = world.getBlockState(newPos);
+								if (tile1.getEnchants().equals(tile2.getEnchants())) {
+									state = state.setValue(EnchantedChestBlock.TYPE, ChestType.RIGHT);
+								}
 
-                        if (newState.getBlock() instanceof EnchantedChestBlock) {
-                            newDirection = newState.getValue(EnchantedChestBlock.FACING);
-                            newType = newState.getValue(EnchantedChestBlock.TYPE);
+							}
 
-                            if (newState.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
-                                state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
-                            } else if (newState.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
-                                EnchantedHiddenTrappedChestTileEntity tile1 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(event.getPos());
-                                EnchantedHiddenTrappedChestTileEntity tile2 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(newPos);
+						}
 
-                                if (tile1.getEnchants().equals(tile2.getEnchants())) {
-                                    state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
-                                }
+						newPos = getOffset(event.getPos(), initDirection, false);
+						newState = world.getBlockState(newPos);
 
-                            }
+						if (newState.getBlock() instanceof EnchantedChestBlock) {
+							newDirection = newState.getValue(EnchantedChestBlock.FACING);
+							newType = newState.getValue(EnchantedChestBlock.TYPE);
 
-                        }
+							if (newState.getBlock() == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
+								state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
+							}
+							else if (newState.getBlock() == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && newDirection == initDirection && newType == ChestType.SINGLE) {
+								EnchantedHiddenTrappedChestTileEntity tile1 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(event.getPos());
+								EnchantedHiddenTrappedChestTileEntity tile2 = (EnchantedHiddenTrappedChestTileEntity) world.getBlockEntity(newPos);
 
-                        world.setBlockAndUpdate(event.getPos(), state);
-                    }
+								if (tile1.getEnchants().equals(tile2.getEnchants())) {
+									state = state.setValue(EnchantedChestBlock.TYPE, ChestType.LEFT);
+								}
 
-                }
+							}
 
-            }
+						}
 
-        }
+						world.setBlockAndUpdate(event.getPos(), state);
+					}
 
-    }
+				}
 
-    @SubscribeEvent
-    public static void breakEnchantedBlocks(final BreakEvent event) {
+			}
 
-        Player player = event.getPlayer();
-        Block block = event.getState().getBlock();
-        Level world = (Level) event.getWorld();
-        BlockState state = event.getState();
-        BlockPos pos = event.getPos();
-        breakEnchantedBlock(block, BlockInit.ENCHANTED_HOPPER.get(), state, pos, Items.HOPPER, world, player, EnchantmentInit.FAST_HOPPER.get());
-        breakEnchantedBlock(block, BlockInit.ENCHANTED_CHEST.get(), state, pos, Items.CHEST, world, player, EnchantmentInit.CAVERNOUS_STORAGE.get());
-        breakTrappedEnchantedChest(block, state, pos, world, player);
+		}
 
-    }
+	}
 
-    public static void breakEnchantedBlock(Block block, Block checkBlock, BlockState state, BlockPos pos, Item drop, Level world, Player player, Enchantment ench) {
+	@SubscribeEvent
+	public static void breakEnchantedBlocks(final BreakEvent event) {
 
-        if (block == checkBlock && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level, pos, player)) {
-            ItemStack stack = new ItemStack(drop);
-            stack.enchant(ench, 1);
-            ItemEntity item = new ItemEntity((Level) world, pos.getX(), pos.getY(), pos.getZ(), stack);
-            item.setPickUpDelay(10);
+		Player player = event.getPlayer();
+		Block block = event.getState().getBlock();
+		Level world = (Level) event.getLevel();
+		BlockState state = event.getState();
+		BlockPos pos = event.getPos();
+		breakEnchantedBlock(block, BlockInit.ENCHANTED_HOPPER.get(), state, pos, Items.HOPPER, world, player, EnchantmentInit.FAST_HOPPER.get());
+		breakEnchantedBlock(block, BlockInit.ENCHANTED_CHEST.get(), state, pos, Items.CHEST, world, player, EnchantmentInit.CAVERNOUS_STORAGE.get());
+		breakTrappedEnchantedChest(block, state, pos, world, player);
 
-            world.addFreshEntity(item);
-        }
+	}
 
-    }
+	public static void breakEnchantedBlock(Block block, Block checkBlock, BlockState state, BlockPos pos, Item drop, Level world, Player player, Enchantment ench) {
 
-    public static void breakTrappedEnchantedChest(Block block, BlockState state, BlockPos pos, Level world, Player player) {
+		if (block == checkBlock && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level, pos, player)) {
+			ItemStack stack = new ItemStack(drop);
+			stack.enchant(ench, 1);
+			ItemEntity item = new ItemEntity((Level) world, pos.getX(), pos.getY(), pos.getZ(), stack);
+			item.setPickUpDelay(10);
 
-        if (block == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level, pos, player)) {
-            ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
-            BlockEntity tile = world.getBlockEntity(pos);
+			world.addFreshEntity(item);
+		}
 
-            if (tile instanceof EnchantedTrappedChestTileEntity) {
-                EnchantedTrappedChestTileEntity eTile = (EnchantedTrappedChestTileEntity) tile;
-                ListTag nbt = eTile.getEnchants();
+	}
 
-                if (ModEnchantmentHelper.hasCamouflage(nbt)) {
-                    stack.enchant(EnchantmentInit.CAMOUFLAGE.get(), 1);
-                }
+	public static void breakTrappedEnchantedChest(Block block, BlockState state, BlockPos pos, Level world, Player player) {
 
-                if (ModEnchantmentHelper.isCavernousStorage(nbt)) {
-                    stack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
-                }
+		if (block == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level, pos, player)) {
+			ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
+			BlockEntity tile = world.getBlockEntity(pos);
 
-            }
+			if (tile instanceof EnchantedTrappedChestTileEntity) {
+				EnchantedTrappedChestTileEntity eTile = (EnchantedTrappedChestTileEntity) tile;
+				ListTag nbt = eTile.getEnchants();
 
-        }
+				if (ModEnchantmentHelper.hasCamouflage(nbt)) {
+					stack.enchant(EnchantmentInit.CAMOUFLAGE.get(), 1);
+				}
 
-        if (block == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level, pos, player)) {
-            ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
-            BlockEntity tile = world.getBlockEntity(pos);
+				if (ModEnchantmentHelper.isCavernousStorage(nbt)) {
+					stack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+				}
 
-            if (tile instanceof EnchantedHiddenTrappedChestTileEntity) {
-                EnchantedHiddenTrappedChestTileEntity eTile = (EnchantedHiddenTrappedChestTileEntity) tile;
-                ListTag nbt = eTile.getEnchants();
+			}
 
-                if (ModEnchantmentHelper.hasCamouflage(nbt)) {
-                    stack.enchant(EnchantmentInit.CAMOUFLAGE.get(), 1);
-                }
+		}
 
-                if (ModEnchantmentHelper.isCavernousStorage(nbt)) {
-                    stack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
-                }
+		if (block == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level, pos, player)) {
+			ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
+			BlockEntity tile = world.getBlockEntity(pos);
 
-            }
+			if (tile instanceof EnchantedHiddenTrappedChestTileEntity) {
+				EnchantedHiddenTrappedChestTileEntity eTile = (EnchantedHiddenTrappedChestTileEntity) tile;
+				ListTag nbt = eTile.getEnchants();
 
-            ItemEntity item = new ItemEntity((Level) world, pos.getX(), pos.getY(), pos.getZ(), stack);
+				if (ModEnchantmentHelper.hasCamouflage(nbt)) {
+					stack.enchant(EnchantmentInit.CAMOUFLAGE.get(), 1);
+				}
 
-            item.setPickUpDelay(10);
+				if (ModEnchantmentHelper.isCavernousStorage(nbt)) {
+					stack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+				}
 
-            world.addFreshEntity(item);
-        }
+			}
 
-    }
+			ItemEntity item = new ItemEntity((Level) world, pos.getX(), pos.getY(), pos.getZ(), stack);
 
-    @SubscribeEvent
-    public static void onEnchant(final CommandEvent event) {
+			item.setPickUpDelay(10);
 
-        CommandContext<CommandSourceStack> command = event.getParseResults().getContext().build(null);
+			world.addFreshEntity(item);
+		}
 
-        if (command.getCommand() != null) {
+	}
 
-            if (command.getCommand().toString().contains("net.minecraft.server.commands.EnchantCommand$$Lambda$")) {
-                Enchantment enchant = command.getArgument("enchantment", Enchantment.class);
-                EntitySelector e = command.getArgument("targets", EntitySelector.class);
-                List<? extends Entity> entities;
+	@SubscribeEvent
+	public static void onEnchant(final CommandEvent event) {
 
-                try {
-                    entities = e.findEntities(command.getSource());
+		CommandContext<CommandSourceStack> command = event.getParseResults().getContext().build(null);
 
-                    for (int x = 0; x < entities.size(); x++) {
-                        Entity entity = entities.get(x);
+		if (command.getCommand() != null) {
 
-                        if (entity instanceof LivingEntity) {
-                            LivingEntity living = (LivingEntity) entity;
+			if (command.getCommand().toString().contains("net.minecraft.server.commands.EnchantCommand$$Lambda$")) {
+				Enchantment enchant = command.getArgument("enchantment", Enchantment.class);
+				EntitySelector e = command.getArgument("targets", EntitySelector.class);
+				List<? extends Entity> entities;
 
-                            if (EnchantmentTypesInit.STORAGE.canEnchant(living.getMainHandItem().getItem()) && enchant == EnchantmentInit.CAVERNOUS_STORAGE.get() && Config.cavernousStorage.isEnabled.get()) {
-                                ItemStack stack = living.getMainHandItem();
-                                Item item = stack.getItem();
+				try {
+					entities = e.findEntities(command.getSource());
 
-                                if (item instanceof BlockItem) {
-                                    BlockItem blockItem = (BlockItem) item;
-                                    Block block = blockItem.getBlock();
+					for (int x = 0; x < entities.size(); x++) {
+						Entity entity = entities.get(x);
 
-                                    if (block instanceof ShulkerBoxBlock) {
-                                        ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()));
-                                        newStack.setTag(stack.getTag());
-                                        newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+						if (entity instanceof LivingEntity) {
+							LivingEntity living = (LivingEntity) entity;
 
-                                        if (living instanceof Player) {
-                                            Player player = (Player) living;
-                                            player.setItemInHand(InteractionHand.MAIN_HAND, newStack);
-                                        } else {
-                                            living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
-                                        }
+							if (EnchantmentTypesInit.STORAGE.canEnchant(living.getMainHandItem().getItem()) && enchant == EnchantmentInit.CAVERNOUS_STORAGE.get() && Config.cavernousStorage.isEnabled.get()) {
+								ItemStack stack = living.getMainHandItem();
+								Item item = stack.getItem();
 
-                                        CommandSourceStack source = command.getSource();
+								if (item instanceof BlockItem) {
+									BlockItem blockItem = (BlockItem) item;
+									Block block = blockItem.getBlock();
 
-                                        if (entities.size() == 1) {
-                                            source.sendSuccess(new TranslatableComponent("commands.enchant.success.single", enchant.getFullname(1), entities.iterator().next().getDisplayName()), true);
-                                        } else {
-                                            source.sendSuccess(new TranslatableComponent("commands.enchant.success.multiple", enchant.getFullname(1), entities.size()), true);
-                                        }
+									if (block instanceof ShulkerBoxBlock) {
+										ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()));
+										newStack.setTag(stack.getTag());
+										newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 
-                                        event.setCanceled(true);
-                                    }
+										if (living instanceof Player) {
+											Player player = (Player) living;
+											player.inventory.setItem(getSlotFor(stack, player), newStack);
+										}
+										else {
+											living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
+										}
 
-                                }
+										CommandSourceStack source = command.getSource();
 
-                            } else if (EnchantmentTypesInit.SMELTER.canEnchant(living.getMainHandItem().getItem())) {
-                                ItemStack stack = living.getMainHandItem();
-                                Item item = stack.getItem();
-                                int level = 1;
+										if (entities.size() == 1) {
+											source.sendSuccess(Component.translatable("commands.enchant.success.single", enchant.getFullname(1), entities.iterator().next().getDisplayName()), true);
+										}
+										else {
+											source.sendSuccess(Component.translatable("commands.enchant.success.multiple", enchant.getFullname(1), entities.size()), true);
+										}
 
-                                try {
-                                    level = command.getArgument("level", Integer.class);
-                                } catch (IllegalArgumentException exception) {
-                                    level = 1;
-                                }
+										event.setCanceled(true);
+									}
 
-                                if (item instanceof BlockItem) {
-                                    BlockItem blockItem = (BlockItem) item;
-                                    Block block = blockItem.getBlock();
+								}
 
-                                    if (block instanceof AbstractFurnaceBlock) {
-                                        ItemStack newStack = new ItemStack(AbstractEnchantedSmelterBlock.getSmelterFromBlock(block));
-                                        newStack.setTag(stack.getTag());
+							}
 
-                                        if (enchant == EnchantmentInit.FAST_SMELT.get() && Config.fastSmelt.isEnabled.get()) {
-                                            newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
-                                        }
+							else if (EnchantmentTypesInit.SMELTER.canEnchant(living.getMainHandItem().getItem())) {
+								ItemStack stack = living.getMainHandItem();
+								Item item = stack.getItem();
+								int level = 1;
 
-                                        if (enchant == EnchantmentInit.FUEL_EFFICIENT.get() && Config.fuelEfficient.isEnabled.get()) {
-                                            newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
-                                        }
+								try {
+									level = command.getArgument("level", Integer.class);
+								}
+								catch (IllegalArgumentException exception) {
+									level = 1;
+								}
 
-                                        if (enchant == EnchantmentInit.EXTRA_EXPERIENCE.get() && Config.extraExperience.isEnabled.get()) {
-                                            newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
-                                        }
+								if (item instanceof BlockItem) {
+									BlockItem blockItem = (BlockItem) item;
+									Block block = blockItem.getBlock();
 
-                                        if (newStack.isEnchanted()) {
+									if (block instanceof AbstractFurnaceBlock) {
+										ItemStack newStack = new ItemStack(AbstractEnchantedSmelterBlock.getSmelterFromBlock(block));
+										newStack.setTag(stack.getTag());
 
-                                            if (living instanceof Player) {
-                                                Player player = (Player) living;
-                                                player.setItemInHand(InteractionHand.MAIN_HAND, newStack);
-                                            } else {
-                                                living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
-                                            }
+										if (enchant == EnchantmentInit.FAST_SMELT.get() && Config.fastSmelt.isEnabled.get()) {
+											newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
+										}
 
-                                            CommandSourceStack source = command.getSource();
+										if (enchant == EnchantmentInit.FUEL_EFFICIENT.get() && Config.fuelEfficient.isEnabled.get()) {
+											newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
+										}
 
-                                            if (entities.size() == 1) {
-                                                source.sendSuccess(new TranslatableComponent("commands.enchant.success.single", enchant.getFullname(level), entities.iterator().next().getDisplayName()), true);
-                                            } else {
-                                                source.sendSuccess(new TranslatableComponent("commands.enchant.success.multiple", enchant.getFullname(level), entities.size()), true);
-                                            }
+										if (enchant == EnchantmentInit.EXTRA_EXPERIENCE.get() && Config.extraExperience.isEnabled.get()) {
+											newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
+										}
 
-                                            event.setCanceled(true);
-                                        }
+										if (newStack.isEnchanted()) {
 
-                                    } else if (block instanceof AbstractEnchantedSmelterBlock) {
-                                        ItemStack newStack = new ItemStack(stack.getItem());
-                                        newStack.setCount(stack.getCount());
-                                        newStack.setTag(stack.getTag());
+											if (living instanceof Player) {
+												Player player = (Player) living;
+												player.inventory.setItem(getSlotFor(stack, player), newStack);
+											}
+											else {
+												living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
+											}
 
-                                        if (enchant == EnchantmentInit.FAST_SMELT.get() && Config.fastSmelt.isEnabled.get()) {
-                                            newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
-                                        }
+											CommandSourceStack source = command.getSource();
 
-                                        if (enchant == EnchantmentInit.FUEL_EFFICIENT.get() && Config.fuelEfficient.isEnabled.get()) {
-                                            newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
-                                        }
+											if (entities.size() == 1) {
+												source.sendSuccess(Component.translatable("commands.enchant.success.single", enchant.getFullname(level), entities.iterator().next().getDisplayName()), true);
+											}
+											else {
+												source.sendSuccess(Component.translatable("commands.enchant.success.multiple", enchant.getFullname(level), entities.size()), true);
+											}
 
-                                        if (enchant == EnchantmentInit.EXTRA_EXPERIENCE.get() && Config.extraExperience.isEnabled.get()) {
-                                            newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
-                                        }
+											event.setCanceled(true);
+										}
 
-                                        if (newStack.isEnchanted()) {
+									}
 
-                                            if (living instanceof Player) {
-                                                Player player = (Player) living;
-                                                player.setItemInHand(InteractionHand.MAIN_HAND, newStack);
-                                            } else {
-                                                living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
-                                            }
+									else if (block instanceof AbstractEnchantedSmelterBlock) {
+										ItemStack newStack = new ItemStack(stack.getItem());
+										newStack.setCount(stack.getCount());
+										newStack.setTag(stack.getTag());
 
-                                            CommandSourceStack source = command.getSource();
+										if (enchant == EnchantmentInit.FAST_SMELT.get() && Config.fastSmelt.isEnabled.get()) {
+											newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
+										}
 
-                                            if (entities.size() == 1) {
-                                                source.sendSuccess(new TranslatableComponent("commands.enchant.success.single", enchant.getFullname(level), entities.iterator().next().getDisplayName()), true);
-                                            } else {
-                                                source.sendSuccess(new TranslatableComponent("commands.enchant.success.multiple", enchant.getFullname(level), entities.size()), true);
-                                            }
+										if (enchant == EnchantmentInit.FUEL_EFFICIENT.get() && Config.fuelEfficient.isEnabled.get()) {
+											newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
+										}
 
-                                            event.setCanceled(true);
-                                        }
+										if (enchant == EnchantmentInit.EXTRA_EXPERIENCE.get() && Config.extraExperience.isEnabled.get()) {
+											newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
+										}
 
-                                    }
+										if (newStack.isEnchanted()) {
 
-                                }
+											if (living instanceof Player) {
+												Player player = (Player) living;
+												player.inventory.setItem(getSlotFor(stack, player), newStack);
+											}
+											else {
+												living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
+											}
 
-                            }
+											CommandSourceStack source = command.getSource();
 
-                        }
+											if (entities.size() == 1) {
+												source.sendSuccess(Component.translatable("commands.enchant.success.single", enchant.getFullname(level), entities.iterator().next().getDisplayName()), true);
+											}
+											else {
+												source.sendSuccess(Component.translatable("commands.enchant.success.multiple", enchant.getFullname(level), entities.size()), true);
+											}
 
-                    }
+											event.setCanceled(true);
+										}
 
-                } catch (CommandSyntaxException e1) {
-                    e1.printStackTrace();
-                }
+									}
 
-            }
+								}
 
-        }
+							}
 
-    }
+						}
 
+					}
 
-    @SubscribeEvent
-    public static void onBookApply(final AnvilRepairEvent event) {
+				}
+				catch (CommandSyntaxException e1) {
+					e1.printStackTrace();
+				}
 
-        Player player = event.getPlayer();
-        ItemStack initial = event.getItemInput();
-        ItemStack ingredient = event.getIngredientInput();
-        ItemStack stack = event.getPlayer().inventory.getSelected();
+			}
 
-        if (ItemStack.isSame(initial, stack)) {
+		}
 
-            if (ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTags()) && stack.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get()) {
-                Block block = Block.byItem(stack.getItem());
+	}
 
-                if (block instanceof ShulkerBoxBlock) {
-                    ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
-                    newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
-                    newStack.setTag(stack.getTag());
-                    player.inventory.setPickedItem(newStack);
-                }
+	@SubscribeEvent
+	public static void onBookApply(final AnvilRepairEvent event) {
 
-            }
+		Player player = event.getEntity();
+		ItemStack initial = event.getLeft();
+		ItemStack ingredient = event.getRight();
+		ItemStack stack = event.getEntity().inventory.getSelected();
 
-            if (stack.getItem() instanceof BlockItem) {
-                Block block = Block.byItem(stack.getItem());
+		if (ItemStack.isSame(initial, stack)) {
 
-                if (block instanceof AbstractFurnaceBlock && stack.isEnchanted()) {
-                    ItemStack newStack = new ItemStack(AbstractEnchantedSmelterBlock.getSmelterFromBlock(block));
-                    newStack.setTag(stack.getTag());
-                    int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), stack);
+			if (ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTags()) && stack.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get()) {
+				Block block = Block.byItem(stack.getItem());
 
-                    if (level > 0 && stack.getItem() instanceof BlockItem && Config.fastSmelt.isEnabled.get()) {
-                        newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
-                    }
+				if (block instanceof ShulkerBoxBlock) {
+					ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
+					newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+					newStack.setTag(stack.getTag());
+					player.inventory.setPickedItem(newStack);
+				}
 
-                    level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), stack);
+			}
 
-                    if (level > 0 && stack.getItem() instanceof BlockItem && Config.fuelEfficient.isEnabled.get()) {
-                        newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
-                    }
+			if (stack.getItem() instanceof BlockItem) {
+				Block block = Block.byItem(stack.getItem());
 
-                    level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), stack);
+				if (block instanceof AbstractFurnaceBlock && stack.isEnchanted()) {
+					ItemStack newStack = new ItemStack(AbstractEnchantedSmelterBlock.getSmelterFromBlock(block));
+					newStack.setTag(stack.getTag());
+					int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), stack);
 
-                    if (level > 0 && stack.getItem() instanceof BlockItem && Config.extraExperience.isEnabled.get()) {
-                        newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
-                    }
+					if (level > 0 && stack.getItem() instanceof BlockItem && Config.fastSmelt.isEnabled.get()) {
+						newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
+					}
 
-                    if (newStack.isEnchanted()) {
-                        player.inventory.setPickedItem(newStack);
-                    }
+					level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), stack);
 
-                }
+					if (level > 0 && stack.getItem() instanceof BlockItem && Config.fuelEfficient.isEnabled.get()) {
+						newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
+					}
 
-            }
+					level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), stack);
 
-        } else {
+					if (level > 0 && stack.getItem() instanceof BlockItem && Config.extraExperience.isEnabled.get()) {
+						newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
+					}
 
-            for (int x = 0; x < player.inventory.getContainerSize(); x++) {
+					if (newStack.isEnchanted()) {
+						player.inventory.setPickedItem(newStack);
+					}
 
-                if (ItemStack.isSame(initial, player.inventory.getItem(x))) {
-                    ItemStack stack1 = player.inventory.getItem(x);
+				}
 
-                    if (ModEnchantmentHelper.isCavernousStorage(stack1.getEnchantmentTags()) && stack1.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get()) {
-                        Block block = ((BlockItem) stack1.getItem()).getBlock();
+			}
 
-                        if (block instanceof ShulkerBoxBlock) {
-                            ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
-                            newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
-                            newStack.setTag(stack1.getTag());
-                            player.inventory.setItem(x, newStack);
-                        }
+		}
+		else {
 
-                    }
+			for (int x = 0; x < player.inventory.getContainerSize(); x++) {
 
-                    if (stack1.getItem() instanceof BlockItem) {
-                        Block block = Block.byItem(stack1.getItem());
+				if (ItemStack.isSame(initial, player.inventory.getItem(x))) {
+					ItemStack stack1 = player.inventory.getItem(x);
 
-                        if (block instanceof AbstractFurnaceBlock && stack1.isEnchanted()) {
-                            ItemStack newStack = new ItemStack(AbstractEnchantedSmelterBlock.getSmelterFromBlock(block));
-                            newStack.setTag(stack1.getTag());
-                            int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), stack1);
+					if (ModEnchantmentHelper.isCavernousStorage(stack1.getEnchantmentTags()) && stack1.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get()) {
+						Block block = ((BlockItem) stack1.getItem()).getBlock();
 
-                            if (level > 0 && stack1.getItem() instanceof BlockItem && Config.fastSmelt.isEnabled.get()) {
-                                newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
-                            }
+						if (block instanceof ShulkerBoxBlock) {
+							ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
+							newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+							newStack.setTag(stack1.getTag());
+							player.inventory.setItem(x, newStack);
+						}
 
-                            level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), stack1);
+					}
 
-                            if (level > 0 && stack1.getItem() instanceof BlockItem && Config.fuelEfficient.isEnabled.get()) {
-                                newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
-                            }
+					if (stack1.getItem() instanceof BlockItem) {
+						Block block = Block.byItem(stack1.getItem());
 
-                            level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), stack1);
+						if (block instanceof AbstractFurnaceBlock && stack1.isEnchanted()) {
+							ItemStack newStack = new ItemStack(AbstractEnchantedSmelterBlock.getSmelterFromBlock(block));
+							newStack.setTag(stack1.getTag());
+							int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), stack1);
 
-                            if (level > 0 && stack1.getItem() instanceof BlockItem && Config.extraExperience.isEnabled.get()) {
-                                newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
-                            }
+							if (level > 0 && stack1.getItem() instanceof BlockItem && Config.fastSmelt.isEnabled.get()) {
+								newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
+							}
 
-                            if (newStack.isEnchanted()) {
-                                player.inventory.setItem(x, newStack);
-                            }
+							level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), stack1);
 
-                        }
+							if (level > 0 && stack1.getItem() instanceof BlockItem && Config.fuelEfficient.isEnabled.get()) {
+								newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
+							}
 
-                    }
+							level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), stack1);
 
-                }
+							if (level > 0 && stack1.getItem() instanceof BlockItem && Config.extraExperience.isEnabled.get()) {
+								newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
+							}
 
-            }
+							if (newStack.isEnchanted()) {
+								player.inventory.setItem(x, newStack);
+							}
 
-        }
+						}
 
-    }
+					}
 
-    @SubscribeEvent
-    public static void onPickup(final ItemPickupEvent event) {
+				}
 
-        Player player = event.getPlayer();
-        ItemStack stack = event.getStack();
-        int x = getSlotFor(stack, player);
+			}
 
-        if (x >= 0) {
+		}
 
-            if (ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTags()) && stack.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get()) {
-                Block block = Block.byItem(stack.getItem());
+	}
 
-                if (block instanceof ShulkerBoxBlock) {
-                    ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
-                    newStack.setTag(stack.getTag());
-                    newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
-                    player.inventory.setItem(x, newStack);
-                }
+	@SubscribeEvent
+	public static void onPickup(final ItemPickupEvent event) {
 
-            }
+		Player player = event.getEntity();
+		ItemStack stack = event.getStack();
+		int x = getSlotFor(stack, player);
 
-            if (stack.getItem() instanceof BlockItem) {
-                Block block = Block.byItem(stack.getItem());
+		if (x >= 0) {
 
-                if (block instanceof AbstractFurnaceBlock && stack.isEnchanted()) {
-                    ItemStack newStack = new ItemStack(AbstractEnchantedSmelterBlock.getSmelterFromBlock(block));
-                    newStack.setTag(stack.getTag());
-                    int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), stack);
+			if (ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTags()) && stack.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get()) {
+				Block block = Block.byItem(stack.getItem());
 
-                    if (level > 0 && stack.getItem() instanceof BlockItem && Config.fastSmelt.isEnabled.get()) {
-                        newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
-                    }
+				if (block instanceof ShulkerBoxBlock) {
+					ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
+					newStack.setTag(stack.getTag());
+					newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
+					player.inventory.setItem(x, newStack);
+				}
 
-                    level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), stack);
+			}
 
-                    if (level > 0 && stack.getItem() instanceof BlockItem && Config.fuelEfficient.isEnabled.get()) {
-                        newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
-                    }
+			if (stack.getItem() instanceof BlockItem) {
+				Block block = Block.byItem(stack.getItem());
 
-                    level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), stack);
+				if (block instanceof AbstractFurnaceBlock && stack.isEnchanted()) {
+					ItemStack newStack = new ItemStack(AbstractEnchantedSmelterBlock.getSmelterFromBlock(block));
+					newStack.setTag(stack.getTag());
+					int level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FAST_SMELT.get(), stack);
 
-                    if (level > 0 && stack.getItem() instanceof BlockItem && Config.extraExperience.isEnabled.get()) {
-                        newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
-                    }
+					if (level > 0 && stack.getItem() instanceof BlockItem && Config.fastSmelt.isEnabled.get()) {
+						newStack.enchant(EnchantmentInit.FAST_SMELT.get(), level);
+					}
 
-                    if (newStack.isEnchanted()) {
-                        player.inventory.setItem(x, newStack);
-                    }
+					level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.FUEL_EFFICIENT.get(), stack);
 
-                }
+					if (level > 0 && stack.getItem() instanceof BlockItem && Config.fuelEfficient.isEnabled.get()) {
+						newStack.enchant(EnchantmentInit.FUEL_EFFICIENT.get(), level);
+					}
 
-            }
+					level = ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.EXTRA_EXPERIENCE.get(), stack);
 
-        }
+					if (level > 0 && stack.getItem() instanceof BlockItem && Config.extraExperience.isEnabled.get()) {
+						newStack.enchant(EnchantmentInit.EXTRA_EXPERIENCE.get(), level);
+					}
 
-    }
+					if (newStack.isEnchanted()) {
+						player.inventory.setItem(x, newStack);
+					}
 
-    public static int getSlotFor(ItemStack stack, Player player) {
+				}
 
-        for (int i = 0; i < player.inventory.getContainerSize(); ++i) {
+			}
 
-            if (!player.inventory.getItem(i).isEmpty() && stackEqualExact(stack, player.inventory.getItem(i))) {
-                return i;
-            }
+		}
 
-        }
+	}
 
-        return -1;
+	public static int getSlotFor(ItemStack stack, Player player) {
 
-    }
+		for (int i = 0; i < player.inventory.getContainerSize(); ++i) {
 
-    private static boolean stackEqualExact(ItemStack stack1, ItemStack stack2) {
+			if (!player.inventory.getItem(i).isEmpty() && stackEqualExact(stack, player.inventory.getItem(i))) {
+				return i;
+			}
 
-        return stack1.getItem() == stack2.getItem() && ItemStack.tagMatches(stack1, stack2) && stack1.areCapsCompatible(stack2) && stack1.areShareTagsEqual(stack2) && stack1.getCount() == stack2.getCount();
+		}
 
-    }
+		return -1;
 
-    public static BlockPos getOffset(BlockPos initial, Direction direction, boolean right) {
+	}
 
-        switch (direction) {
-            case WEST:
-                if (right) {
-                    return initial.offset(0, 0, 1);
-                }
-                return initial.offset(0, 0, -1);
+	private static boolean stackEqualExact(ItemStack stack1, ItemStack stack2) {
 
-            case EAST:
-                if (right) {
-                    return initial.offset(0, 0, -1);
-                }
-                return initial.offset(0, 0, 1);
+		return stack1.getItem() == stack2.getItem() && ItemStack.tagMatches(stack1, stack2);
 
-            case NORTH:
-                if (right) {
-                    return initial.offset(-1, 0, 0);
-                }
-                return initial.offset(1, 0, 0);
+	}
 
-            case SOUTH:
-                if (right) {
-                    return initial.offset(1, 0, 0);
-                }
-                return initial.offset(-1, 0, 0);
+	public static BlockPos getOffset(BlockPos initial, Direction direction, boolean right) {
 
-            default:
-                return initial;
+		switch (direction) {
+		case WEST:
+			if (right) {
+				return initial.offset(0, 0, 1);
+			}
+			return initial.offset(0, 0, -1);
 
-        }
+		case EAST:
+			if (right) {
+				return initial.offset(0, 0, -1);
+			}
+			return initial.offset(0, 0, 1);
 
-    }
+		case NORTH:
+			if (right) {
+				return initial.offset(-1, 0, 0);
+			}
+			return initial.offset(1, 0, 0);
+
+		case SOUTH:
+			if (right) {
+				return initial.offset(1, 0, 0);
+			}
+			return initial.offset(-1, 0, 0);
+
+		default:
+			return initial;
+
+		}
+
+	}
 
 }

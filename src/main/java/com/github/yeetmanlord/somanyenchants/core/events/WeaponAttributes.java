@@ -17,23 +17,22 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class WeaponAttributes {
 
-    @SubscribeEvent
-    public static void mainhand(final LivingEquipmentChangeEvent event) {
+	@SubscribeEvent
+	public static void mainhand(final LivingEquipmentChangeEvent event) {
 
+		if (event.getEntity() instanceof Player) {
+			Player player = (Player) event.getEntity();
+			EquipmentSlot slot = event.getSlot();
 
-        if (event.getEntityLiving() instanceof Player) {
-            Player player = (Player) event.getEntityLiving();
-            EquipmentSlot slot = event.getSlot();
+			if (slot == EquipmentSlot.MAINHAND) {
 
-            if (slot == EquipmentSlot.MAINHAND) {
+				AttributeHelper.apply(EnchantmentInit.HEAVY_BLADE.get(), Attributes.ATTACK_SPEED, Config.heavyBlade, event, -0.1d);
+				AttributeHelper.apply(EnchantmentInit.LIGHT_BLADE.get(), Attributes.ATTACK_SPEED, Config.lightBlade, event, 0.5d);
 
-                AttributeHelper.apply(EnchantmentInit.HEAVY_BLADE.get(), Attributes.ATTACK_SPEED, Config.heavyBlade, event, -0.1d);
-                AttributeHelper.apply(EnchantmentInit.LIGHT_BLADE.get(), Attributes.ATTACK_SPEED, Config.lightBlade, event, 0.5d);
+			}
 
-            }
+		}
 
-        }
-
-    }
+	}
 
 }

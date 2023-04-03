@@ -17,14 +17,14 @@ public class FastHopperEnchant extends ModEnchantment {
 	@Override
 	public int getMinCost(int enchantmentLevel) {
 
-		return 3;
+		return (enchantmentLevel - 1) * 3 + 5;
 
 	}
 
 	@Override
 	public int getMaxCost(int enchantmentLevel) {
 
-		return this.getMinCost(enchantmentLevel) + 40;
+		return this.getMinCost(enchantmentLevel) + 20;
 
 	}
 

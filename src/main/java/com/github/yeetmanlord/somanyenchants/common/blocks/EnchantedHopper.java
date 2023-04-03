@@ -146,7 +146,7 @@ public class EnchantedHopper extends HopperBlock {
 		} else {
 			BlockEntity tileentity = worldIn.getBlockEntity(pos);
 			if (tileentity instanceof EnchantedHopperTileEntity) {
-				NetworkHooks.openGui((ServerPlayer) player, (EnchantedHopperTileEntity) tileentity, pos);
+				NetworkHooks.openScreen((ServerPlayer) player, (EnchantedHopperTileEntity) tileentity, pos);
 				player.awardStat(Stats.INSPECT_HOPPER);
 			}
 
