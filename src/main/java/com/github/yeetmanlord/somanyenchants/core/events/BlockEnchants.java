@@ -36,6 +36,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.BarrelBlock;
@@ -623,6 +624,10 @@ public class BlockEnchants {
 						if (entity instanceof LivingEntity) {
 							LivingEntity living = (LivingEntity) entity;
 
+							if (!EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(living.getMainHandItem()).keySet(), enchant) || !enchant.category.canEnchant(living.getMainHandItem().getItem())) {
+								continue;
+							}
+
 							if (EnchantmentTypesInit.STORAGE.canEnchant(living.getMainHandItem().getItem()) && enchant == EnchantmentInit.CAVERNOUS_STORAGE.get() && Config.cavernousStorage.isEnabled.get()) {
 								ItemStack stack = living.getMainHandItem();
 								Item item = stack.getItem();
@@ -783,6 +788,10 @@ public class BlockEnchants {
 		ItemStack initial = event.getLeft();
 		ItemStack ingredient = event.getRight();
 		ItemStack stack = event.getEntity().inventory.getSelected();
+
+		if (!ingredient.isEnchanted()) {
+			return;
+		}
 
 		if (ItemStack.isSame(initial, stack)) {
 

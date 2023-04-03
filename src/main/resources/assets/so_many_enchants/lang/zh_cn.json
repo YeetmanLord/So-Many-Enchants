@@ -133,5 +133,6 @@
 	"enchantment.so_many_enchants.fuel_efficient.desc": "使炉子，高炉，吸烟者迅速冶炼燃料。 （它会持续更长时间）",
 	"enchantment.so_many_enchants.extra_experience.desc": "使炉子，高炉，吸烟者闻到您拍摄物品时提供更多体验。",
 	"enchantment.so_many_enchants.heavy_blade.desc": "武器做了更多的攻击伤害，但攻击速度减少了。",
-	"enchantment.so_many_enchants.light_blade.desc": "武器的速度越快，但损坏较小。"
+	"enchantment.so_many_enchants.light_blade.desc": "武器的速度越快，但损坏较小。",
+	"enchantment.so_many_enchants.camouflage.desc": "将被困的胸部伪装成普通的胸部。"
 }
