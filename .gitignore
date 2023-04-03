@@ -29,3 +29,5 @@ build
 bin
 run
 changelog.txt
+
+.idea/
