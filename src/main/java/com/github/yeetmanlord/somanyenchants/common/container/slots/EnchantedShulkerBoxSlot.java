@@ -1,16 +1,16 @@
 package com.github.yeetmanlord.somanyenchants.common.container.slots;
 
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.ShulkerBoxBlock;
 
 import com.github.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 
 public class EnchantedShulkerBoxSlot extends Slot {
-   public EnchantedShulkerBoxSlot(Container inventoryIn, int slotIndexIn, int xPosition, int yPosition) {
+   public EnchantedShulkerBoxSlot(IInventory inventoryIn, int slotIndexIn, int xPosition, int yPosition) {
       super(inventoryIn, slotIndexIn, xPosition, yPosition);
    }
 

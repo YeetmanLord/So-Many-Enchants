@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.network.NetworkHandler;
 import com.github.yeetmanlord.somanyenchants.core.network.message.ConfigSyncPacket;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -73,10 +75,10 @@ public class Config {
 
 	public static void loadConfig(String string) {
 
-		JsonObject json = (JsonObject) JsonParser.parseString(string);
+		JsonObject json = (JsonObject) new JsonParser().parse(string);
 
-		for (String key : json.keySet()) {
-
+		for (Entry<String, JsonElement> set : json.entrySet()) {
+			String key = set.getKey();
 			JsonObject sub = json.get(key).getAsJsonObject();
 			boolean enabled = sub.get("isEnabled").getAsBoolean();
 
@@ -375,13 +377,13 @@ public class Config {
 
 			try {
 				content = new String(Files.readAllBytes(Paths.get(file.getPath())));
-				JsonObject json = (JsonObject) JsonParser.parseString(content);
+				JsonObject json = (JsonObject) new JsonParser().parse(content);
 				boolean write = false;
 
 				for (String key : configSections.keySet()) {
 					EnchantmentConfig conf = configSections.get(key);
 
-					if (!json.keySet().contains(key)) {
+					if (json.get(key) != null) {
 						write = true;
 						JsonObject val = new JsonObject();
 						val.addProperty("isEnabled", conf.isEnabled.get());
@@ -400,7 +402,7 @@ public class Config {
 
 				}
 
-				if (!json.keySet().contains("Villager")) {
+				if (json.get("Villager") != null) {
 					write = true;
 					JsonObject val = new JsonObject();
 					VillagerConfig conf = villager;

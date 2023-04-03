@@ -5,10 +5,10 @@ import java.util.function.Supplier;
 import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 public class ClientConfigSyncPacket {
 
@@ -24,13 +24,13 @@ public class ClientConfigSyncPacket {
 
 	}
 
-	public static void encode(ClientConfigSyncPacket msg, FriendlyByteBuf buff) {
+	public static void encode(ClientConfigSyncPacket msg, PacketBuffer buff) {
 
 		buff.writeUtf(msg.file);
 
 	}
 
-	public static ClientConfigSyncPacket decode(FriendlyByteBuf buff) {
+	public static ClientConfigSyncPacket decode(PacketBuffer buff) {
 
 		return new ClientConfigSyncPacket(buff.readUtf());
 

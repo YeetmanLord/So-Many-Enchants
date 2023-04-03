@@ -1,22 +1,22 @@
 package com.github.yeetmanlord.somanyenchants.core.util;
 
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class PlayerUtilities {
 
 	private float stepHeight;
 	private float lastModifiedStepHeight;
-	private Player player;
+	private PlayerEntity player;
 	
 	
-	public PlayerUtilities(Player owner) 
+	public PlayerUtilities(PlayerEntity owner) 
 	{
 		setStepHeight(0.6f);
 		setLastModifiedStepHeight(0.6f);
 		player = owner;
 	}
 	
-	public Player getOwner() {
+	public PlayerEntity getOwner() {
 		return player;
 	}
 

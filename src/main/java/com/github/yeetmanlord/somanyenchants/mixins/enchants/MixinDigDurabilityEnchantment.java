@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.item.enchantment.DigDurabilityEnchantment;
+import net.minecraft.enchantment.UnbreakingEnchantment;
 
-@Mixin(DigDurabilityEnchantment.class)
+@Mixin(UnbreakingEnchantment.class)
 public class MixinDigDurabilityEnchantment {
 
 	@Inject(at = @At("HEAD"), method = "getMaxLevel()I", cancellable = true)

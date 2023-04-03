@@ -2,18 +2,18 @@ package com.github.yeetmanlord.somanyenchants.common.container.slots;
 
 import com.github.yeetmanlord.somanyenchants.common.tileentities.AbstractEnchantedSmelterTileEntity;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.hooks.BasicEventHooks;
 
 public class EnchantedSmelterResultSlot extends Slot {
 
-	private final Player player;
+	private final PlayerEntity player;
 	private int removeCount;
 
-	public EnchantedSmelterResultSlot(Player player, Container inventoryIn, int slotIndex, int xPosition,
+	public EnchantedSmelterResultSlot(PlayerEntity player, IInventory inventoryIn, int slotIndex, int xPosition,
 			int yPosition) {
 		super(inventoryIn, slotIndex, xPosition, yPosition);
 		this.player = player;
@@ -34,9 +34,10 @@ public class EnchantedSmelterResultSlot extends Slot {
 	}
 
 	@Override
-	public void onTake(Player thePlayer, ItemStack stack) {
+	public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
 		this.checkTakeAchievements(stack);
 		super.onTake(thePlayer, stack);
+		return stack;
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class EnchantedSmelterResultSlot extends Slot {
 		}
 
 		this.removeCount = 0;
-		ForgeEventFactory.firePlayerSmeltedEvent(this.player, stack);
+		BasicEventHooks.firePlayerSmeltedEvent(this.player, stack);
 	}
 
 }

@@ -3,14 +3,14 @@ package com.github.yeetmanlord.somanyenchants.common.enchantments.armor;
 import com.github.yeetmanlord.somanyenchants.common.enchantments.ModEnchantment;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.inventory.EquipmentSlotType;
 
 public class CatVisionEnchant extends ModEnchantment {
 
-	public CatVisionEnchant(Rarity rarityIn, EquipmentSlot[] slots) {
+	public CatVisionEnchant(Rarity rarityIn, EquipmentSlotType[] slots) {
 
-		super(rarityIn, EnchantmentCategory.ARMOR_HEAD, Config.catVision, slots);
+		super(rarityIn, EnchantmentType.ARMOR_HEAD, Config.catVision, slots);
 
 	}
 

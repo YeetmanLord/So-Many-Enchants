@@ -3,11 +3,11 @@ package com.github.yeetmanlord.somanyenchants.data.server;
 import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.init.BlockInit;
 
+import net.minecraft.block.Block;
+import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.tags.ITag;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class BlockTagProvider extends BlockTagsProvider {
@@ -45,12 +45,12 @@ public class BlockTagProvider extends BlockTagsProvider {
 	}
 
 	public static final class BlockTags {
-		public static final TagKey<Block> PICKAXE_MINABLES = minecraftTag("mineable/pickaxe");
-		public static final TagKey<Block> AXE_MINABLES = minecraftTag("mineable/axe");
-		public static final TagKey<Block> SHULKER_BOXES = minecraftTag("shulker_boxes");
+		public static final ITag.INamedTag<Block> PICKAXE_MINABLES = minecraftTag("mineable/pickaxe");
+		public static final ITag.INamedTag<Block> AXE_MINABLES = minecraftTag("mineable/axe");
+		public static final ITag.INamedTag<Block> SHULKER_BOXES = minecraftTag("shulker_boxes");
 
-		public static TagKey<Block> minecraftTag(String path) {
-			return net.minecraft.tags.BlockTags.create(new ResourceLocation("minecraft", path));
+		public static ITag.INamedTag<Block> minecraftTag(String path) {
+			return (ITag.INamedTag<Block>)net.minecraft.tags.BlockTags.createOptional(new ResourceLocation("minecraft", path));
 		}
 	}
 

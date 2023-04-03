@@ -3,14 +3,14 @@ package com.github.yeetmanlord.somanyenchants.common.enchantments.tools;
 import com.github.yeetmanlord.somanyenchants.common.enchantments.ModEnchantment;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.inventory.EquipmentSlotType;
 
 public class DoubleBreakEnchant extends ModEnchantment {
 
-	public DoubleBreakEnchant(Rarity rarityIn, EquipmentSlot... slots) {
+	public DoubleBreakEnchant(Rarity rarityIn, EquipmentSlotType... slots) {
 
-		super(rarityIn, EnchantmentCategory.DIGGER, Config.doubleBreak, slots);
+		super(rarityIn, EnchantmentType.DIGGER, Config.doubleBreak, slots);
 
 	}
 

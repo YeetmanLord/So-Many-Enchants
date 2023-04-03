@@ -3,20 +3,20 @@ package com.github.yeetmanlord.somanyenchants.common.particles;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.IAnimatedSprite;
+import net.minecraft.client.particle.IParticleFactory;
+import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.TextureSheetParticle;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.util.Mth;
+import net.minecraft.client.particle.SpriteTexturedParticle;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.particles.BasicParticleType;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class FreezeParticle extends TextureSheetParticle {
-   private FreezeParticle(ClientLevel world, double x, double y, double z, double motionX, double motionY, double motionZ) {
+public class FreezeParticle extends SpriteTexturedParticle {
+   private FreezeParticle(ClientWorld world, double x, double y, double z, double motionX, double motionY, double motionZ) {
       super(world, x, y, z, 0.0D, 0.0D, 0.0D);
       this.xd *= (double)0.1F;
       this.yd *= (double)0.1F;
@@ -36,7 +36,7 @@ public class FreezeParticle extends TextureSheetParticle {
 
    @Override
 public float getQuadSize(float scaleFactor) {
-      return this.quadSize * Mth.clamp(((float)this.age + scaleFactor) / (float)this.lifetime * 32.0F, 0.0F, 1.0F);
+      return this.quadSize * MathHelper.clamp(((float)this.age + scaleFactor) / (float)this.lifetime * 32.0F, 0.0F, 1.0F);
    }
 
    @Override
@@ -63,21 +63,21 @@ public void tick() {
    }
 
    @Override
-public ParticleRenderType getRenderType() {
-      return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+public IParticleRenderType getRenderType() {
+      return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
    }
 
    @OnlyIn(Dist.CLIENT)
-   public static class DamageIndicatorFactory implements ParticleProvider<SimpleParticleType> {
-      private final SpriteSet spriteSet;
+   public static class DamageIndicatorFactory implements IParticleFactory<BasicParticleType> {
+      private final IAnimatedSprite spriteSet;
 
-      public DamageIndicatorFactory(SpriteSet spriteSet) {
+      public DamageIndicatorFactory(IAnimatedSprite spriteSet) {
          this.spriteSet = spriteSet;
       }
       
       @Nullable
       @Override
-      public Particle createParticle(SimpleParticleType typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+      public Particle createParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
          FreezeParticle freezeparticle = new FreezeParticle(worldIn, x, y, z, xSpeed, ySpeed + 1.0D, zSpeed);
          freezeparticle.setLifetime(20);
          freezeparticle.pickSprite(this.spriteSet);
@@ -86,16 +86,16 @@ public ParticleRenderType getRenderType() {
    }
 
    @OnlyIn(Dist.CLIENT)
-   public static class Factory implements ParticleProvider<SimpleParticleType> {
-      private final SpriteSet spriteSet;
+   public static class Factory implements IParticleFactory<BasicParticleType> {
+      private final IAnimatedSprite spriteSet;
 
-      public Factory(SpriteSet spriteSet) {
+      public Factory(IAnimatedSprite spriteSet) {
          this.spriteSet = spriteSet;
       }
       
       @Nullable
       @Override
-      public Particle createParticle(SimpleParticleType typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+      public Particle createParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
          FreezeParticle freezeparticle = new FreezeParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
          freezeparticle.pickSprite(this.spriteSet);
          return freezeparticle;
@@ -103,16 +103,16 @@ public ParticleRenderType getRenderType() {
    }
 
    @OnlyIn(Dist.CLIENT)
-   public static class MagicFactory implements ParticleProvider<SimpleParticleType> {
-      private final SpriteSet spriteSet;
+   public static class MagicFactory implements IParticleFactory<BasicParticleType> {
+      private final IAnimatedSprite spriteSet;
 
-      public MagicFactory(SpriteSet spriteSet) {
+      public MagicFactory(IAnimatedSprite spriteSet) {
          this.spriteSet = spriteSet;
       }
       
       @Nullable
       @Override
-      public Particle createParticle(SimpleParticleType typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+      public Particle createParticle(BasicParticleType typeIn, ClientWorld worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
          FreezeParticle freezeparticle = new FreezeParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
          freezeparticle.rCol *= 0.3F;
          freezeparticle.gCol *= 0.8F;

@@ -1,7 +1,7 @@
 package com.github.yeetmanlord.somanyenchants.common.tileentities;
 
 import java.util.List;
-import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -12,65 +12,67 @@ import com.github.yeetmanlord.somanyenchants.common.blocks.EnchantedHopper;
 import com.github.yeetmanlord.somanyenchants.common.container.EnchantedHopperContainer;
 import com.github.yeetmanlord.somanyenchants.core.init.BlockEntityTypeInit;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.WorldlyContainer;
-import net.minecraft.world.WorldlyContainerHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.Hopper;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.shapes.BooleanOp;
-import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ISidedInventoryProvider;
+import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.IHopper;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.LockableLootTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 
-public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity implements Hopper {
+public class EnchantedHopperTileEntity extends LockableLootTileEntity implements IHopper, ITickableTileEntity {
 	public static final int MOVE_ITEM_SPEED = 2;
 	public static final int HOPPER_CONTAINER_SIZE = 5;
 	private NonNullList<ItemStack> items = NonNullList.withSize(5, ItemStack.EMPTY);
 	private int cooldownTime = -1;
 	private long tickedGameTime;
 
-	public EnchantedHopperTileEntity(BlockPos p_155550_, BlockState p_155551_) {
-	      super(BlockEntityTypeInit.ENCHANTED_HOPPER.get(), p_155550_, p_155551_);
-	   }
-
-	@Override
-	public void load(CompoundTag p_155588_) {
-		super.load(p_155588_);
-		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		if (!this.tryLoadLootTable(p_155588_)) {
-			ContainerHelper.loadAllItems(p_155588_, this.items);
-		}
-
-		this.cooldownTime = p_155588_.getInt("TransferCooldown");
+	public EnchantedHopperTileEntity() {
+		super(BlockEntityTypeInit.ENCHANTED_HOPPER.get());
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag p_187502_) {
-		super.saveAdditional(p_187502_);
-		if (!this.trySaveLootTable(p_187502_)) {
-			ContainerHelper.saveAllItems(p_187502_, this.items);
+	public void load(BlockState blockState, CompoundNBT nbt) {
+		super.load(blockState, nbt);
+		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+		if (!this.tryLoadLootTable(nbt)) {
+			ItemStackHelper.loadAllItems(nbt, this.items);
 		}
 
-		p_187502_.putInt("TransferCooldown", this.cooldownTime);
+		this.cooldownTime = nbt.getInt("TransferCooldown");
+	}
+
+	@Override
+	public CompoundNBT save(CompoundNBT nbt) {
+		super.save(nbt);
+		if (!this.trySaveLootTable(nbt)) {
+			ItemStackHelper.saveAllItems(nbt, this.items);
+		}
+
+		nbt.putInt("TransferCooldown", this.cooldownTime);
+		return nbt;
 	}
 
 	@Override
@@ -80,13 +82,13 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 
 	@Override
 	public ItemStack removeItem(int p_59309_, int p_59310_) {
-		this.unpackLootTable((Player) null);
-		return ContainerHelper.removeItem(this.getItems(), p_59309_, p_59310_);
+		this.unpackLootTable((PlayerEntity) null);
+		return ItemStackHelper.removeItem(this.getItems(), p_59309_, p_59310_);
 	}
 
 	@Override
 	public void setItem(int p_59315_, ItemStack p_59316_) {
-		this.unpackLootTable((Player) null);
+		this.unpackLootTable((PlayerEntity) null);
 		this.getItems().set(p_59315_, p_59316_);
 		if (p_59316_.getCount() > this.getMaxStackSize()) {
 			p_59316_.setCount(this.getMaxStackSize());
@@ -95,41 +97,41 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 	}
 
 	@Override
-	protected Component getDefaultName() {
-		return new TranslatableComponent("container.enchanted_hopper");
+	protected ITextComponent getDefaultName() {
+		return new TranslationTextComponent("container.enchanted_hopper");
 	}
 
-	public static void pushItemsTick(Level p_155574_, BlockPos p_155575_, BlockState p_155576_,
-			EnchantedHopperTileEntity p_155577_) {
-		--p_155577_.cooldownTime;
-		p_155577_.tickedGameTime = p_155574_.getGameTime();
-		if (!p_155577_.isOnCooldown()) {
-			p_155577_.setCooldown(0);
-			tryMoveItems(p_155574_, p_155575_, p_155576_, p_155577_, () -> {
-				return suckInItems(p_155574_, p_155577_);
+	@Override
+	public void tick() {
+		--this.cooldownTime;
+		this.tickedGameTime = this.level.getGameTime();
+		if (!this.isOnCooldown()) {
+			this.setCooldown(0);
+			this.tryMoveItems(() -> {
+				return suckInItems();
 			});
 		}
 
 	}
 
-	private static boolean tryMoveItems(Level p_155579_, BlockPos p_155580_, BlockState p_155581_,
-			EnchantedHopperTileEntity p_155582_, BooleanSupplier p_155583_) {
-		if (p_155579_.isClientSide) {
+	private boolean tryMoveItems(Supplier<Boolean> sup) {
+		BlockState state = this.level.getBlockState(this.getBlockPos());
+		if (this.level.isClientSide) {
 			return false;
 		} else {
-			if (!p_155582_.isOnCooldown() && p_155581_.getValue(EnchantedHopper.ENABLED)) {
+			if (!this.isOnCooldown() && state.getValue(EnchantedHopper.ENABLED)) {
 				boolean flag = false;
-				if (!p_155582_.isEmpty()) {
-					flag = ejectItems(p_155579_, p_155580_, p_155581_, p_155582_);
+				if (!this.isEmpty()) {
+					flag = ejectItems(this.level, this.getBlockPos(), state, this);
 				}
 
-				if (!p_155582_.inventoryFull()) {
-					flag |= p_155583_.getAsBoolean();
+				if (!this.inventoryFull()) {
+					flag |= sup.get();
 				}
 
 				if (flag) {
-					p_155582_.setCooldown(2);
-					setChanged(p_155579_, p_155580_, p_155581_);
+					this.setCooldown(2);
+					this.setChanged();
 					return true;
 				}
 			}
@@ -148,11 +150,11 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 		return true;
 	}
 
-	private static boolean ejectItems(Level p_155563_, BlockPos p_155564_, BlockState p_155565_,
+	private static boolean ejectItems(World p_155563_, BlockPos p_155564_, BlockState p_155565_,
 			EnchantedHopperTileEntity p_155566_) {
 		if (Capabilities.insertHook(p_155566_))
 			return true;
-		Container container = getAttachedContainer(p_155563_, p_155564_, p_155565_);
+		IInventory container = getAttachedContainer(p_155563_, p_155564_, p_155565_);
 		if (container == null) {
 			return false;
 		} else {
@@ -178,39 +180,39 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 		}
 	}
 
-	private static IntStream getSlots(Container p_59340_, Direction p_59341_) {
-		return p_59340_ instanceof WorldlyContainer
-				? IntStream.of(((WorldlyContainer) p_59340_).getSlotsForFace(p_59341_))
+	private static IntStream getSlots(IInventory p_59340_, Direction p_59341_) {
+		return p_59340_ instanceof ISidedInventory
+				? IntStream.of(((ISidedInventory) p_59340_).getSlotsForFace(p_59341_))
 				: IntStream.range(0, p_59340_.getContainerSize());
 	}
 
-	private static boolean isFullContainer(Container p_59386_, Direction p_59387_) {
+	private static boolean isFullContainer(IInventory p_59386_, Direction p_59387_) {
 		return getSlots(p_59386_, p_59387_).allMatch((p_59379_) -> {
 			ItemStack itemstack = p_59386_.getItem(p_59379_);
 			return itemstack.getCount() >= itemstack.getMaxStackSize();
 		});
 	}
 
-	private static boolean isEmptyContainer(Container p_59398_, Direction p_59399_) {
+	private static boolean isEmptyContainer(IInventory p_59398_, Direction p_59399_) {
 		return getSlots(p_59398_, p_59399_).allMatch((p_59319_) -> {
 			return p_59398_.getItem(p_59319_).isEmpty();
 		});
 	}
 
-	public static boolean suckInItems(Level p_155553_, Hopper p_155554_) {
-		Boolean ret = net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(p_155553_, p_155554_);
+	public boolean suckInItems() {
+		Boolean ret = net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(this);
 		if (ret != null)
 			return ret;
-		Container container = getSourceContainer(p_155553_, p_155554_);
+		IInventory container = getSourceContainer(this.level, this);
 		if (container != null) {
 			Direction direction = Direction.DOWN;
 			return isEmptyContainer(container, direction) ? false
 					: getSlots(container, direction).anyMatch((p_59363_) -> {
-						return tryTakeInItemFromSlot(p_155554_, container, p_59363_, direction);
+						return tryTakeInItemFromSlot(this, container, p_59363_, direction);
 					});
 		} else {
-			for (ItemEntity itementity : getItemsAtAndAbove(p_155553_, p_155554_)) {
-				if (addItem(p_155554_, itementity)) {
+			for (ItemEntity itementity : getItemsAtAndAbove(this.level, this)) {
+				if (addItem(this, itementity)) {
 					return true;
 				}
 			}
@@ -219,7 +221,7 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 		}
 	}
 
-	private static boolean tryTakeInItemFromSlot(Hopper p_59355_, Container p_59356_, int p_59357_,
+	private static boolean tryTakeInItemFromSlot(IHopper p_59355_, IInventory p_59356_, int p_59357_,
 			Direction p_59358_) {
 		ItemStack itemstack = p_59356_.getItem(p_59357_);
 		if (!itemstack.isEmpty() && canTakeItemFromContainer(p_59356_, itemstack, p_59357_, p_59358_)) {
@@ -236,24 +238,24 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 		return false;
 	}
 
-	public static boolean addItem(Container p_59332_, ItemEntity p_59333_) {
+	public static boolean addItem(IInventory inv, ItemEntity item) {
 		boolean flag = false;
-		ItemStack itemstack = p_59333_.getItem().copy();
-		ItemStack itemstack1 = addItem((Container) null, p_59332_, itemstack, (Direction) null);
+		ItemStack itemstack = item.getItem().copy();
+		ItemStack itemstack1 = addItem((IInventory) null, inv, itemstack, (Direction) null);
 		if (itemstack1.isEmpty()) {
 			flag = true;
-			p_59333_.discard();
+			item.remove();
 		} else {
-			p_59333_.setItem(itemstack1);
+			item.setItem(itemstack1);
 		}
 
 		return flag;
 	}
 
-	public static ItemStack addItem(@Nullable Container p_59327_, Container p_59328_, ItemStack p_59329_,
+	public static ItemStack addItem(@Nullable IInventory p_59327_, IInventory p_59328_, ItemStack p_59329_,
 			@Nullable Direction p_59330_) {
-		if (p_59328_ instanceof WorldlyContainer && p_59330_ != null) {
-			WorldlyContainer worldlycontainer = (WorldlyContainer) p_59328_;
+		if (p_59328_ instanceof ISidedInventory && p_59330_ != null) {
+			ISidedInventory worldlycontainer = (ISidedInventory) p_59328_;
 			int[] aint = worldlycontainer.getSlotsForFace(p_59330_);
 
 			for (int k = 0; k < aint.length && !p_59329_.isEmpty(); ++k) {
@@ -270,23 +272,23 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 		return p_59329_;
 	}
 
-	private static boolean canPlaceItemInContainer(Container p_59335_, ItemStack p_59336_, int p_59337_,
+	private static boolean canPlaceItemInContainer(IInventory p_59335_, ItemStack p_59336_, int p_59337_,
 			@Nullable Direction p_59338_) {
 		if (!p_59335_.canPlaceItem(p_59337_, p_59336_)) {
 			return false;
 		} else {
-			return !(p_59335_ instanceof WorldlyContainer)
-					|| ((WorldlyContainer) p_59335_).canPlaceItemThroughFace(p_59337_, p_59336_, p_59338_);
+			return !(p_59335_ instanceof ISidedInventory)
+					|| ((ISidedInventory) p_59335_).canPlaceItemThroughFace(p_59337_, p_59336_, p_59338_);
 		}
 	}
 
-	private static boolean canTakeItemFromContainer(Container p_59381_, ItemStack p_59382_, int p_59383_,
+	private static boolean canTakeItemFromContainer(IInventory p_59381_, ItemStack p_59382_, int p_59383_,
 			Direction p_59384_) {
-		return !(p_59381_ instanceof WorldlyContainer)
-				|| ((WorldlyContainer) p_59381_).canTakeItemThroughFace(p_59383_, p_59382_, p_59384_);
+		return !(p_59381_ instanceof ISidedInventory)
+				|| ((ISidedInventory) p_59381_).canTakeItemThroughFace(p_59383_, p_59382_, p_59384_);
 	}
 
-	private static ItemStack tryMoveInItem(@Nullable Container p_59321_, Container p_59322_, ItemStack p_59323_,
+	private static ItemStack tryMoveInItem(@Nullable IInventory p_59321_, IInventory p_59322_, ItemStack p_59323_,
 			int p_59324_, @Nullable Direction p_59325_) {
 		ItemStack itemstack = p_59322_.getItem(p_59324_);
 		if (canPlaceItemInContainer(p_59322_, p_59323_, p_59324_, p_59325_)) {
@@ -328,57 +330,59 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 	}
 
 	@Nullable
-	private static Container getAttachedContainer(Level p_155593_, BlockPos p_155594_, BlockState p_155595_) {
+	private static IInventory getAttachedContainer(World p_155593_, BlockPos p_155594_, BlockState p_155595_) {
 		Direction direction = p_155595_.getValue(EnchantedHopper.FACING);
 		return getContainerAt(p_155593_, p_155594_.relative(direction));
 	}
 
 	@Nullable
-	private static Container getSourceContainer(Level p_155597_, Hopper p_155598_) {
+	private static IInventory getSourceContainer(World p_155597_, IHopper p_155598_) {
 		return getContainerAt(p_155597_, p_155598_.getLevelX(), p_155598_.getLevelY() + 1.0D, p_155598_.getLevelZ());
 	}
 
-	public static List<ItemEntity> getItemsAtAndAbove(Level p_155590_, Hopper p_155591_) {
+	public static List<ItemEntity> getItemsAtAndAbove(World p_155590_, IHopper p_155591_) {
 		return p_155591_.getSuckShape().toAabbs().stream().flatMap((p_155558_) -> {
 			return p_155590_.getEntitiesOfClass(ItemEntity.class, p_155558_.move(p_155591_.getLevelX() - 0.5D,
-					p_155591_.getLevelY() - 0.5D, p_155591_.getLevelZ() - 0.5D), EntitySelector.ENTITY_STILL_ALIVE)
+					p_155591_.getLevelY() - 0.5D, p_155591_.getLevelZ() - 0.5D), EntityPredicates.ENTITY_STILL_ALIVE)
 					.stream();
 		}).collect(Collectors.toList());
 	}
 
 	@Nullable
-	public static Container getContainerAt(Level p_59391_, BlockPos p_59392_) {
+	public static IInventory getContainerAt(World p_59391_, BlockPos p_59392_) {
 		return getContainerAt(p_59391_, (double) p_59392_.getX() + 0.5D, (double) p_59392_.getY() + 0.5D,
 				(double) p_59392_.getZ() + 0.5D);
 	}
 
 	@Nullable
-	private static Container getContainerAt(Level p_59348_, double p_59349_, double p_59350_, double p_59351_) {
-		Container container = null;
+	private static IInventory getContainerAt(World p_59348_, double p_59349_, double p_59350_, double p_59351_) {
+		IInventory container = null;
 		BlockPos blockpos = new BlockPos(p_59349_, p_59350_, p_59351_);
 		BlockState blockstate = p_59348_.getBlockState(blockpos);
 		Block block = blockstate.getBlock();
-		if (block instanceof WorldlyContainerHolder) {
-			container = ((WorldlyContainerHolder) block).getContainer(blockstate, p_59348_, blockpos);
-		} else if (blockstate.hasBlockEntity()) {
-			BlockEntity blockentity = p_59348_.getBlockEntity(blockpos);
-			if (blockentity instanceof Container) {
-				container = (Container) blockentity;
-				if (container instanceof ChestBlockEntity && block instanceof ChestBlock) {
+		if (block instanceof ISidedInventoryProvider) {
+			container = ((ISidedInventoryProvider) block).getContainer(blockstate, p_59348_, blockpos);
+		} else if (blockstate.hasTileEntity()) {
+			TileEntity blockentity = p_59348_.getBlockEntity(blockpos);
+			if (blockentity instanceof IInventory) {
+				container = (IInventory) blockentity;
+				if (container instanceof ChestTileEntity && block instanceof ChestBlock) {
 					container = ChestBlock.getContainer((ChestBlock) block, blockstate, p_59348_, blockpos, true);
-				}
-				else if(container instanceof EnchantedChestTileEntity && block instanceof EnchantedChestBlock) {
-					container = EnchantedChestBlock.getContainer((EnchantedChestBlock)block, blockstate, p_59348_, blockpos, true);
+				} else if (container instanceof EnchantedChestTileEntity && block instanceof EnchantedChestBlock) {
+					container = EnchantedChestBlock.getContainer((EnchantedChestBlock) block, blockstate, p_59348_,
+							blockpos, true);
 				}
 			}
 		}
 
 		if (container == null) {
-			List<Entity> list = p_59348_.getEntities((Entity) null, new AABB(p_59349_ - 0.5D, p_59350_ - 0.5D,
-					p_59351_ - 0.5D, p_59349_ + 0.5D, p_59350_ + 0.5D, p_59351_ + 0.5D),
-					EntitySelector.CONTAINER_ENTITY_SELECTOR);
+			List<Entity> list = p_59348_
+					.getEntities(
+							(Entity) null, new AxisAlignedBB(p_59349_ - 0.5D, p_59350_ - 0.5D, p_59351_ - 0.5D,
+									p_59349_ + 0.5D, p_59350_ + 0.5D, p_59351_ + 0.5D),
+							EntityPredicates.CONTAINER_ENTITY_SELECTOR);
 			if (!list.isEmpty()) {
-				container = (Container) list.get(p_59348_.random.nextInt(list.size()));
+				container = (IInventory) list.get(p_59348_.random.nextInt(list.size()));
 			}
 		}
 
@@ -386,7 +390,7 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 	}
 
 	private static boolean canMergeItems(ItemStack p_59345_, ItemStack p_59346_) {
-		if (!p_59345_.is(p_59346_.getItem())) {
+		if (!p_59345_.getItem().equals(p_59346_.getItem())) {
 			return false;
 		} else if (p_59345_.getDamageValue() != p_59346_.getDamageValue()) {
 			return false;
@@ -434,21 +438,19 @@ public class EnchantedHopperTileEntity extends RandomizableContainerBlockEntity 
 		this.items = p_59371_;
 	}
 
-	public static void entityInside(Level p_155568_, BlockPos p_155569_, BlockState p_155570_, Entity p_155571_,
-			EnchantedHopperTileEntity p_155572_) {
-		if (p_155571_ instanceof ItemEntity && Shapes.joinIsNotEmpty(
-				Shapes.create(p_155571_.getBoundingBox().move((double) (-p_155569_.getX()),
-						(double) (-p_155569_.getY()), (double) (-p_155569_.getZ()))),
-				p_155572_.getSuckShape(), BooleanOp.AND)) {
-			tryMoveItems(p_155568_, p_155569_, p_155570_, p_155572_, () -> {
-				return addItem(p_155572_, (ItemEntity) p_155571_);
+	public void entityInside(Entity entity) {
+		if (entity instanceof ItemEntity && VoxelShapes.joinIsNotEmpty(VoxelShapes.create(
+				entity.getBoundingBox().move((double) (-this.getBlockPos().getX()), (double) (-this.getBlockPos().getY()), (double) (-this.getBlockPos().getZ()))),
+				this.getSuckShape(), IBooleanFunction.AND)) {
+			tryMoveItems(() -> {
+				return addItem(this, (ItemEntity) entity);
 			});
 		}
 
 	}
 
 	@Override
-	protected AbstractContainerMenu createMenu(int p_59312_, Inventory p_59313_) {
+	protected Container createMenu(int p_59312_, PlayerInventory p_59313_) {
 		return new EnchantedHopperContainer(p_59312_, p_59313_, this);
 	}
 

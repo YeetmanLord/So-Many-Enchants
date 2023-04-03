@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.item.enchantment.DiggingEnchantment;
+import net.minecraft.enchantment.EfficiencyEnchantment;
 
-@Mixin(DiggingEnchantment.class)
+@Mixin(EfficiencyEnchantment.class)
 public class MixinDiggingEnchantment {
 
 	@Inject(at = @At("HEAD"), method = "getMaxLevel()I", cancellable = true)

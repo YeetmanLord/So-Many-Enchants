@@ -11,19 +11,19 @@ import com.github.yeetmanlord.somanyenchants.common.blocks.smelters.furnace.Ench
 import com.github.yeetmanlord.somanyenchants.common.blocks.smelters.smoker.EnchantedSmokerBlock;
 import com.github.yeetmanlord.somanyenchants.common.tileentities.EnchantedShulkerBoxTileEntity;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
+import net.minecraft.item.DyeColor;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 public class BlockInit {
 
@@ -54,70 +54,70 @@ public class BlockInit {
 
 	public static final RegistryObject<Block> ENCHANTED_SHULKER_BOX = BLOCKS.register("enchanted_shulker_box",
 			() -> createEnchantedShulkerBoxFromColorAndProperties((DyeColor) null,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL)));
 	public static final RegistryObject<Block> ENCHANTED_WHITE_SHULKER_BOX = BLOCKS.register(
 			"enchanted_white_shulker_box", () -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.WHITE,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.SNOW)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.SNOW)));
 	public static final RegistryObject<Block> ENCHANTED_ORANGE_SHULKER_BOX = BLOCKS.register(
 			"enchanted_orange_shulker_box", () -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.ORANGE,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_ORANGE)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_ORANGE)));
 	public static final RegistryObject<Block> ENCHANTED_MAGENTA_SHULKER_BOX = BLOCKS.register(
 			"enchanted_magenta_shulker_box", () -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.MAGENTA,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_MAGENTA)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_MAGENTA)));
 	public static final RegistryObject<Block> ENCHANTED_LIGHT_BLUE_SHULKER_BOX = BLOCKS.register(
 			"enchanted_light_blue_shulker_box",
 			() -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.LIGHT_BLUE,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_LIGHT_BLUE)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_LIGHT_BLUE)));
 	public static final RegistryObject<Block> ENCHANTED_YELLOW_SHULKER_BOX = BLOCKS.register(
 			"enchanted_yellow_shulker_box", () -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.YELLOW,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_YELLOW)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_YELLOW)));
 	public static final RegistryObject<Block> ENCHANTED_LIME_SHULKER_BOX = BLOCKS.register("enchanted_lime_shulker_box",
 			() -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.LIME,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_LIGHT_GREEN)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_LIGHT_GREEN)));
 	public static final RegistryObject<Block> ENCHANTED_PINK_SHULKER_BOX = BLOCKS.register("enchanted_pink_shulker_box",
 			() -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.PINK,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_PINK)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_PINK)));
 	public static final RegistryObject<Block> ENCHANTED_GRAY_SHULKER_BOX = BLOCKS.register("enchanted_gray_shulker_box",
 			() -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.GRAY,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_GRAY)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_GRAY)));
 	public static final RegistryObject<Block> ENCHANTED_LIGHT_GRAY_SHULKER_BOX = BLOCKS.register(
 			"enchanted_light_gray_shulker_box",
 			() -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.LIGHT_GRAY,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_LIGHT_GRAY)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_LIGHT_GRAY)));
 	public static final RegistryObject<Block> ENCHANTED_CYAN_SHULKER_BOX = BLOCKS.register("enchanted_cyan_shulker_box",
 			() -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.CYAN,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_CYAN)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_CYAN)));
 	public static final RegistryObject<Block> ENCHANTED_PURPLE_SHULKER_BOX = BLOCKS.register(
 			"enchanted_purple_shulker_box", () -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.PURPLE,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.TERRACOTTA_PURPLE)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.TERRACOTTA_PURPLE)));
 	public static final RegistryObject<Block> ENCHANTED_BLUE_SHULKER_BOX = BLOCKS.register("enchanted_blue_shulker_box",
 			() -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.BLUE,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_BLUE)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_BLUE)));
 	public static final RegistryObject<Block> ENCHANTED_BROWN_SHULKER_BOX = BLOCKS.register(
 			"enchanted_brown_shulker_box", () -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.BROWN,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_BROWN)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_BROWN)));
 	public static final RegistryObject<Block> ENCHANTED_GREEN_SHULKER_BOX = BLOCKS.register(
 			"enchanted_green_shulker_box", () -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.GREEN,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_GREEN)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_GREEN)));
 	public static final RegistryObject<Block> ENCHANTED_RED_SHULKER_BOX = BLOCKS.register("enchanted_red_shulker_box",
 			() -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.RED,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_RED)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_RED)));
 	public static final RegistryObject<Block> ENCHANTED_BLACK_SHULKER_BOX = BLOCKS.register(
 			"enchanted_black_shulker_box", () -> createEnchantedShulkerBoxFromColorAndProperties(DyeColor.BLACK,
-					BlockBehaviour.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_BLACK)));
+					AbstractBlock.Properties.of(Material.SHULKER_SHELL, MaterialColor.COLOR_BLACK)));
 
 	public static final RegistryObject<Block> ENCHANTED_FURNACE = BLOCKS.register("enchanted_furnace", () -> new EnchantedFurnaceBlock(Block.Properties.copy(Blocks.FURNACE)));
 	public static final RegistryObject<Block> ENCHANTED_BLAST_FURNACE = BLOCKS.register("enchanted_blast_furnace", () -> new EnchantedBlastFurnaceBlock(Block.Properties.copy(Blocks.BLAST_FURNACE)));
 	public static final RegistryObject<Block> ENCHANTED_SMOKER = BLOCKS.register("enchanted_smoker", () -> new EnchantedSmokerBlock(Block.Properties.copy(Blocks.SMOKER)));
 	
-	private static boolean isntSolid(BlockState state, BlockGetter reader, BlockPos pos) {
+	private static boolean isntSolid(BlockState state, IBlockReader reader, BlockPos pos) {
 		return false;
 	}
 
 	private static EnchantedShulkerBoxBlock createEnchantedShulkerBoxFromColorAndProperties(DyeColor color,
-			BlockBehaviour.Properties properties) {
-		BlockBehaviour.StatePredicate abstractblock$ipositionpredicate = (state, reader, pos) -> {
-			BlockEntity tileentity = reader.getBlockEntity(pos);
+			AbstractBlock.Properties properties) {
+		AbstractBlock.IPositionPredicate abstractblock$ipositionpredicate = (state, reader, pos) -> {
+			TileEntity tileentity = reader.getBlockEntity(pos);
 			if (!(tileentity instanceof EnchantedShulkerBoxTileEntity)) {
 				return true;
 			} else {

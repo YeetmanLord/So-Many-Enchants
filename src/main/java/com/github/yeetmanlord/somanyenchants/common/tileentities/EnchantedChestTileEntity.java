@@ -4,197 +4,242 @@ import com.github.yeetmanlord.somanyenchants.common.blocks.EnchantedChestBlock;
 import com.github.yeetmanlord.somanyenchants.common.container.EnchantedChestContainer;
 import com.github.yeetmanlord.somanyenchants.core.init.BlockEntityTypeInit;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.CompoundContainer;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.ChestLidController;
-import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
-import net.minecraft.world.level.block.entity.LidBlockEntity;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.DoubleSidedInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.ChestType;
+import net.minecraft.tileentity.IChestLid;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.LockableLootTileEntity;
+import net.minecraft.tileentity.LockableTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(value = Dist.CLIENT, _interface = LidBlockEntity.class)
-public class EnchantedChestTileEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
+@OnlyIn(value = Dist.CLIENT, _interface = IChestLid.class)
+public class EnchantedChestTileEntity extends LockableLootTileEntity implements IChestLid, ITickableTileEntity {
 	private NonNullList<ItemStack> items = NonNullList.withSize(36, ItemStack.EMPTY);
-	private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
-		@Override
-		protected void onOpen(Level p_155357_, BlockPos p_155358_, BlockState p_155359_) {
-			EnchantedChestTileEntity.playSound(p_155357_, p_155358_, p_155359_, SoundEvents.CHEST_OPEN);
-		}
+	protected float openness;
+	protected float oOpenness;
+	protected int openCount;
+	private int tickInterval;
+	private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
 
-		@Override
-		protected void onClose(Level p_155367_, BlockPos p_155368_, BlockState p_155369_) {
-			EnchantedChestTileEntity.playSound(p_155367_, p_155368_, p_155369_, SoundEvents.CHEST_CLOSE);
-		}
+	protected EnchantedChestTileEntity(TileEntityType<?> type) {
+		super(type);
+	}
 
-		@Override
-		protected void openerCountChanged(Level p_155361_, BlockPos p_155362_, BlockState p_155363_, int p_155364_,
-				int p_155365_) {
-			EnchantedChestTileEntity.this.signalOpenCount(p_155361_, p_155362_, p_155363_, p_155364_, p_155365_);
-		}
+	public EnchantedChestTileEntity() {
+		this(BlockEntityTypeInit.ENCHANTED_CHEST.get());
+	}
 
-		@Override
-		protected boolean isOwnContainer(Player p_155355_) {
-			if (!(p_155355_.containerMenu instanceof EnchantedChestContainer)) {
-				return false;
-			} else {
-				Container container = ((EnchantedChestContainer) p_155355_.containerMenu).getContainer();
-				return container == EnchantedChestTileEntity.this || container instanceof CompoundContainer
-						&& ((CompoundContainer) container).contains(EnchantedChestTileEntity.this);
-			}
-		}
-	};
-	private final ChestLidController chestLidController = new ChestLidController();
-
-	protected EnchantedChestTileEntity(BlockEntityType<?> p_155327_, BlockPos p_155328_, BlockState p_155329_) {
-	      super(p_155327_, p_155328_, p_155329_);
-	   }
-
-	public EnchantedChestTileEntity(BlockPos p_155331_, BlockState p_155332_) {
-	      this(BlockEntityTypeInit.ENCHANTED_CHEST.get(), p_155331_, p_155332_);
-	   }
-
-	@Override
-	public int getContainerSize() {
+	@Override public int getContainerSize() {
 		return 36;
 	}
 
-	@Override
-	protected Component getDefaultName() {
-		return new TranslatableComponent("container.enchanted_chest");
+	@Override protected ITextComponent getDefaultName() {
+		return new TranslationTextComponent("container.enchanted_chest");
 	}
 
-	@Override
-	public void load(CompoundTag p_155349_) {
-		super.load(p_155349_);
+	@Override public void load(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
+		super.load(p_230337_1_, p_230337_2_);
 		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		if (!this.tryLoadLootTable(p_155349_)) {
-			ContainerHelper.loadAllItems(p_155349_, this.items);
+		if (!this.tryLoadLootTable(p_230337_2_)) {
+			ItemStackHelper.loadAllItems(p_230337_2_, this.items);
 		}
 
+	}
+
+	@Override public CompoundNBT save(CompoundNBT p_189515_1_) {
+		super.save(p_189515_1_);
+		if (!this.trySaveLootTable(p_189515_1_)) {
+			ItemStackHelper.saveAllItems(p_189515_1_, this.items);
+		}
+
+		return p_189515_1_;
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag p_187489_) {
-		super.saveAdditional(p_187489_);
-		if (!this.trySaveLootTable(p_187489_)) {
-			ContainerHelper.saveAllItems(p_187489_, this.items);
+	public void tick() {
+		int i = this.worldPosition.getX();
+		int j = this.worldPosition.getY();
+		int k = this.worldPosition.getZ();
+		++this.tickInterval;
+		this.openCount = getOpenCount(this.level, this, this.tickInterval, i, j, k, this.openCount);
+		this.oOpenness = this.openness;
+		float f = 0.1F;
+		if (this.openCount > 0 && this.openness == 0.0F) {
+			this.playSound(SoundEvents.CHEST_OPEN);
+		}
+
+		if (this.openCount == 0 && this.openness > 0.0F || this.openCount > 0 && this.openness < 1.0F) {
+			float f1 = this.openness;
+			if (this.openCount > 0) {
+				this.openness += 0.1F;
+			} else {
+				this.openness -= 0.1F;
+			}
+
+			if (this.openness > 1.0F) {
+				this.openness = 1.0F;
+			}
+
+			float f2 = 0.5F;
+			if (this.openness < 0.5F && f1 >= 0.5F) {
+				this.playSound(SoundEvents.CHEST_CLOSE);
+			}
+
+			if (this.openness < 0.0F) {
+				this.openness = 0.0F;
+			}
 		}
 
 	}
 
-	public static void lidAnimateTick(Level p_155344_, BlockPos p_155345_, BlockState p_155346_,
-			EnchantedChestTileEntity p_155347_) {
-		p_155347_.chestLidController.tickLid();
+	public static int getOpenCount(World p_213977_0_, LockableTileEntity p_213977_1_, int p_213977_2_, int p_213977_3_,
+			int p_213977_4_, int p_213977_5_, int p_213977_6_) {
+		if (!p_213977_0_.isClientSide && p_213977_6_ != 0
+				&& (p_213977_2_ + p_213977_3_ + p_213977_4_ + p_213977_5_) % 200 == 0) {
+			p_213977_6_ = getOpenCount(p_213977_0_, p_213977_1_, p_213977_3_, p_213977_4_, p_213977_5_);
+		}
+
+		return p_213977_6_;
 	}
 
-	static void playSound(Level p_155339_, BlockPos p_155340_, BlockState p_155341_, SoundEvent p_155342_) {
-		ChestType chesttype = p_155341_.getValue(EnchantedChestBlock.TYPE);
+	public static int getOpenCount(World p_213976_0_, LockableTileEntity p_213976_1_, int p_213976_2_, int p_213976_3_,
+			int p_213976_4_) {
+		int i = 0;
+		float f = 5.0F;
+
+		for (PlayerEntity playerentity : p_213976_0_.getEntitiesOfClass(PlayerEntity.class,
+				new AxisAlignedBB((double) ((float) p_213976_2_ - 5.0F), (double) ((float) p_213976_3_ - 5.0F),
+						(double) ((float) p_213976_4_ - 5.0F), (double) ((float) (p_213976_2_ + 1) + 5.0F),
+						(double) ((float) (p_213976_3_ + 1) + 5.0F), (double) ((float) (p_213976_4_ + 1) + 5.0F)))) {
+			if (playerentity.containerMenu instanceof EnchantedChestContainer) {
+				IInventory iinventory = ((EnchantedChestContainer) playerentity.containerMenu).getContainer();
+				if (iinventory == p_213976_1_ || iinventory instanceof DoubleSidedInventory
+						&& ((DoubleSidedInventory) iinventory).contains(p_213976_1_)) {
+					++i;
+				}
+			}
+		}
+
+		return i;
+	}
+
+	private void playSound(SoundEvent p_195483_1_) {
+		ChestType chesttype = this.getBlockState().getValue(EnchantedChestBlock.TYPE);
 		if (chesttype != ChestType.LEFT) {
-			double d0 = (double) p_155340_.getX() + 0.5D;
-			double d1 = (double) p_155340_.getY() + 0.5D;
-			double d2 = (double) p_155340_.getZ() + 0.5D;
+			double d0 = (double) this.worldPosition.getX() + 0.5D;
+			double d1 = (double) this.worldPosition.getY() + 0.5D;
+			double d2 = (double) this.worldPosition.getZ() + 0.5D;
 			if (chesttype == ChestType.RIGHT) {
-				Direction direction = EnchantedChestBlock.getConnectedDirection(p_155341_);
+				Direction direction = EnchantedChestBlock.getConnectedDirection(this.getBlockState());
 				d0 += (double) direction.getStepX() * 0.5D;
 				d2 += (double) direction.getStepZ() * 0.5D;
 			}
 
-			p_155339_.playSound((Player) null, d0, d1, d2, p_155342_, SoundSource.BLOCKS, 0.5F,
-					p_155339_.random.nextFloat() * 0.1F + 0.9F);
+			this.level.playSound((PlayerEntity) null, d0, d1, d2, p_195483_1_, SoundCategory.BLOCKS, 0.5F,
+					this.level.random.nextFloat() * 0.1F + 0.9F);
 		}
 	}
 
-	@Override
-	public boolean triggerEvent(int p_59114_, int p_59115_) {
-		if (p_59114_ == 1) {
-			this.chestLidController.shouldBeOpen(p_59115_ > 0);
+	@Override public boolean triggerEvent(int p_145842_1_, int p_145842_2_) {
+		if (p_145842_1_ == 1) {
+			this.openCount = p_145842_2_;
 			return true;
 		} else {
-			return super.triggerEvent(p_59114_, p_59115_);
+			return super.triggerEvent(p_145842_1_, p_145842_2_);
 		}
 	}
 
-	@Override
-	public void startOpen(Player p_59120_) {
-		if (!this.remove && !p_59120_.isSpectator()) {
-			this.openersCounter.incrementOpeners(p_59120_, this.getLevel(), this.getBlockPos(), this.getBlockState());
-		}
+	@Override public void startOpen(PlayerEntity p_174889_1_) {
+		if (!p_174889_1_.isSpectator()) {
+			if (this.openCount < 0) {
+				this.openCount = 0;
+			}
 
-	}
-
-	@Override
-	public void stopOpen(Player p_59118_) {
-		if (!this.remove && !p_59118_.isSpectator()) {
-			this.openersCounter.decrementOpeners(p_59118_, this.getLevel(), this.getBlockPos(), this.getBlockState());
+			++this.openCount;
+			this.signalOpenCount();
 		}
 
 	}
 
-	@Override
-	protected NonNullList<ItemStack> getItems() {
+	@Override public void stopOpen(PlayerEntity p_174886_1_) {
+		if (!p_174886_1_.isSpectator()) {
+			--this.openCount;
+			this.signalOpenCount();
+		}
+
+	}
+
+	protected void signalOpenCount() {
+		Block block = this.getBlockState().getBlock();
+		if (block instanceof EnchantedChestBlock) {
+			this.level.blockEvent(this.worldPosition, block, 1, this.openCount);
+			this.level.updateNeighborsAt(this.worldPosition, block);
+		}
+
+	}
+
+	@Override protected NonNullList<ItemStack> getItems() {
 		return this.items;
 	}
 
-	@Override
-	protected void setItems(NonNullList<ItemStack> p_59110_) {
-		this.items = p_59110_;
+	@Override protected void setItems(NonNullList<ItemStack> p_199721_1_) {
+		this.items = p_199721_1_;
 	}
 
-	@Override
-	public float getOpenNess(float p_59080_) {
-		return this.chestLidController.getOpenness(p_59080_);
+	@Override @OnlyIn(Dist.CLIENT)
+	public float getOpenNess(float p_195480_1_) {
+		return MathHelper.lerp(p_195480_1_, this.oOpenness, this.openness);
 	}
 
-	public static int getOpenCount(BlockGetter p_59087_, BlockPos p_59088_) {
-		BlockState blockstate = p_59087_.getBlockState(p_59088_);
-		if (blockstate.hasBlockEntity()) {
-			BlockEntity blockentity = p_59087_.getBlockEntity(p_59088_);
-			if (blockentity instanceof EnchantedChestTileEntity) {
-				return ((EnchantedChestTileEntity) blockentity).openersCounter.getOpenerCount();
+	public static int getOpenCount(IBlockReader p_195481_0_, BlockPos p_195481_1_) {
+		BlockState blockstate = p_195481_0_.getBlockState(p_195481_1_);
+		if (blockstate.hasTileEntity()) {
+			TileEntity tileentity = p_195481_0_.getBlockEntity(p_195481_1_);
+			if (tileentity instanceof EnchantedChestTileEntity) {
+				return ((EnchantedChestTileEntity) tileentity).openCount;
 			}
 		}
 
 		return 0;
 	}
 
-	public static void swapContents(EnchantedChestTileEntity p_59104_, EnchantedChestTileEntity p_59105_) {
-		NonNullList<ItemStack> nonnulllist = p_59104_.getItems();
-		p_59104_.setItems(p_59105_.getItems());
-		p_59105_.setItems(nonnulllist);
+	public static void swapContents(EnchantedChestTileEntity p_199722_0_, EnchantedChestTileEntity p_199722_1_) {
+		NonNullList<ItemStack> nonnulllist = p_199722_0_.getItems();
+		p_199722_0_.setItems(p_199722_1_.getItems());
+		p_199722_1_.setItems(nonnulllist);
+	}
+
+	@Override protected Container createMenu(int p_213906_1_, PlayerInventory p_213906_2_) {
+		return EnchantedChestContainer.createGeneric9X4(p_213906_1_, p_213906_2_, this);
 	}
 
 	@Override
-	protected AbstractContainerMenu createMenu(int p_59082_, Inventory p_59083_) {
-		return EnchantedChestContainer.createGeneric9X4(p_59082_, p_59083_, this);
-	}
-
-	private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
-
-	@Override
-	public void setBlockState(BlockState p_155251_) {
-		super.setBlockState(p_155251_);
+	public void clearCache() {
+		super.clearCache();
 		if (this.chestHandler != null) {
 			net.minecraftforge.common.util.LazyOptional<?> oldHandler = this.chestHandler;
 			this.chestHandler = null;
@@ -218,29 +263,15 @@ public class EnchantedChestTileEntity extends RandomizableContainerBlockEntity i
 		if (!(state.getBlock() instanceof EnchantedChestBlock)) {
 			return new net.minecraftforge.items.wrapper.InvWrapper(this);
 		}
-		Container inv = EnchantedChestBlock.getContainer((EnchantedChestBlock) state.getBlock(), state, getLevel(), getBlockPos(), true);
+		IInventory inv = EnchantedChestBlock.getContainer((EnchantedChestBlock) state.getBlock(), state, getLevel(),
+				getBlockPos(), true);
 		return new net.minecraftforge.items.wrapper.InvWrapper(inv == null ? this : inv);
 	}
 
 	@Override
-	public void invalidateCaps() {
+	protected void invalidateCaps() {
 		super.invalidateCaps();
-		if (chestHandler != null) {
+		if (chestHandler != null)
 			chestHandler.invalidate();
-			chestHandler = null;
-		}
-	}
-
-	public void recheckOpen() {
-		if (!this.remove) {
-			this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
-		}
-
-	}
-
-	protected void signalOpenCount(Level p_155333_, BlockPos p_155334_, BlockState p_155335_, int p_155336_,
-			int p_155337_) {
-		Block block = p_155335_.getBlock();
-		p_155333_.blockEvent(p_155334_, block, 1, p_155337_);
 	}
 }

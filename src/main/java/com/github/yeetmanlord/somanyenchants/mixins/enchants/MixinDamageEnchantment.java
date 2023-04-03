@@ -8,11 +8,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TridentItem;
-import net.minecraft.world.item.enchantment.DamageEnchantment;
-import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.TridentItem;
+import net.minecraft.enchantment.DamageEnchantment;
+import net.minecraft.enchantment.Enchantment;
 
 @Mixin(DamageEnchantment.class)
 public abstract class MixinDamageEnchantment {
@@ -26,7 +26,7 @@ public abstract class MixinDamageEnchantment {
 
 	}
 
-	@Inject(at = @At("HEAD"), method = "checkCompatibility(Lnet/minecraft/world/item/enchantment/Enchantment;)Z", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "checkCompatibility(Lnet/minecraft/enchantment/Enchantment;)Z", cancellable = true)
 	private void checkCompatibility(Enchantment ench, CallbackInfoReturnable<Boolean> callback) {
 
 		if (Config.damageEnchantments.isEnabled.get()) {
@@ -35,7 +35,7 @@ public abstract class MixinDamageEnchantment {
 
 	}
 
-	@Inject(at = @At("HEAD"), method = "canEnchant(Lnet/minecraft/world/item/ItemStack;)Z", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "canEnchant(Lnet/minecraft/item/ItemStack;)Z", cancellable = true)
 	private void canEnchant(ItemStack stack, CallbackInfoReturnable<Boolean> callback) {
 
 		if (Config.damageEnchantments.isEnabled.get()) {

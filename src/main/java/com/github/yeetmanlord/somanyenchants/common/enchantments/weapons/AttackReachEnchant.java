@@ -4,18 +4,18 @@ import com.github.yeetmanlord.somanyenchants.common.enchantments.ModEnchantment;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TridentItem;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.TridentItem;
 
 public class AttackReachEnchant extends ModEnchantment {
 
-	public AttackReachEnchant(Rarity rarityIn, EquipmentSlot... slots) {
+	public AttackReachEnchant(Rarity rarityIn, EquipmentSlotType... slots) {
 
-		super(rarityIn, EnchantmentCategory.WEAPON, Config.attackReach, slots);
+		super(rarityIn, EnchantmentType.WEAPON, Config.attackReach, slots);
 
 	}
 
@@ -29,7 +29,7 @@ public class AttackReachEnchant extends ModEnchantment {
 	@Override
 	public boolean canEnchant(ItemStack stack) {
 
-		boolean flag = stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem ? true : EnchantmentCategory.WEAPON.canEnchant(stack.getItem());
+		boolean flag = stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem ? true : EnchantmentType.WEAPON.canEnchant(stack.getItem());
 		return flag && this.config.isEnabled.get();
 
 	}

@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.item.enchantment.TridentImpalerEnchantment;
+import net.minecraft.enchantment.ImpalingEnchantment;
 
-@Mixin(TridentImpalerEnchantment.class)
+@Mixin(ImpalingEnchantment.class)
 public class MixinTridentImpalerEnchantment {
 
 	@Inject(at = @At("HEAD"), method = "getMaxLevel()I", cancellable = true)

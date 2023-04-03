@@ -3,41 +3,41 @@ package com.github.yeetmanlord.somanyenchants.common.container;
 import com.github.yeetmanlord.somanyenchants.common.container.slots.EnchantedSmelterFuelSlot;
 import com.github.yeetmanlord.somanyenchants.common.container.slots.EnchantedSmelterResultSlot;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.RecipeBookMenu;
-import net.minecraft.world.inventory.RecipeBookType;
-import net.minecraft.world.inventory.SimpleContainerData;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.StackedContentsCompatible;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.AbstractCookingRecipe;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.Level;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.crafting.RecipeItemHelper;
+import net.minecraft.util.IIntArray;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.RecipeBookContainer;
+import net.minecraft.item.crafting.RecipeBookCategory;
+import net.minecraft.util.IntArray;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.inventory.IRecipeHelperPopulator;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.AbstractCookingRecipe;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.world.World;
 
 @SuppressWarnings( "unchecked" )
-public class AbstractEnchantedSmelterContainer extends RecipeBookMenu<Container> {
-	private final Container container;
-	private final ContainerData data;
-	protected final Level level;
-	private final RecipeType<? extends AbstractCookingRecipe> recipeType;
-	private final RecipeBookType recipeBookType;
+public class AbstractEnchantedSmelterContainer extends RecipeBookContainer<IInventory> {
+	private final IInventory container;
+	private final IIntArray data;
+	protected final World level;
+	private final IRecipeType<? extends AbstractCookingRecipe> recipeType;
+	private final RecipeBookCategory recipeBookType;
 
-	protected AbstractEnchantedSmelterContainer(MenuType<?> type,
-			RecipeType<? extends AbstractCookingRecipe> recipeType, RecipeBookType bookCat, int id,
-			Inventory playerInv) {
-		this(type, recipeType, bookCat, id, playerInv, new SimpleContainer(3), new SimpleContainerData(4));
+	protected AbstractEnchantedSmelterContainer(ContainerType<?> type,
+			IRecipeType<? extends AbstractCookingRecipe> recipeType, RecipeBookCategory bookCat, int id,
+			PlayerInventory playerInv) {
+		this(type, recipeType, bookCat, id, playerInv, new Inventory(3), new IntArray(4));
 	}
 
-	protected AbstractEnchantedSmelterContainer(MenuType<?> type,
-			RecipeType<? extends AbstractCookingRecipe> recipeType, RecipeBookType bookCat, int id, Inventory playerInv,
-			Container furnaceInv, ContainerData furnaceData) {
+	protected AbstractEnchantedSmelterContainer(ContainerType<?> type,
+			IRecipeType<? extends AbstractCookingRecipe> recipeType, RecipeBookCategory bookCat, int id, PlayerInventory playerInv,
+			IInventory furnaceInv, IIntArray furnaceData) {
 		super(type, id);
 		this.recipeType = recipeType;
 		this.recipeBookType = bookCat;
@@ -64,9 +64,9 @@ public class AbstractEnchantedSmelterContainer extends RecipeBookMenu<Container>
 	}
 
 	@Override
-	public void fillCraftSlotsStackedContents(StackedContents p_38976_) {
-		if (this.container instanceof StackedContentsCompatible) {
-			((StackedContentsCompatible) this.container).fillStackedContents(p_38976_);
+	public void fillCraftSlotsStackedContents(RecipeItemHelper p_38976_) {
+		if (this.container instanceof IRecipeHelperPopulator) {
+			((IRecipeHelperPopulator) this.container).fillStackedContents(p_38976_);
 		}
 
 	}
@@ -78,7 +78,7 @@ public class AbstractEnchantedSmelterContainer extends RecipeBookMenu<Container>
 	}
 
 	@Override
-	public boolean recipeMatches(Recipe<? super Container> p_38980_) {
+	public boolean recipeMatches(IRecipe<? super IInventory> p_38980_) {
 		return p_38980_.matches(this.container, this.level);
 	}
 
@@ -103,12 +103,12 @@ public class AbstractEnchantedSmelterContainer extends RecipeBookMenu<Container>
 	}
 
 	@Override
-	public boolean stillValid(Player p_38974_) {
+	public boolean stillValid(PlayerEntity p_38974_) {
 		return this.container.stillValid(p_38974_);
 	}
 
 	@Override
-	public ItemStack quickMoveStack(Player p_38986_, int p_38987_) {
+	public ItemStack quickMoveStack(PlayerEntity p_38986_, int p_38987_) {
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.slots.get(p_38987_);
 		if (slot != null && slot.hasItem()) {
@@ -157,8 +157,8 @@ public class AbstractEnchantedSmelterContainer extends RecipeBookMenu<Container>
 	}
 
 	protected boolean canSmelt(ItemStack p_38978_) {
-		return this.level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.recipeType,
-				new SimpleContainer(p_38978_), this.level).isPresent();
+		return this.level.getRecipeManager().getRecipeFor((IRecipeType<AbstractCookingRecipe>) this.recipeType,
+				new Inventory(p_38978_), this.level).isPresent();
 	}
 
 	public boolean isFuel(ItemStack p_38989_) {
@@ -185,12 +185,7 @@ public class AbstractEnchantedSmelterContainer extends RecipeBookMenu<Container>
 	}
 
 	@Override
-	public RecipeBookType getRecipeBookType() {
+	public RecipeBookCategory getRecipeBookType() {
 		return this.recipeBookType;
-	}
-
-	@Override
-	public boolean shouldMoveToInventory(int p_150463_) {
-		return p_150463_ != 1;
 	}
 }

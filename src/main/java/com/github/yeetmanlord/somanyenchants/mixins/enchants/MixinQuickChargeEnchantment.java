@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.item.enchantment.QuickChargeEnchantment;
+import net.minecraft.enchantment.QuickChargeEnchantment;
 
 @Mixin(QuickChargeEnchantment.class)
 public class MixinQuickChargeEnchantment {

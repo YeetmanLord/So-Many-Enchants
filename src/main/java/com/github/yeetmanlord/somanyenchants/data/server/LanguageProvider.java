@@ -5,8 +5,8 @@ import com.github.yeetmanlord.somanyenchants.common.enchantments.EffectEnchantme
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraftforge.fml.RegistryObject;
 
 public class LanguageProvider extends net.minecraftforge.common.data.LanguageProvider {
 
@@ -36,7 +36,7 @@ public class LanguageProvider extends net.minecraftforge.common.data.LanguagePro
 			s = s.replaceFirst(first, first.toUpperCase());
 			title += s + " ";
 		}
-		title = title.strip();
+		title = title.trim();
 		return title;
 	}
 
@@ -49,7 +49,7 @@ public class LanguageProvider extends net.minecraftforge.common.data.LanguagePro
 			cammel += s;
 		}
 		cammel = cammel.replaceFirst(String.valueOf(cammel.charAt(0)), String.valueOf(cammel.charAt(0)).toLowerCase());
-		cammel = cammel.strip();
+		cammel = cammel.trim();
 		return cammel;
 	}
 

@@ -2,7 +2,7 @@ package com.github.yeetmanlord.somanyenchants.common.tileentities;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 public class EnchantedHopperItemHandler extends InvWrapper

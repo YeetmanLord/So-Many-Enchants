@@ -11,65 +11,65 @@ import com.github.yeetmanlord.somanyenchants.common.tileentities.EnchantedHidden
 import com.github.yeetmanlord.somanyenchants.common.tileentities.EnchantedTrappedChestTileEntity;
 import com.github.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.monster.piglin.PiglinAi;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.CompoundContainer;
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.monster.piglin.PiglinTasks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.DoubleSidedInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.DoubleBlockCombiner;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.util.Mth;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityMerger;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 
 public class EnchantedTrappedChestBlock extends EnchantedChestBlock {
 
 	private boolean hidden;
 
 	public EnchantedTrappedChestBlock(Properties builder,
-			Supplier<BlockEntityType<? extends EnchantedChestTileEntity>> tileEntityTypeIn, boolean hidden) {
+			Supplier<TileEntityType<? extends EnchantedChestTileEntity>> tileEntityTypeIn, boolean hidden) {
 		super(builder, tileEntityTypeIn);
 		this.hidden = hidden;
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+	public TileEntity newBlockEntity(IBlockReader reader) {
 		if (hidden) {
-			return new EnchantedHiddenTrappedChestTileEntity(pos, state);
+			return new EnchantedHiddenTrappedChestTileEntity();
 		}
-		return new EnchantedTrappedChestTileEntity(pos, state);
+		return new EnchantedTrappedChestTileEntity();
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
-			BlockHitResult hit) {
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn,
+			BlockRayTraceResult hit) {
 		if (worldIn.isClientSide) {
-			return InteractionResult.SUCCESS;
+			return ActionResultType.SUCCESS;
 		} else {
-			BlockEntity tileentity = worldIn.getBlockEntity(pos);
-			MenuProvider inamedcontainerprovider = this.getMenuProvider(state, worldIn, pos);
+			TileEntity tileentity = worldIn.getBlockEntity(pos);
+			INamedContainerProvider inamedcontainerprovider = this.getMenuProvider(state, worldIn, pos);
 			if (inamedcontainerprovider != null) {
 				player.openMenu(inamedcontainerprovider);
 				player.awardStat(this.getOpenChestStat());
-				PiglinAi.angerNearbyPiglins(player, true);
+				PiglinTasks.angerNearbyPiglins(player, true);
 			}
 
-			return InteractionResult.CONSUME;
+			return ActionResultType.CONSUME;
 		}
 	}
 
@@ -84,26 +84,26 @@ public class EnchantedTrappedChestBlock extends EnchantedChestBlock {
 	}
 
 	@Override
-	public int getSignal(BlockState p_57577_, BlockGetter p_57578_, BlockPos p_57579_, Direction p_57580_) {
-		return Mth.clamp(ChestBlockEntity.getOpenCount(p_57578_, p_57579_), 0, 15);
+	public int getSignal(BlockState p_57577_, IBlockReader p_57578_, BlockPos p_57579_, Direction p_57580_) {
+		return MathHelper.clamp(ChestTileEntity.getOpenCount(p_57578_, p_57579_), 0, 15);
 	}
 
 	@Override
-	public int getDirectSignal(BlockState p_57582_, BlockGetter p_57583_, BlockPos p_57584_, Direction p_57585_) {
+	public int getDirectSignal(BlockState p_57582_, IBlockReader p_57583_, BlockPos p_57584_, Direction p_57585_) {
 		return p_57585_ == Direction.UP ? p_57582_.getSignal(p_57583_, p_57584_, p_57585_) : 0;
 	}
 
-	private static final DoubleBlockCombiner.Combiner<EnchantedChestTileEntity, Optional<MenuProvider>> CONTAINER_MERGER = new DoubleBlockCombiner.Combiner<EnchantedChestTileEntity, Optional<MenuProvider>>() {
+	private static final TileEntityMerger.ICallback<EnchantedChestTileEntity, Optional<INamedContainerProvider>> CONTAINER_MERGER = new TileEntityMerger.ICallback<EnchantedChestTileEntity, Optional<INamedContainerProvider>>() {
 		@Override
-		public Optional<MenuProvider> acceptDouble(final EnchantedChestTileEntity p_225539_1_,
+		public Optional<INamedContainerProvider> acceptDouble(final EnchantedChestTileEntity p_225539_1_,
 				final EnchantedChestTileEntity p_225539_2_) {
-			final Container iinventory = new CompoundContainer(p_225539_1_, p_225539_2_);
-			return Optional.of(new MenuProvider() {
+			final IInventory iinventory = new DoubleSidedInventory(p_225539_1_, p_225539_2_);
+			return Optional.of(new INamedContainerProvider() {
 
 				@Override
 				@Nullable
-				public AbstractContainerMenu createMenu(int p_createMenu_1_, Inventory p_createMenu_2_,
-						Player p_createMenu_3_) {
+				public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_,
+						PlayerEntity p_createMenu_3_) {
 					if (p_225539_1_.canOpen(p_createMenu_3_) && p_225539_2_.canOpen(p_createMenu_3_)) {
 						p_225539_1_.unpackLootTable(p_createMenu_2_.player);
 						p_225539_2_.unpackLootTable(p_createMenu_2_.player);
@@ -132,32 +132,32 @@ public class EnchantedTrappedChestBlock extends EnchantedChestBlock {
 				}
 
 				@Override
-				public Component getDisplayName() {
+				public ITextComponent getDisplayName() {
 					if (p_225539_1_.hasCustomName()) {
 						return p_225539_1_.getDisplayName();
 					} else {
-						return (Component) (p_225539_2_.hasCustomName() ? p_225539_2_.getDisplayName()
-								: new TranslatableComponent("container.enchantedChestDouble"));
+						return (ITextComponent) (p_225539_2_.hasCustomName() ? p_225539_2_.getDisplayName()
+								: new TranslationTextComponent("container.enchantedChestDouble"));
 					}
 				}
 			});
 		}
 
 		@Override
-		public Optional<MenuProvider> acceptSingle(EnchantedChestTileEntity p_225538_1_) {
+		public Optional<INamedContainerProvider> acceptSingle(EnchantedChestTileEntity p_225538_1_) {
 			return Optional.of(p_225538_1_);
 		}
 
 		@Override
-		public Optional<MenuProvider> acceptNone() {
+		public Optional<INamedContainerProvider> acceptNone() {
 			return Optional.empty();
 		}
 	};
 
 	@Nullable
 	@Override
-	public MenuProvider getMenuProvider(BlockState state, Level worldIn, BlockPos pos) {
-		return this.combine(state, worldIn, pos, false).<Optional<MenuProvider>>apply(CONTAINER_MERGER)
-				.orElse((MenuProvider) null);
+	public INamedContainerProvider getMenuProvider(BlockState state, World worldIn, BlockPos pos) {
+		return this.combine(state, worldIn, pos, false).<Optional<INamedContainerProvider>>apply(CONTAINER_MERGER)
+				.orElse((INamedContainerProvider) null);
 	}
 }

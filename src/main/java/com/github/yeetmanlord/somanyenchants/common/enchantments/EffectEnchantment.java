@@ -2,38 +2,38 @@ package com.github.yeetmanlord.somanyenchants.common.enchantments;
 
 import com.github.yeetmanlord.somanyenchants.core.config.EnchantmentConfig;
 
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 
 public class EffectEnchantment extends ModEnchantment {
 
-	private final MobEffect effect;
+	private final Effect effect;
 
 	private final boolean canEnchant;
 
-	public EffectEnchantment(MobEffect effect, EnchantmentConfig config, Rarity rarity, EquipmentSlot... equipment) {
+	public EffectEnchantment(Effect effect, EnchantmentConfig config, Rarity rarity, EquipmentSlotType... equipment) {
 
 		this(effect, config, false, rarity, equipment);
 
 	}
 
-	public EffectEnchantment(MobEffect effect, EnchantmentConfig config, boolean canEnchant, Rarity rarity, EquipmentSlot... equipment) {
+	public EffectEnchantment(Effect effect, EnchantmentConfig config, boolean canEnchant, Rarity rarity, EquipmentSlotType... equipment) {
 
-		super(rarity, EnchantmentCategory.ARMOR, config, equipment);
+		super(rarity, EnchantmentType.ARMOR, config, equipment);
 		this.effect = effect;
 		this.config = config;
 		this.canEnchant = true;
 
 	}
 
-	public void applyEffect(Player player, int level) {
+	public void applyEffect(PlayerEntity player, int level) {
 
 		if (this.config.isEnabled.get()) {
-			player.addEffect(new MobEffectInstance(effect, 600, level - 1, false, false, false));
+			player.addEffect(new EffectInstance(effect, 600, level - 1, false, false, false));
 		}
 
 	}

@@ -4,56 +4,48 @@ import com.github.yeetmanlord.somanyenchants.common.container.EnchantedChestCont
 import com.github.yeetmanlord.somanyenchants.core.init.BlockEntityTypeInit;
 import com.github.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 
 public class EnchantedHiddenTrappedChestTileEntity extends EnchantedChestTileEntity {
 
-	private ListTag enchants;
+	private ListNBT enchants;
 
-	public EnchantedHiddenTrappedChestTileEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityTypeInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get(), pos, state);
-		enchants = new ListTag();
+	public EnchantedHiddenTrappedChestTileEntity() {
+		super(BlockEntityTypeInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get());
+		enchants = new ListNBT();
 	}
 
 	@Override
-	protected void signalOpenCount(Level p_155865_, BlockPos p_155866_, BlockState p_155867_, int p_155868_,
-			int p_155869_) {
-		super.signalOpenCount(p_155865_, p_155866_, p_155867_, p_155868_, p_155869_);
-		if (p_155868_ != p_155869_) {
-			Block block = p_155867_.getBlock();
-			p_155865_.updateNeighborsAt(p_155866_, block);
-			p_155865_.updateNeighborsAt(p_155866_.below(), block);
-		}
-
+	protected void signalOpenCount() {
+		super.signalOpenCount();
+		this.level.updateNeighborsAt(this.worldPosition.below(), this.getBlockState().getBlock());
 	}
 
 	@Override
-	public void load(CompoundTag nbt) {
-		super.load(nbt);
+	public void load(BlockState state, CompoundNBT nbt) {
+		super.load(state, nbt);
 
 		this.enchants = nbt.getList("Enchantments", 10);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
+	public CompoundNBT save(CompoundNBT compound) {
+		super.save(compound);
 		compound.put("Enchantments", this.getEnchants());
+		return compound;
 	}
 
-	public ListTag getEnchants() {
+	public ListNBT getEnchants() {
 		return this.enchants;
 	}
 
 	public void addEnchant(Enchantment ench, short lvl) {
-		CompoundTag nbt = new CompoundTag();
+		CompoundNBT nbt = new CompoundNBT();
 		nbt.putString("id", String.valueOf(ench.getRegistryName()));
 		nbt.putShort("lvl", lvl);
 		this.enchants.add(nbt);
@@ -69,7 +61,7 @@ public class EnchantedHiddenTrappedChestTileEntity extends EnchantedChestTileEnt
 	}
 
 	@Override
-	protected AbstractContainerMenu createMenu(int id, Inventory player) {
+	protected Container createMenu(int id, PlayerInventory player) {
 		if (ModEnchantmentHelper.isCavernousStorage(this.enchants)) {
 			return EnchantedChestContainer.createGeneric9X4(id, player, this);
 		} else {

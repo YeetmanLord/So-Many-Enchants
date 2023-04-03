@@ -6,10 +6,10 @@ import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -25,7 +25,7 @@ public class ApplyCriticalEnchant {
 
 		Random rand = new Random();
 		Entity target = event.getTarget();
-		Player player = event.getPlayer();
+		PlayerEntity player = event.getPlayer();
 		int criticalLevel = ModEnchantmentHelper.getCriticalLevel(player);
 
 		if (criticalLevel > 0 && Config.critical.isEnabled.get() == true) {
@@ -75,7 +75,7 @@ public class ApplyCriticalEnchant {
 		if (event.getSource() instanceof EntityDamageSource && Config.critical.isEnabled.get() == true) {
 			Entity attacker = event.getSource().getEntity();
 
-			if (attacker instanceof LivingEntity && !(attacker instanceof Player)) {
+			if (attacker instanceof LivingEntity && !(attacker instanceof PlayerEntity)) {
 				int critEnchant = ModEnchantmentHelper.getCriticalLevel((LivingEntity) attacker);
 
 				if (critEnchant > 0) {

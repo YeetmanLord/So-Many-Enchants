@@ -2,15 +2,15 @@ package com.github.yeetmanlord.somanyenchants.common.container.slots;
 
 import com.github.yeetmanlord.somanyenchants.common.container.AbstractEnchantedSmelterContainer;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 public class EnchantedSmelterFuelSlot extends Slot {
 	private final AbstractEnchantedSmelterContainer smelterContainer;
 
-	public EnchantedSmelterFuelSlot(AbstractEnchantedSmelterContainer smelterContainer, Container smelterInventory,
+	public EnchantedSmelterFuelSlot(AbstractEnchantedSmelterContainer smelterContainer, IInventory smelterInventory,
 			int index, int xPos, int yPos) {
 		super(smelterInventory, index, xPos, yPos);
 		this.smelterContainer = smelterContainer;

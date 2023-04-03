@@ -9,16 +9,16 @@ import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 
 @EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class ServerStart {
 
 	@SubscribeEvent
-	public static void onServerStart(ServerAboutToStartEvent event) {
+	public static void onServerStart(FMLServerAboutToStartEvent event) {
 
 		if (event.getServer() instanceof DedicatedServer) {
 			System.out.println("testasdfadsfasdfasdf");

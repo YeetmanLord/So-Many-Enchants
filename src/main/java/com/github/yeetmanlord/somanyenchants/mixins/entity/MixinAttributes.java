@@ -5,15 +5,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.core.Registry;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
 
 @Mixin(Attributes.class)
 public class MixinAttributes {
 
-	@Inject(method = "register(Ljava/lang/String;Lnet/minecraft/world/entity/ai/attributes/Attribute;)Lnet/minecraft/world/entity/ai/attributes/Attribute;", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "register(Ljava/lang/String;Lnet/minecraft/entity/ai/attributes/Attribute;)Lnet/minecraft/entity/ai/attributes/Attribute;", at = @At("HEAD"), cancellable = true)
 	private static void register(String id, Attribute attribute, CallbackInfoReturnable<Attribute> callback) {
 
 		if (id == "generic.armor") {

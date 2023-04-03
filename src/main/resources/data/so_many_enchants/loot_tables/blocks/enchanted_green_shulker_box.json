@@ -2,8 +2,7 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
+      "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
@@ -35,7 +34,6 @@
             },
             {
               "function": "minecraft:set_contents",
-              "type": "minecraft:shulker_box",
               "entries": [
                 {
                   "type": "minecraft:dynamic",
@@ -44,11 +42,15 @@
               ]
             },
             {
-              "function": "minecraft:set_enchantments",
-              "enchantments": {
-                "so_many_enchants:cavernous_storage": 1.0
-              },
-              "add": false
+              "function": "minecraft:copy_nbt",
+              "source": "block_entity",
+              "ops": [
+                {
+                  "source": "Enchantments",
+                  "target": "Enchantments",
+                  "op": "replace"
+                }
+              ]
             }
           ],
           "name": "so_many_enchants:enchanted_green_shulker_box"

@@ -6,18 +6,18 @@ import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CocoaBlock;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CocoaBlock;
+import net.minecraft.block.CropsBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -30,8 +30,8 @@ public class ToolEnchants {
 	public static void replant(final BreakEvent event) {
 		if (event.getState().getBlock() != Blocks.AIR && Config.replanting.isEnabled.get() == true) {
 			Block block = event.getState().getBlock();
-			Player player = event.getPlayer();
-			if (block instanceof CropBlock) {
+			PlayerEntity player = event.getPlayer();
+			if (block instanceof CropsBlock) {
 				ItemStack cropSeed = new ItemStack(block.asItem());
 				ItemStack stack = player.getMainHandItem();
 				if (stack != ItemStack.EMPTY) {
@@ -98,19 +98,19 @@ public class ToolEnchants {
 	@SubscribeEvent
 	public static void doubleBreak(final BreakEvent event) {
 		Random rand = new Random();
-		Player player = event.getPlayer();
+		PlayerEntity player = event.getPlayer();
 		boolean creative = player.isCreative();
 		BlockPos pos = event.getPos();
 		BlockPos newPos;
 		BlockState newState;
-		HitResult raytrace = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0, false);
+		RayTraceResult raytrace = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0, false);
 		int enchant = ModEnchantmentHelper.getDoubleBreakLevel(player);
 		if (enchant > 0 && Config.doubleBreak.isEnabled.get() == true) {
 			int chance = (int) (rand.nextFloat() * 100);
 			if (chance <= enchant * 20) {
 				// Handles raytracing
-				if (raytrace.getType() == HitResult.Type.BLOCK) {
-					BlockHitResult blockTrace = (BlockHitResult) raytrace;
+				if (raytrace.getType() == RayTraceResult.Type.BLOCK) {
+					BlockRayTraceResult blockTrace = (BlockRayTraceResult) raytrace;
 					Direction dir = blockTrace.getDirection();
 					if (dir == Direction.DOWN) {
 						newPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());

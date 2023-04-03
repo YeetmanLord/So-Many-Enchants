@@ -2,7 +2,6 @@ package com.github.yeetmanlord.somanyenchants.common.blocks;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
@@ -12,62 +11,60 @@ import com.github.yeetmanlord.somanyenchants.common.container.EnchantedChestCont
 import com.github.yeetmanlord.somanyenchants.common.tileentities.EnchantedChestTileEntity;
 
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.ContainerBlock;
+import net.minecraft.block.HorizontalBlock;
+import net.minecraft.block.IWaterLoggable;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.monster.piglin.PiglinTasks;
+import net.minecraft.entity.passive.CatEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.DoubleSidedInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.pathfinding.PathType;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.EnumProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.state.properties.ChestType;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.CompoundContainer;
-import net.minecraft.world.Container;
-import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Cat;
-import net.minecraft.world.entity.monster.piglin.PiglinAi;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DoubleBlockCombiner;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.LidBlockEntity;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.ChestType;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.pathfinder.PathComputationType;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.tileentity.IChestLid;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityMerger;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 
-public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
-	public final Supplier<BlockEntityType<? extends EnchantedChestTileEntity>> blockEntityType;
-	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+public class EnchantedChestBlock extends ContainerBlock implements IWaterLoggable {
+	public final Supplier<TileEntityType<? extends EnchantedChestTileEntity>> blockEntityType;
+	public static final DirectionProperty FACING = HorizontalBlock.FACING;
 	public static final EnumProperty<ChestType> TYPE = BlockStateProperties.CHEST_TYPE;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 	public static final int EVENT_SET_OPEN_COUNT = 1;
@@ -78,47 +75,90 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	protected static final VoxelShape WEST_AABB = Block.box(0.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
 	protected static final VoxelShape EAST_AABB = Block.box(1.0D, 0.0D, 1.0D, 16.0D, 14.0D, 15.0D);
 	protected static final VoxelShape AABB = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
-	private static final DoubleBlockCombiner.Combiner<EnchantedChestTileEntity, Optional<Container>> CHEST_COMBINER=new DoubleBlockCombiner.Combiner<EnchantedChestTileEntity,Optional<Container>>(){@Override public Optional<Container>acceptDouble(EnchantedChestTileEntity p_51591_,EnchantedChestTileEntity p_51592_){return Optional.of(new CompoundContainer(p_51591_,p_51592_));}
+	private static final TileEntityMerger.ICallback<EnchantedChestTileEntity, Optional<IInventory>> CHEST_COMBINER = new TileEntityMerger.ICallback<EnchantedChestTileEntity, Optional<IInventory>>() {
+		@Override
+		public Optional<IInventory> acceptDouble(EnchantedChestTileEntity p_51591_, EnchantedChestTileEntity p_51592_) {
+			return Optional.of(new DoubleSidedInventory(p_51591_, p_51592_));
+		}
 
-	@Override public Optional<Container>acceptSingle(EnchantedChestTileEntity p_51589_){return Optional.of(p_51589_);}
+		@Override
+		public Optional<IInventory> acceptSingle(EnchantedChestTileEntity p_51589_) {
+			return Optional.of(p_51589_);
+		}
 
-	@Override public Optional<Container>acceptNone(){return Optional.empty();}};
-	private static final DoubleBlockCombiner.Combiner<EnchantedChestTileEntity, Optional<MenuProvider>> MENU_PROVIDER_COMBINER=new DoubleBlockCombiner.Combiner<EnchantedChestTileEntity,Optional<MenuProvider>>(){@Override public Optional<MenuProvider>acceptDouble(final EnchantedChestTileEntity p_51604_,final EnchantedChestTileEntity p_51605_){final Container container=new CompoundContainer(p_51604_,p_51605_);return Optional.of(new MenuProvider(){@Override @Nullable public AbstractContainerMenu createMenu(int p_51622_,Inventory p_51623_,Player p_51624_){if(p_51604_.canOpen(p_51624_)&&p_51605_.canOpen(p_51624_)){p_51604_.unpackLootTable(p_51623_.player);p_51605_.unpackLootTable(p_51623_.player);return EnchantedChestContainer.createGeneric9X8(p_51622_,p_51623_,container);}else{return null;}}
+		@Override
+		public Optional<IInventory> acceptNone() {
+			return Optional.empty();
+		}
+	};
+	private static final TileEntityMerger.ICallback<EnchantedChestTileEntity, Optional<INamedContainerProvider>> MENU_PROVIDER_COMBINER = new TileEntityMerger.ICallback<EnchantedChestTileEntity, Optional<INamedContainerProvider>>() {
+		@Override
+		public Optional<INamedContainerProvider> acceptDouble(final EnchantedChestTileEntity p_51604_,
+				final EnchantedChestTileEntity p_51605_) {
+			final IInventory container = new DoubleSidedInventory(p_51604_, p_51605_);
+			return Optional.of(new INamedContainerProvider() {
+				@Override
+				@Nullable
+				public Container createMenu(int p_51622_, PlayerInventory p_51623_, PlayerEntity p_51624_) {
+					if (p_51604_.canOpen(p_51624_) && p_51605_.canOpen(p_51624_)) {
+						p_51604_.unpackLootTable(p_51623_.player);
+						p_51605_.unpackLootTable(p_51623_.player);
+						return EnchantedChestContainer.createGeneric9X8(p_51622_, p_51623_, container);
+					} else {
+						return null;
+					}
+				}
 
-	@Override public Component getDisplayName(){if(p_51604_.hasCustomName()){return p_51604_.getDisplayName();}else{return(Component)(p_51605_.hasCustomName()?p_51605_.getDisplayName():new TranslatableComponent("container.enchantedChestDouble"));}}});}
+				@Override
+				public ITextComponent getDisplayName() {
+					if (p_51604_.hasCustomName()) {
+						return p_51604_.getDisplayName();
+					} else {
+						return (ITextComponent) (p_51605_.hasCustomName() ? p_51605_.getDisplayName()
+								: new TranslationTextComponent("container.enchantedChestDouble"));
+					}
+				}
+			});
+		}
 
-	@Override public Optional<MenuProvider>acceptSingle(EnchantedChestTileEntity p_51602_){return Optional.of(p_51602_);}
+		@Override
+		public Optional<INamedContainerProvider> acceptSingle(EnchantedChestTileEntity p_51602_) {
+			return Optional.of(p_51602_);
+		}
 
-	@Override public Optional<MenuProvider>acceptNone(){return Optional.empty();}};
+		@Override
+		public Optional<INamedContainerProvider> acceptNone() {
+			return Optional.empty();
+		}
+	};
 
-	public EnchantedChestBlock(BlockBehaviour.Properties properties,
-			Supplier<BlockEntityType<? extends EnchantedChestTileEntity>> type) {
+	public EnchantedChestBlock(AbstractBlock.Properties properties,
+			Supplier<TileEntityType<? extends EnchantedChestTileEntity>> type) {
 		super(properties);
 		this.blockEntityType = type;
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH)
 				.setValue(TYPE, ChestType.SINGLE).setValue(WATERLOGGED, Boolean.valueOf(false)));
 	}
 
-	public static DoubleBlockCombiner.BlockType getBlockType(BlockState p_51583_) {
+	public static TileEntityMerger.Type getBlockType(BlockState p_51583_) {
 		ChestType chesttype = p_51583_.getValue(TYPE);
 		if (chesttype == ChestType.SINGLE) {
-			return DoubleBlockCombiner.BlockType.SINGLE;
+			return TileEntityMerger.Type.SINGLE;
 		} else {
-			return chesttype == ChestType.RIGHT ? DoubleBlockCombiner.BlockType.FIRST
-					: DoubleBlockCombiner.BlockType.SECOND;
+			return chesttype == ChestType.RIGHT ? TileEntityMerger.Type.FIRST : TileEntityMerger.Type.SECOND;
 		}
 	}
 
 	@Override
-	public RenderShape getRenderShape(BlockState p_51567_) {
-		return RenderShape.ENTITYBLOCK_ANIMATED;
+	public BlockRenderType getRenderShape(BlockState p_51567_) {
+		return BlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 
 	@Override
-	public BlockState updateShape(BlockState p_51555_, Direction p_51556_, BlockState p_51557_, LevelAccessor p_51558_,
+	public BlockState updateShape(BlockState p_51555_, Direction p_51556_, BlockState p_51557_, IWorld p_51558_,
 			BlockPos p_51559_, BlockPos p_51560_) {
 		if (p_51555_.getValue(WATERLOGGED)) {
-			p_51558_.scheduleTick(p_51559_, Fluids.WATER, Fluids.WATER.getTickDelay(p_51558_));
+			p_51558_.getLiquidTicks().scheduleTick(p_51559_, Fluids.WATER, Fluids.WATER.getTickDelay(p_51558_));
 		}
 
 		if (p_51557_.is(this) && p_51556_.getAxis().isHorizontal()) {
@@ -136,8 +176,8 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState p_51569_, BlockGetter p_51570_, BlockPos p_51571_,
-			CollisionContext p_51572_) {
+	public VoxelShape getShape(BlockState p_51569_, IBlockReader p_51570_, BlockPos p_51571_,
+			ISelectionContext p_51572_) {
 		if (p_51569_.getValue(TYPE) == ChestType.SINGLE) {
 			return AABB;
 		} else {
@@ -161,7 +201,7 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext p_51493_) {
+	public BlockState getStateForPlacement(BlockItemUseContext p_51493_) {
 		ChestType chesttype = ChestType.SINGLE;
 		Direction direction = p_51493_.getHorizontalDirection().getOpposite();
 		FluidState fluidstate = p_51493_.getLevel().getFluidState(p_51493_.getClickedPos());
@@ -194,17 +234,17 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	}
 
 	@Nullable
-	private Direction candidatePartnerFacing(BlockPlaceContext p_51495_, Direction p_51496_) {
+	private Direction candidatePartnerFacing(BlockItemUseContext p_51495_, Direction p_51496_) {
 		BlockState blockstate = p_51495_.getLevel().getBlockState(p_51495_.getClickedPos().relative(p_51496_));
 		return blockstate.is(this) && blockstate.getValue(TYPE) == ChestType.SINGLE ? blockstate.getValue(FACING)
 				: null;
 	}
 
 	@Override
-	public void setPlacedBy(Level p_51503_, BlockPos p_51504_, BlockState p_51505_, LivingEntity p_51506_,
+	public void setPlacedBy(World p_51503_, BlockPos p_51504_, BlockState p_51505_, LivingEntity p_51506_,
 			ItemStack p_51507_) {
 		if (p_51507_.hasCustomHoverName()) {
-			BlockEntity blockentity = p_51503_.getBlockEntity(p_51504_);
+			TileEntity blockentity = p_51503_.getBlockEntity(p_51504_);
 			if (blockentity instanceof EnchantedChestTileEntity) {
 				((EnchantedChestTileEntity) blockentity).setCustomName(p_51507_.getHoverName());
 			}
@@ -213,12 +253,12 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	}
 
 	@Override
-	public void onRemove(BlockState p_51538_, Level p_51539_, BlockPos p_51540_, BlockState p_51541_,
+	public void onRemove(BlockState p_51538_, World p_51539_, BlockPos p_51540_, BlockState p_51541_,
 			boolean p_51542_) {
 		if (!p_51538_.is(p_51541_.getBlock())) {
-			BlockEntity blockentity = p_51539_.getBlockEntity(p_51540_);
-			if (blockentity instanceof Container) {
-				Containers.dropContents(p_51539_, p_51540_, (Container) blockentity);
+			TileEntity blockentity = p_51539_.getBlockEntity(p_51540_);
+			if (blockentity instanceof IInventory) {
+				InventoryHelper.dropContents(p_51539_, p_51540_, (IInventory) blockentity);
 				p_51539_.updateNeighbourForOutputSignal(p_51540_, this);
 			}
 
@@ -227,19 +267,19 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	}
 
 	@Override
-	public InteractionResult use(BlockState p_51531_, Level p_51532_, BlockPos p_51533_, Player p_51534_,
-			InteractionHand p_51535_, BlockHitResult p_51536_) {
+	public ActionResultType use(BlockState p_51531_, World p_51532_, BlockPos p_51533_, PlayerEntity p_51534_,
+			Hand p_51535_, BlockRayTraceResult p_51536_) {
 		if (p_51532_.isClientSide) {
-			return InteractionResult.SUCCESS;
+			return ActionResultType.SUCCESS;
 		} else {
-			MenuProvider menuprovider = this.getMenuProvider(p_51531_, p_51532_, p_51533_);
+			INamedContainerProvider menuprovider = this.getMenuProvider(p_51531_, p_51532_, p_51533_);
 			if (menuprovider != null) {
 				p_51534_.openMenu(menuprovider);
 				p_51534_.awardStat(this.getOpenChestStat());
-				PiglinAi.angerNearbyPiglins(p_51534_, true);
+				PiglinTasks.angerNearbyPiglins(p_51534_, true);
 			}
 
-			return InteractionResult.CONSUME;
+			return ActionResultType.CONSUME;
 		}
 	}
 
@@ -247,20 +287,20 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 		return Stats.CUSTOM.get(Stats.OPEN_CHEST);
 	}
 
-	public BlockEntityType<? extends EnchantedChestTileEntity> blockEntityType() {
+	public TileEntityType<? extends EnchantedChestTileEntity> blockEntityType() {
 		return this.blockEntityType.get();
 	}
 
 	@Nullable
-	public static Container getContainer(EnchantedChestBlock p_51512_, BlockState p_51513_, Level p_51514_,
+	public static IInventory getContainer(EnchantedChestBlock p_51512_, BlockState p_51513_, World p_51514_,
 			BlockPos p_51515_, boolean p_51516_) {
-		return p_51512_.combine(p_51513_, p_51514_, p_51515_, p_51516_).<Optional<Container>>apply(CHEST_COMBINER)
-				.orElse((Container) null);
+		return p_51512_.combine(p_51513_, p_51514_, p_51515_, p_51516_).<Optional<IInventory>>apply(CHEST_COMBINER)
+				.orElse((IInventory) null);
 	}
 
-	public DoubleBlockCombiner.NeighborCombineResult<? extends EnchantedChestTileEntity> combine(BlockState p_51544_,
-			Level p_51545_, BlockPos p_51546_, boolean p_51547_) {
-		BiPredicate<LevelAccessor, BlockPos> bipredicate;
+	public TileEntityMerger.ICallbackWrapper<? extends EnchantedChestTileEntity> combine(BlockState p_51544_,
+			World p_51545_, BlockPos p_51546_, boolean p_51547_) {
+		BiPredicate<IWorld, BlockPos> bipredicate;
 		if (p_51547_) {
 			bipredicate = (p_51578_, p_51579_) -> {
 				return false;
@@ -269,20 +309,21 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 			bipredicate = EnchantedChestBlock::isEnchantedChestBlockedAt;
 		}
 
-		return DoubleBlockCombiner.combineWithNeigbour(this.blockEntityType.get(), EnchantedChestBlock::getBlockType,
+		return TileEntityMerger.combineWithNeigbour(this.blockEntityType.get(), EnchantedChestBlock::getBlockType,
 				EnchantedChestBlock::getConnectedDirection, FACING, p_51544_, p_51545_, p_51546_, bipredicate);
 	}
 
 	@Override
 	@Nullable
-	public MenuProvider getMenuProvider(BlockState p_51574_, Level p_51575_, BlockPos p_51576_) {
-		return this.combine(p_51574_, p_51575_, p_51576_, false).<Optional<MenuProvider>>apply(MENU_PROVIDER_COMBINER)
-				.orElse((MenuProvider) null);
+	public INamedContainerProvider getMenuProvider(BlockState p_51574_, World p_51575_, BlockPos p_51576_) {
+		return this.combine(p_51574_, p_51575_, p_51576_, false)
+				.<Optional<INamedContainerProvider>>apply(MENU_PROVIDER_COMBINER)
+				.orElse((INamedContainerProvider) null);
 	}
 
-	public static DoubleBlockCombiner.Combiner<EnchantedChestTileEntity, Float2FloatFunction> opennessCombiner(
-			final LidBlockEntity p_51518_) {
-		return new DoubleBlockCombiner.Combiner<EnchantedChestTileEntity, Float2FloatFunction>() {
+	public static TileEntityMerger.ICallback<EnchantedChestTileEntity, Float2FloatFunction> opennessCombiner(
+			final IChestLid p_51518_) {
+		return new TileEntityMerger.ICallback<EnchantedChestTileEntity, Float2FloatFunction>() {
 			@Override
 			public Float2FloatFunction acceptDouble(EnchantedChestTileEntity p_51633_,
 					EnchantedChestTileEntity p_51634_) {
@@ -304,35 +345,26 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockPos p_153064_, BlockState p_153065_) {
-		return new EnchantedChestTileEntity(p_153064_, p_153065_);
+	public TileEntity newBlockEntity(IBlockReader reader) {
+		return new EnchantedChestTileEntity();
 	}
 
-	@Override
-	@Nullable
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153055_, BlockState p_153056_,
-			BlockEntityType<T> p_153057_) {
-		return p_153055_.isClientSide
-				? createTickerHelper(p_153057_, this.blockEntityType(), EnchantedChestTileEntity::lidAnimateTick)
-				: null;
-	}
-
-	public static boolean isEnchantedChestBlockedAt(LevelAccessor p_51509_, BlockPos p_51510_) {
+	public static boolean isEnchantedChestBlockedAt(IWorld p_51509_, BlockPos p_51510_) {
 		return isBlockedChestByBlock(p_51509_, p_51510_) || isCatSittingOnChest(p_51509_, p_51510_);
 	}
 
-	private static boolean isBlockedChestByBlock(BlockGetter p_51500_, BlockPos p_51501_) {
+	private static boolean isBlockedChestByBlock(IBlockReader p_51500_, BlockPos p_51501_) {
 		BlockPos blockpos = p_51501_.above();
 		return p_51500_.getBlockState(blockpos).isRedstoneConductor(p_51500_, blockpos);
 	}
 
-	private static boolean isCatSittingOnChest(LevelAccessor p_51564_, BlockPos p_51565_) {
-		List<Cat> list = p_51564_.getEntitiesOfClass(Cat.class,
-				new AABB((double) p_51565_.getX(), (double) (p_51565_.getY() + 1), (double) p_51565_.getZ(),
+	private static boolean isCatSittingOnChest(IWorld p_51564_, BlockPos p_51565_) {
+		List<CatEntity> list = p_51564_.getEntitiesOfClass(CatEntity.class,
+				new AxisAlignedBB((double) p_51565_.getX(), (double) (p_51565_.getY() + 1), (double) p_51565_.getZ(),
 						(double) (p_51565_.getX() + 1), (double) (p_51565_.getY() + 2),
 						(double) (p_51565_.getZ() + 1)));
 		if (!list.isEmpty()) {
-			for (Cat cat : list) {
+			for (CatEntity cat : list) {
 				if (cat.isInSittingPose()) {
 					return true;
 				}
@@ -348,9 +380,8 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	}
 
 	@Override
-	public int getAnalogOutputSignal(BlockState p_51527_, Level p_51528_, BlockPos p_51529_) {
-		return AbstractContainerMenu
-				.getRedstoneSignalFromContainer(getContainer(this, p_51527_, p_51528_, p_51529_, false));
+	public int getAnalogOutputSignal(BlockState p_51527_, World p_51528_, BlockPos p_51529_) {
+		return Container.getRedstoneSignalFromContainer(getContainer(this, p_51527_, p_51528_, p_51529_, false));
 	}
 
 	@Override
@@ -361,32 +392,16 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	@Override
 	public BlockState mirror(BlockState p_51549_, Mirror p_51550_) {
 		BlockState rotated = p_51549_.rotate(p_51550_.getRotation(p_51549_.getValue(FACING)));
-		return p_51550_ == Mirror.NONE ? rotated : rotated.setValue(TYPE, rotated.getValue(TYPE).getOpposite()); // Forge:
-																													// Fixed
-																													// MC-134110
-																													// Structure
-																													// mirroring
-																													// breaking
-																													// apart
-																													// double
-																													// chests
+		return p_51550_ == Mirror.NONE ? rotated : rotated.setValue(TYPE, rotated.getValue(TYPE).getOpposite());
 	}
+
 	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_51562_) {
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> p_51562_) {
 		p_51562_.add(FACING, TYPE, WATERLOGGED);
 	}
 
 	@Override
-	public boolean isPathfindable(BlockState p_51522_, BlockGetter p_51523_, BlockPos p_51524_,
-			PathComputationType p_51525_) {
+	public boolean isPathfindable(BlockState p_51522_, IBlockReader p_51523_, BlockPos p_51524_, PathType p_51525_) {
 		return false;
-	}
-
-	@Override
-	public void tick(BlockState p_153059_, ServerLevel p_153060_, BlockPos p_153061_, Random p_153062_) {
-		BlockEntity blockentity = p_153060_.getBlockEntity(p_153061_);
-		if (blockentity instanceof EnchantedChestTileEntity) {
-			((EnchantedChestTileEntity) blockentity).recheckOpen();
-		}
 	}
 }

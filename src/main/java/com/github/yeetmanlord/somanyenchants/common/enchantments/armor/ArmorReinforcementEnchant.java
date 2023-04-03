@@ -4,15 +4,15 @@ import com.github.yeetmanlord.somanyenchants.common.enchantments.ModEnchantment;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.inventory.EquipmentSlotType;
 
 public class ArmorReinforcementEnchant extends ModEnchantment {
 
-	public ArmorReinforcementEnchant(Rarity rarityIn, EquipmentSlot[] slots) {
+	public ArmorReinforcementEnchant(Rarity rarityIn, EquipmentSlotType[] slots) {
 
-		super(rarityIn, EnchantmentCategory.ARMOR, Config.reinforcement, slots);
+		super(rarityIn, EnchantmentType.ARMOR, Config.reinforcement, slots);
 
 	}
 

@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.item.enchantment.SweepingEdgeEnchantment;
+import net.minecraft.enchantment.SweepingEnchantment;
 
-@Mixin(SweepingEdgeEnchantment.class)
+@Mixin(SweepingEnchantment.class)
 public class MixinSweepingEdgeEnchantment {
 
 	@Inject(at = @At("HEAD"), method = "getMaxLevel()I", cancellable = true)

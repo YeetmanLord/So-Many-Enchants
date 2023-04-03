@@ -2,16 +2,16 @@ package com.github.yeetmanlord.somanyenchants.common.enchantments;
 
 import com.github.yeetmanlord.somanyenchants.core.config.EnchantmentConfig;
 
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 
 public class ModEnchantment extends Enchantment {
 
 	protected EnchantmentConfig config;
 
-	public ModEnchantment(Rarity rarity, EnchantmentCategory category, EnchantmentConfig config, EquipmentSlot... slots) {
+	public ModEnchantment(Rarity rarity, EnchantmentType category, EnchantmentConfig config, EquipmentSlotType... slots) {
 
 		super(rarity, category, slots);
 		this.config = config;
@@ -89,9 +89,11 @@ public class ModEnchantment extends Enchantment {
 	@Override
 	protected boolean checkCompatibility(Enchantment ench) {
 
-		if (ench instanceof ModEnchantment modEnch) {
+		if (ench instanceof ModEnchantment) {
+			ModEnchantment modEnch = (ModEnchantment) ench;
 			return this.config.isEnabled.get() && modEnch.config.isEnabled.get() && super.checkCompatibility(ench);
 		}
+
 		return this.config.isEnabled.get() && super.checkCompatibility(ench);
 
 	}

@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentTypesInit;
 
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 @Mixin(Item.class)
 public class MixinItem {
@@ -31,7 +31,7 @@ public class MixinItem {
 
 	}
 
-	@Inject(at = @At("HEAD"), method = "isEnchantable(Lnet/minecraft/world/item/ItemStack;)Z", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "isEnchantable(Lnet/minecraft/item/ItemStack;)Z", cancellable = true)
 	private void isEnchantable(ItemStack stack, CallbackInfoReturnable<Boolean> callback) {
 
 		if (((Item) (Object) this) instanceof BlockItem) {

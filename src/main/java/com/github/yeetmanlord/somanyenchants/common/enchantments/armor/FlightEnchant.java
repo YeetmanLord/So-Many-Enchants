@@ -3,17 +3,17 @@ package com.github.yeetmanlord.somanyenchants.common.enchantments.armor;
 import com.github.yeetmanlord.somanyenchants.common.enchantments.ModEnchantment;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 
 public class FlightEnchant extends ModEnchantment {
 
-	public FlightEnchant(Rarity rarityIn, EquipmentSlot... slots) {
+	public FlightEnchant(Rarity rarityIn, EquipmentSlotType... slots) {
 
-		super(rarityIn, EnchantmentCategory.ARMOR_FEET, Config.flight, slots);
+		super(rarityIn, EnchantmentType.ARMOR_FEET, Config.flight, slots);
 
 	}
 
@@ -41,7 +41,7 @@ public class FlightEnchant extends ModEnchantment {
 	@Override
 	public boolean canEnchant(ItemStack stack) {
 
-		return EnchantmentCategory.ARMOR_FEET.canEnchant(stack.getItem()) && this.config.isEnabled.get();
+		return EnchantmentType.ARMOR_FEET.canEnchant(stack.getItem()) && this.config.isEnabled.get();
 
 	}
 

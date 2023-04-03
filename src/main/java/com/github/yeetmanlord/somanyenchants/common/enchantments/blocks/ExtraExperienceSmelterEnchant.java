@@ -4,12 +4,12 @@ import com.github.yeetmanlord.somanyenchants.common.enchantments.ModEnchantment;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentTypesInit;
 
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 
 public class ExtraExperienceSmelterEnchant extends ModEnchantment {
 
-	public ExtraExperienceSmelterEnchant(Rarity rarityIn, EquipmentSlot... slots) {
+	public ExtraExperienceSmelterEnchant(Rarity rarityIn, EquipmentSlotType... slots) {
 
 		super(rarityIn, EnchantmentTypesInit.SMELTER, Config.extraExperience, slots);
 

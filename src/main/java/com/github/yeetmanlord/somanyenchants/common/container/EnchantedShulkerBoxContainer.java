@@ -1,25 +1,25 @@
 package com.github.yeetmanlord.somanyenchants.common.container;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 
 import com.github.yeetmanlord.somanyenchants.common.container.slots.EnchantedShulkerBoxSlot;
 import com.github.yeetmanlord.somanyenchants.core.init.ContainerTypeInit;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 
-public class EnchantedShulkerBoxContainer extends AbstractContainerMenu {
-	private final Container inventory;
+public class EnchantedShulkerBoxContainer extends Container {
+	private final IInventory inventory;
 
-	public EnchantedShulkerBoxContainer(int id, Inventory playerInventory) {
-	      this(id, playerInventory, new SimpleContainer(36));
+	public EnchantedShulkerBoxContainer(int id, PlayerInventory playerInventory) {
+	      this(id, playerInventory, new Inventory(36));
 	   }
 
-	public EnchantedShulkerBoxContainer(int id, Inventory playerInventory, Container inventory) {
+	public EnchantedShulkerBoxContainer(int id, PlayerInventory playerInventory, IInventory inventory) {
 	      super(ContainerTypeInit.ENCHANTED_SHULKER_BOX.get(), id);
 	      checkContainerSize(inventory, 36);
 	      this.inventory = inventory;
@@ -47,7 +47,7 @@ public class EnchantedShulkerBoxContainer extends AbstractContainerMenu {
 	 * Determines whether supplied player can use this container
 	 */
 	@Override
-	public boolean stillValid(Player playerIn) {
+	public boolean stillValid(PlayerEntity playerIn) {
 		return this.inventory.stillValid(playerIn);
 	}
 
@@ -56,7 +56,7 @@ public class EnchantedShulkerBoxContainer extends AbstractContainerMenu {
 	 * moves the stack between the player inventory and the other inventory(s).
 	 */
 	@Override
-	public ItemStack quickMoveStack(Player playerIn, int index) {
+	public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.slots.get(index);
 		if (slot != null && slot.hasItem()) {
@@ -85,7 +85,7 @@ public class EnchantedShulkerBoxContainer extends AbstractContainerMenu {
 	 * Called when the container is closed.
 	 */
 	@Override
-	public void removed(Player playerIn) {
+	public void removed(PlayerEntity playerIn) {
 		super.removed(playerIn);
 		this.inventory.stopOpen(playerIn);
 	}

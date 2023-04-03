@@ -1,5 +1,7 @@
 package com.github.yeetmanlord.somanyenchants.mixins;
 
+import java.lang.reflect.Field;
+
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,9 +13,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 
-import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.inventory.container.RepairContainer;
+import net.minecraft.util.IntReferenceHolder;
 
-@Mixin(AnvilMenu.class)
+@Mixin(RepairContainer.class)
 public class MixinAnvilMenu {
 
 	@Shadow
@@ -23,10 +26,20 @@ public class MixinAnvilMenu {
 
 	}
 
-	@Shadow
-	private int getCost() {
-
-		throw new IllegalStateException("Mixin MixinAnvilMenu could not shadow setMaximumCost!");
+	private int cost() {
+		
+		RepairContainer container = (RepairContainer)(Object)this;
+		try {
+			Field costField = container.getClass().getDeclaredField("cost");
+			costField.setAccessible(true);
+			IntReferenceHolder cost = (IntReferenceHolder) costField.get(container);
+			costField.setAccessible(false);
+			return cost.get();
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return 0;
 
 	}
 
@@ -46,7 +59,7 @@ public class MixinAnvilMenu {
 	private void createResult(CallbackInfo callback) {
 
 		if (SoManyEnchants.instance != null) {
-			this.setMaximumCost(Math.max((int) Math.floor(((this.getCost() / 2) - 1) * 0.75 + 1), 1));
+			this.setMaximumCost(Math.max((int) Math.floor(((this.cost() / 2) - 1) * 0.85 + 1), 1));
 		}
 
 	}

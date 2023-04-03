@@ -2,11 +2,11 @@ package com.github.yeetmanlord.somanyenchants.core.network.message;
 
 import java.util.function.Supplier;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 public class AttackPacket {
 	public int attacked;
@@ -21,12 +21,12 @@ public class AttackPacket {
 		this.attacked = attacked;
 	}
 	
-	public static void encode(AttackPacket msg, FriendlyByteBuf buff) 
+	public static void encode(AttackPacket msg, PacketBuffer buff) 
 	{
 		buff.writeInt(msg.attacked);
 	}
 	
-	public static AttackPacket decode(FriendlyByteBuf buff) 
+	public static AttackPacket decode(PacketBuffer buff) 
 	{
 		return new AttackPacket(buff.readInt());
 	}
@@ -36,8 +36,8 @@ public class AttackPacket {
 		NetworkEvent.Context context = contextSup.get();
 		
 		context.enqueueWork(() -> {
-			ServerPlayer player = context.getSender();
-			Level world = player.getCommandSenderWorld();
+			ServerPlayerEntity player = context.getSender();
+			World world = player.getCommandSenderWorld();
 			Entity e = world.getEntity(msg.attacked);
 			player.attack(e);
 		});

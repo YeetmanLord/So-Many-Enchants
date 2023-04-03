@@ -1,15 +1,15 @@
 package com.github.yeetmanlord.somanyenchants.core.util;
 
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 
 public class NBTHelper
 {
 
-	public static double getAttackDamage(Player player)
+	public static double getAttackDamage(PlayerEntity player)
 	{
 		double attackDamage = AttributeHelper.getAttackDamage(player.getMainHandItem().getItem())
 				+ NBTHelper.getSharpnessDamage(player)
@@ -21,14 +21,14 @@ public class NBTHelper
 		return attackDamage;
 	}
 
-	public static double getAttackSpeed(Player player)
+	public static double getAttackSpeed(PlayerEntity player)
 	{
 		double attackSpeed = player.getAttributeValue(Attributes.ATTACK_SPEED);
 		attackSpeed = MathUtils.roundNearestPlace(attackSpeed, -1);
 		return attackSpeed;
 	}
 
-	public static double getSharpnessDamage(Player player)
+	public static double getSharpnessDamage(PlayerEntity player)
 	{
 		int sharpnessLvl = ModEnchantmentHelper.getSharpnessLevel(player);
 
@@ -42,22 +42,22 @@ public class NBTHelper
 	
 	public static double getAttributeValue(ItemStack stack, Attribute attr) {
 		if (stack.hasTag()) {
-			CompoundTag tag = stack.getTag();
+			CompoundNBT tag = stack.getTag();
 			if (tag.contains("AttributeData")) {
-				CompoundTag data = tag.getCompound("AttributeData");
-				return data.getDouble(attr.getRegistryName().toString());
+				CompoundNBT data = tag.getCompound("AttributeData");
+				return data.getDouble(attr.getDescriptionId());
 			}
 		}
 		return 0d;
 	}
 	
 	public static void writeAttributeValue(ItemStack stack, double value, Attribute attr) {
-		CompoundTag nbt = stack.getTag();
-		CompoundTag tag = new CompoundTag();
+		CompoundNBT nbt = stack.getTag();
+		CompoundNBT tag = new CompoundNBT();
 		if(nbt.contains("AttributeData")) {
 			tag = nbt.getCompound("AttributeData");
 		}
-		tag.putDouble(attr.getRegistryName().toString(), value);
+		tag.putDouble(attr.getDescriptionId(), value);
 		nbt.put("AttributeData", tag);
 	}
 

@@ -4,11 +4,11 @@ import com.github.yeetmanlord.somanyenchants.common.enchantments.ModEnchantment;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentTypesInit;
 
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 
 public class CamouflageEnchant extends ModEnchantment {
 
-	public CamouflageEnchant(Rarity rarityIn, EquipmentSlot... slots) {
+	public CamouflageEnchant(Rarity rarityIn, EquipmentSlotType... slots) {
 
 		super(rarityIn, EnchantmentTypesInit.TRAPPED_CHEST, Config.camouflage, slots);
 

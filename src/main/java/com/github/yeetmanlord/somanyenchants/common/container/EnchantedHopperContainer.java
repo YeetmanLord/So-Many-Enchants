@@ -1,24 +1,24 @@
 package com.github.yeetmanlord.somanyenchants.common.container;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 
 import com.github.yeetmanlord.somanyenchants.core.init.ContainerTypeInit;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 
-public class EnchantedHopperContainer extends AbstractContainerMenu {
-   private final Container enchantedHopperInventory;
+public class EnchantedHopperContainer extends Container {
+   private final IInventory enchantedHopperInventory;
 
-   public EnchantedHopperContainer(int id, Inventory playerInventory) {
-      this(id, playerInventory, new SimpleContainer(5));
+   public EnchantedHopperContainer(int id, PlayerInventory playerInventory) {
+      this(id, playerInventory, new Inventory(5));
    }
 
-   public EnchantedHopperContainer(int id, Inventory playerInventory, Container inventory) {
+   public EnchantedHopperContainer(int id, PlayerInventory playerInventory, IInventory inventory) {
       super(ContainerTypeInit.ENCHANTED_HOPPER.get(), id);
       this.enchantedHopperInventory = inventory;
       checkContainerSize(inventory, 5);
@@ -45,7 +45,7 @@ public class EnchantedHopperContainer extends AbstractContainerMenu {
     * Determines whether supplied player can use this container
     */
    @Override
-public boolean stillValid(Player playerIn) {
+public boolean stillValid(PlayerEntity playerIn) {
       return this.enchantedHopperInventory.stillValid(playerIn);
    }
 
@@ -54,7 +54,7 @@ public boolean stillValid(Player playerIn) {
     * inventory and the other inventory(s).
     */
    @Override
-public ItemStack quickMoveStack(Player playerIn, int index) {
+public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
       ItemStack itemstack = ItemStack.EMPTY;
       Slot slot = this.slots.get(index);
       if (slot != null && slot.hasItem()) {
@@ -82,7 +82,7 @@ public ItemStack quickMoveStack(Player playerIn, int index) {
     * Called when the container is closed.
     */
    @Override
-public void removed(Player playerIn) {
+public void removed(PlayerEntity playerIn) {
       super.removed(playerIn);
       this.enchantedHopperInventory.stopOpen(playerIn);
    }

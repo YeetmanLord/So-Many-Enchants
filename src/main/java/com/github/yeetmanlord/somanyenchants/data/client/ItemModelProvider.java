@@ -3,7 +3,7 @@ package com.github.yeetmanlord.somanyenchants.data.client;
 import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.world.item.DyeColor;
+import net.minecraft.item.DyeColor;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 

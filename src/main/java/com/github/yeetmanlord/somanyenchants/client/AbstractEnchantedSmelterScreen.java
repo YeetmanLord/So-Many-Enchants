@@ -1,34 +1,33 @@
 package com.github.yeetmanlord.somanyenchants.client;
 
 import com.github.yeetmanlord.somanyenchants.common.container.AbstractEnchantedSmelterContainer;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.recipebook.AbstractFurnaceRecipeBookComponent;
-import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
-import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.client.gui.recipebook.AbstractRecipeBookGui;
+import net.minecraft.client.gui.recipebook.IRecipeShownListener;
+import net.minecraft.client.gui.recipebook.RecipeBookGui;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.button.ImageButton;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class AbstractEnchantedSmelterScreen<T extends AbstractEnchantedSmelterContainer>
-		extends AbstractContainerScreen<T> implements RecipeUpdateListener {
+		extends ContainerScreen<T> implements IRecipeShownListener {
 	private static final ResourceLocation RECIPE_BUTTON_LOCATION = new ResourceLocation(
 			"textures/gui/recipe_button.png");
-	public final AbstractFurnaceRecipeBookComponent recipeBookComponent;
+	public final AbstractRecipeBookGui recipeBookComponent;
 	private boolean widthTooNarrow;
 	private final ResourceLocation texture;
 
-	public AbstractEnchantedSmelterScreen(T screenContainer, AbstractFurnaceRecipeBookComponent recipeGuiIn,
-			Inventory inv, Component titleIn, ResourceLocation guiTextureIn) {
+	public AbstractEnchantedSmelterScreen(T screenContainer, AbstractRecipeBookGui recipeGuiIn, PlayerInventory inv,
+			ITextComponent titleIn, ResourceLocation guiTextureIn) {
 		super(screenContainer, inv, titleIn);
 		this.recipeBookComponent = recipeGuiIn;
 		this.texture = guiTextureIn;
@@ -39,24 +38,25 @@ public abstract class AbstractEnchantedSmelterScreen<T extends AbstractEnchanted
 		super.init();
 		this.widthTooNarrow = this.width < 379;
 		this.recipeBookComponent.init(this.width, this.height, this.minecraft, this.widthTooNarrow, this.menu);
-		this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
-		this.addRenderableWidget(new ImageButton(this.leftPos + 20, this.height / 2 - 49, 20, 18, 0, 0, 19,
+		this.leftPos = this.recipeBookComponent.updateScreenPosition(widthTooNarrow, this.width, this.imageWidth);
+		this.addButton(new ImageButton(this.leftPos + 20, this.height / 2 - 49, 20, 18, 0, 0, 19,
 				RECIPE_BUTTON_LOCATION, (p_97863_) -> {
 					this.recipeBookComponent.toggleVisibility();
-					this.leftPos = this.recipeBookComponent.updateScreenPosition(this.width, this.imageWidth);
+					this.leftPos = this.recipeBookComponent.updateScreenPosition(widthTooNarrow, this.width,
+							this.imageWidth);
 					((ImageButton) p_97863_).setPosition(this.leftPos + 20, this.height / 2 - 49);
 				}));
 		this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
 	}
 
 	@Override
-	public void containerTick() {
-		super.containerTick();
+	public void tick() {
+		super.tick();
 		this.recipeBookComponent.tick();
 	}
 
 	@Override
-	public void render(PoseStack p_97858_, int p_97859_, int p_97860_, float p_97861_) {
+	public void render(MatrixStack p_97858_, int p_97859_, int p_97860_, float p_97861_) {
 		this.renderBackground(p_97858_);
 		if (this.recipeBookComponent.isVisible() && this.widthTooNarrow) {
 			this.renderBg(p_97858_, p_97861_, p_97859_, p_97860_);
@@ -72,10 +72,9 @@ public abstract class AbstractEnchantedSmelterScreen<T extends AbstractEnchanted
 	}
 
 	@Override
-	protected void renderBg(PoseStack p_97853_, float p_97854_, int p_97855_, int p_97856_) {
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, this.texture);
+	protected void renderBg(MatrixStack p_97853_, float p_97854_, int p_97855_, int p_97856_) {
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		this.minecraft.getTextureManager().bind(texture);
 		int i = this.leftPos;
 		int j = this.topPos;
 		this.blit(p_97853_, i, j, 0, 0, this.imageWidth, this.imageHeight);
@@ -130,7 +129,7 @@ public abstract class AbstractEnchantedSmelterScreen<T extends AbstractEnchanted
 	}
 
 	@Override
-	public RecipeBookComponent getRecipeBookComponent() {
+	public RecipeBookGui getRecipeBookComponent() {
 		return this.recipeBookComponent;
 	}
 

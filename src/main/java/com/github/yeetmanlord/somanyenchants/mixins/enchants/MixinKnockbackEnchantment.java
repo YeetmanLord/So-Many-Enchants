@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.item.enchantment.KnockbackEnchantment;
+import net.minecraft.enchantment.KnockbackEnchantment;
 
 @Mixin(KnockbackEnchantment.class)
 public class MixinKnockbackEnchantment {

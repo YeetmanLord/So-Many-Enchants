@@ -2,7 +2,7 @@
 modLoader="javafml" #mandatory
 
 
-loaderVersion="[40,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+loaderVersion="[36,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
 
 
 license="MIT License"
@@ -37,7 +37,7 @@ Yay finally in full release!
 [[dependencies.so_many_enchants]]
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[40,)" #mandatory
+    versionRange="[36,)" #mandatory
     ordering="NONE"
     side="BOTH"
 
@@ -45,6 +45,6 @@ Yay finally in full release!
 [[dependencies.so_many_enchants]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18.2,1.19)"
+    versionRange="[1.16.5,1.17)"
     ordering="NONE"
     side="BOTH"

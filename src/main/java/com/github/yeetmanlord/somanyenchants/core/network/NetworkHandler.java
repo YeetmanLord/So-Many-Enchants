@@ -1,22 +1,22 @@
 package com.github.yeetmanlord.somanyenchants.core.network;
 
-import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.network.message.AttackPacket;
 import com.github.yeetmanlord.somanyenchants.core.network.message.ClientConfigSyncPacket;
 import com.github.yeetmanlord.somanyenchants.core.network.message.ConfigSyncPacket;
 import com.github.yeetmanlord.somanyenchants.core.network.message.FlyingPacket;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class NetworkHandler {
 
 	public static final String NETWORK_VERSION = "SME-MAIN-1.2.0";
 	
-	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(SoManyEnchants.MOD_ID, "packet_handler"), 
-			() -> NETWORK_VERSION, version -> version.equals(NETWORK_VERSION), version -> version.equals(NETWORK_VERSION));
-	
+	public static final SimpleChannel CHANNEL;
+	static {
+	    CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("so_many_enchants", "packet_handler"), () -> "SME-MAIN-1.1.0", version -> version.equals("SME-MAIN-1.1.0"), version -> version.equals("SME-MAIN-1.1.0"));
+	  }
 	
 	public static void init()
 	{

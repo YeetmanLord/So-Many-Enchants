@@ -13,22 +13,22 @@ import com.github.yeetmanlord.somanyenchants.common.blocks.EnchantedChestBlock;
 import com.github.yeetmanlord.somanyenchants.common.tileentities.EnchantedChestTileEntity;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.Container;
-import net.minecraft.world.WorldlyContainerHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventoryProvider;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.EntityPredicates;
+import net.minecraft.world.World;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.HopperTileEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.AxisAlignedBB;
 
-@Mixin(HopperBlockEntity.class)
+@Mixin(HopperTileEntity.class)
 public class MixinHopperTileEntity {
 
-	@Inject(at = @At("TAIL"), cancellable = true, method = "getContainerAt(Lnet/minecraft/world/level/Level;DDD)Lnet/minecraft/world/Container;") @Nullable
+	@Inject(at = @At("TAIL"), cancellable = true, method = "getContainerAt(Lnet/minecraft/world/World;DDD)Lnet/minecraft/inventory/IInventory;") @Nullable
 	/**
 	 * This inject lets hoppers move items into
 	 * 
@@ -39,22 +39,22 @@ public class MixinHopperTileEntity {
 	 * @return If a container exists at the checked location will return the
 	 *         container's inventory otherwise will try to check other areas
 	 */
-	private static void getContainerAt(Level p_59348_, double p_59349_, double p_59350_, double p_59351_, CallbackInfoReturnable<Container> callback) {
+	private static void getContainerAt(World p_59348_, double p_59349_, double p_59350_, double p_59351_, CallbackInfoReturnable<IInventory> callback) {
 
 		if (Config.cavernousStorage.isEnabled.get()) {
-			Container container = null;
+			IInventory container = null;
 			BlockPos blockpos = new BlockPos(p_59349_, p_59350_, p_59351_);
 			BlockState blockstate = p_59348_.getBlockState(blockpos);
 			Block block = blockstate.getBlock();
 
-			if (block instanceof WorldlyContainerHolder) {
-				container = ((WorldlyContainerHolder) block).getContainer(blockstate, p_59348_, blockpos);
+			if (block instanceof ISidedInventoryProvider) {
+				container = ((ISidedInventoryProvider) block).getContainer(blockstate, p_59348_, blockpos);
 			}
-			else if (blockstate.hasBlockEntity()) {
-				BlockEntity blockentity = p_59348_.getBlockEntity(blockpos);
+			else if (blockstate.hasTileEntity()) {
+				TileEntity blockentity = p_59348_.getBlockEntity(blockpos);
 
-				if (blockentity instanceof Container) {
-					container = (Container) blockentity;
+				if (blockentity instanceof IInventory) {
+					container = (IInventory) blockentity;
 
 					if (container instanceof EnchantedChestTileEntity && block instanceof EnchantedChestBlock) {
 						container = EnchantedChestBlock.getContainer((EnchantedChestBlock) block, blockstate, p_59348_, blockpos, true);
@@ -65,10 +65,10 @@ public class MixinHopperTileEntity {
 			}
 
 			if (container == null) {
-				List<Entity> list = p_59348_.getEntities((Entity) null, new AABB(p_59349_ - 0.5D, p_59350_ - 0.5D, p_59351_ - 0.5D, p_59349_ + 0.5D, p_59350_ + 0.5D, p_59351_ + 0.5D), EntitySelector.CONTAINER_ENTITY_SELECTOR);
+				List<Entity> list = p_59348_.getEntities((Entity) null, new AxisAlignedBB(p_59349_ - 0.5D, p_59350_ - 0.5D, p_59351_ - 0.5D, p_59349_ + 0.5D, p_59350_ + 0.5D, p_59351_ + 0.5D), EntityPredicates.CONTAINER_ENTITY_SELECTOR);
 
 				if (!list.isEmpty()) {
-					container = (Container) list.get(p_59348_.random.nextInt(list.size()));
+					container = (IInventory) list.get(p_59348_.random.nextInt(list.size()));
 				}
 
 			}

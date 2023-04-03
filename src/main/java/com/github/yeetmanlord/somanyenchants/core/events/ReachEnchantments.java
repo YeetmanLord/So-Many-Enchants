@@ -9,13 +9,13 @@ import com.github.yeetmanlord.somanyenchants.core.network.message.AttackPacket;
 import com.github.yeetmanlord.somanyenchants.core.util.AttributeHelper;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.Entity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent.ClickInputEvent;
@@ -31,10 +31,10 @@ public class ReachEnchantments {
 	@SubscribeEvent
 	public static void reachEnchantments(final LivingEquipmentChangeEvent event) {
 
-		if (event.getEntityLiving() instanceof Player) {
-			EquipmentSlot slot = event.getSlot();
+		if (event.getEntityLiving() instanceof PlayerEntity) {
+			EquipmentSlotType slot = event.getSlot();
 
-			if (slot == EquipmentSlot.MAINHAND) {
+			if (slot == EquipmentSlotType.MAINHAND) {
 				AttributeHelper.apply(EnchantmentInit.BLOCK_REACH.get(), ForgeMod.REACH_DISTANCE.get(), Config.blockReach, event, 1d);
 				AttributeHelper.apply(EnchantmentInit.ATTACK_REACH.get(), AttributeInit.ATTACK_DISTANCE.get(), Config.attackReach, event, 1.5d);
 			}
@@ -47,7 +47,7 @@ public class ReachEnchantments {
 	public static void extraReach(final ClickInputEvent click) {
 
 		Minecraft mc = Minecraft.getInstance();
-		Player player = mc.player;
+		PlayerEntity player = mc.player;
 
 		if (click.isAttack() && player != null) {
 			// Handles raytracing
@@ -57,11 +57,11 @@ public class ReachEnchantments {
 				reachDist = player.getAttribute(AttributeInit.ATTACK_DISTANCE.get()).getValue();
 			}
 
-			Vec3 startVector = player.getEyePosition(1.0F);
-			Vec3 lookVector = player.getViewVector(1.0F);
-			Vec3 endVector = startVector.add(lookVector.x * reachDist, lookVector.y * reachDist, lookVector.z * reachDist);
-			AABB axisalignedbb = player.getBoundingBox().expandTowards(lookVector.scale(reachDist)).inflate(1.0D, 1.0D, 1.0D);
-			EntityHitResult entityRayTrace = ProjectileUtil.getEntityHitResult(player, startVector, endVector, axisalignedbb, (p_215312_0_) -> {
+			Vector3d startVector = player.getEyePosition(1.0F);
+			Vector3d lookVector = player.getViewVector(1.0F);
+			Vector3d endVector = startVector.add(lookVector.x * reachDist, lookVector.y * reachDist, lookVector.z * reachDist);
+			AxisAlignedBB axisalignedbb = player.getBoundingBox().expandTowards(lookVector.scale(reachDist)).inflate(1.0D, 1.0D, 1.0D);
+			EntityRayTraceResult entityRayTrace = ProjectileHelper.getEntityHitResult(player, startVector, endVector, axisalignedbb, (p_215312_0_) -> {
 				return !p_215312_0_.isSpectator() && p_215312_0_.isPickable();
 			}, reachDist * reachDist);
 

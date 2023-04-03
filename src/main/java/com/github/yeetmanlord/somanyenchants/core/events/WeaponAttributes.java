@@ -5,10 +5,10 @@ import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 import com.github.yeetmanlord.somanyenchants.core.util.AttributeHelper;
 
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -17,23 +17,21 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class WeaponAttributes {
 
-    @SubscribeEvent
-    public static void mainhand(final LivingEquipmentChangeEvent event) {
+	@SubscribeEvent
+	public static void mainhand(final LivingEquipmentChangeEvent event) {
 
+		if (event.getEntityLiving() instanceof PlayerEntity) {
+			EquipmentSlotType slot = event.getSlot();
 
-        if (event.getEntityLiving() instanceof Player) {
-            Player player = (Player) event.getEntityLiving();
-            EquipmentSlot slot = event.getSlot();
+			if (slot == EquipmentSlotType.MAINHAND) {
 
-            if (slot == EquipmentSlot.MAINHAND) {
+				AttributeHelper.apply(EnchantmentInit.HEAVY_BLADE.get(), Attributes.ATTACK_SPEED, Config.heavyBlade, event, -0.1d);
+				AttributeHelper.apply(EnchantmentInit.LIGHT_BLADE.get(), Attributes.ATTACK_SPEED, Config.lightBlade, event, 0.5d);
 
-                AttributeHelper.apply(EnchantmentInit.HEAVY_BLADE.get(), Attributes.ATTACK_SPEED, Config.heavyBlade, event, -0.1d);
-                AttributeHelper.apply(EnchantmentInit.LIGHT_BLADE.get(), Attributes.ATTACK_SPEED, Config.lightBlade, event, 0.5d);
+			}
 
-            }
+		}
 
-        }
-
-    }
+	}
 
 }

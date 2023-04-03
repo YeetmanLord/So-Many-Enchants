@@ -4,20 +4,20 @@ import com.github.yeetmanlord.somanyenchants.common.enchantments.ModEnchantment;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.MobType;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TridentItem;
-import net.minecraft.world.item.enchantment.DamageEnchantment;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.enchantment.DamageEnchantment;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.entity.CreatureAttribute;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.TridentItem;
 
 public class LightBladeEnchant extends ModEnchantment {
 
-	public LightBladeEnchant(Rarity rarityIn, EquipmentSlot... slots) {
+	public LightBladeEnchant(Rarity rarityIn, EquipmentSlotType... slots) {
 
-		super(rarityIn, EnchantmentCategory.WEAPON, Config.lightBlade, slots);
+		super(rarityIn, EnchantmentType.WEAPON, Config.lightBlade, slots);
 
 	}
 
@@ -58,7 +58,7 @@ public class LightBladeEnchant extends ModEnchantment {
 	}
 
 	@Override
-	public float getDamageBonus(int level, MobType creatureType) {
+	public float getDamageBonus(int level, CreatureAttribute creatureType) {
 
 		return (float) (((Math.max(0, level)) * -.5) - 1);
 

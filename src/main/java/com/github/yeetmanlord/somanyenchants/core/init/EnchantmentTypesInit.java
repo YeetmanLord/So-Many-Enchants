@@ -1,27 +1,27 @@
 package com.github.yeetmanlord.somanyenchants.core.init;
 
-import net.minecraft.world.level.block.AbstractFurnaceBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.block.AbstractFurnaceBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.enchantment.EnchantmentType;
 
 import com.github.yeetmanlord.somanyenchants.common.blocks.EnchantedShulkerBoxBlock;
 import com.github.yeetmanlord.somanyenchants.common.blocks.smelters.AbstractEnchantedSmelterBlock;
 
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 
 public class EnchantmentTypesInit {
 
-	public static final EnchantmentCategory HOPPER = EnchantmentCategory.create("hopper", item -> item.equals(Items.HOPPER));
+	public static final EnchantmentType HOPPER = EnchantmentType.create("hopper", item -> item.equals(Items.HOPPER));
 
-	public static final EnchantmentCategory TRAPPED_CHEST = EnchantmentCategory.create("trapped_chest",
+	public static final EnchantmentType TRAPPED_CHEST = EnchantmentType.create("trapped_chest",
 			item -> item.equals(Items.TRAPPED_CHEST));
 
-	public static final EnchantmentCategory STORAGE = EnchantmentCategory.create("storage_blocks", item -> isStorage(item));
+	public static final EnchantmentType STORAGE = EnchantmentType.create("storage_blocks", item -> isStorage(item));
 
-	public static final EnchantmentCategory SMELTER = EnchantmentCategory.create("smelting_blocks", item -> isSmelter(item));
+	public static final EnchantmentType SMELTER = EnchantmentType.create("smelting_blocks", item -> isSmelter(item));
 
 	public static boolean isStorage(Item item) {
 		if (item instanceof BlockItem) {

@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.item.enchantment.ArrowKnockbackEnchantment;
+import net.minecraft.enchantment.PunchEnchantment;
 
-@Mixin(ArrowKnockbackEnchantment.class)
+@Mixin(PunchEnchantment.class)
 public class MixinArrowKnockbackEnchantment {
 
 	@Inject(at = @At("HEAD"), method = "getMaxLevel()I", cancellable = true)

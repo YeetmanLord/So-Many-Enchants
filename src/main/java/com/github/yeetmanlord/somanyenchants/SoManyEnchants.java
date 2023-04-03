@@ -22,24 +22,23 @@ import com.github.yeetmanlord.somanyenchants.core.network.NetworkHandler;
 import com.github.yeetmanlord.somanyenchants.core.util.PlayerUtilities;
 import com.github.yeetmanlord.somanyenchants.core.util.Scheduler;
 
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemGroup;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigGuiHandler;
-import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-@Mod("so_many_enchants")
-@Mod.EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.MOD)
+@Mod("so_many_enchants") @Mod.EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.MOD)
 public class SoManyEnchants {
 
 	public static final Scheduler MOD_SCHEDULER = new Scheduler(null);
@@ -50,9 +49,9 @@ public class SoManyEnchants {
 
 	public static SoManyEnchants instance;
 
-	public static HashMap<Player, PlayerUtilities> playerUtils;
+	public static HashMap<PlayerEntity, PlayerUtilities> playerUtils;
 
-	public static HashMap<Player, Scheduler> playerTaskSchedulers = new HashMap<>();
+	public static HashMap<PlayerEntity, Scheduler> playerTaskSchedulers = new HashMap<>();
 
 	public SoManyEnchants() {
 
@@ -65,7 +64,7 @@ public class SoManyEnchants {
 			@Override
 			public void run() {
 
-				ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, () -> new ConfigGuiHandler.ConfigGuiFactory(((minecraft, screen) -> new ConfigMenu())));
+				ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> (mc, screen) -> new ConfigMenu());
 				Config.load();
 
 			}
@@ -73,9 +72,9 @@ public class SoManyEnchants {
 		});
 		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-		modEventBus.addListener(this::doClientStuff);
+		modEventBus.addListener(this::setup);
 
-		modEventBus.addListener(this::registerRenderers);
+		modEventBus.addListener(this::doClientStuff);
 
 		EnchantmentInit.ENCHANTMENTS.register(modEventBus);
 		ContainerTypeInit.CONTAINER_TYPES.register(modEventBus);
@@ -87,14 +86,13 @@ public class SoManyEnchants {
 		ParticleTypesInit.PARTICLES.register(modEventBus);
 		AttributeInit.ATTRIBUTES.register(modEventBus);
 
-		modEventBus.addListener(this::setup);
 		MinecraftForge.EVENT_BUS.register(this);
 
 	}
 
 	private void setup(final FMLCommonSetupEvent event) {
 
-		CreativeModeTab.TAB_DECORATIONS.setEnchantmentCategories(new EnchantmentCategory[] { EnchantmentTypesInit.HOPPER, EnchantmentTypesInit.STORAGE, EnchantmentTypesInit.TRAPPED_CHEST, EnchantmentTypesInit.SMELTER });
+		ItemGroup.TAB_DECORATIONS.setEnchantmentCategories(new EnchantmentType[] { EnchantmentTypesInit.HOPPER, EnchantmentTypesInit.STORAGE, EnchantmentTypesInit.TRAPPED_CHEST, EnchantmentTypesInit.SMELTER });
 		LOGGER.info("PREINIT IS FUNCTIONING");
 		VillagerProfessionInit.fillTradeData();
 		NetworkHandler.init();
@@ -103,22 +101,19 @@ public class SoManyEnchants {
 //        {
 //        	
 //        });
+
 	}
 
 	private void doClientStuff(final FMLClientSetupEvent event) {
 
-	}
-
-	private void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-
-		event.registerBlockEntityRenderer(BlockEntityTypeInit.ENCHANTED_SHULKER_BOX.get(), EnchantedShulkerBoxTileEntityRenderer::new);
-		event.registerBlockEntityRenderer(BlockEntityTypeInit.ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
-		event.registerBlockEntityRenderer(BlockEntityTypeInit.TRAPPED_ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
-		event.registerBlockEntityRenderer(BlockEntityTypeInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(BlockEntityTypeInit.ENCHANTED_SHULKER_BOX.get(), EnchantedShulkerBoxTileEntityRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(BlockEntityTypeInit.ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(BlockEntityTypeInit.TRAPPED_ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(BlockEntityTypeInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get(), EnchantedChestTileEntityRenderer::new);
 
 	}
 
-	public static PlayerUtilities getPlayerUtil(Player player) {
+	public static PlayerUtilities getPlayerUtil(PlayerEntity player) {
 
 		PlayerUtilities util;
 
@@ -133,7 +128,7 @@ public class SoManyEnchants {
 
 	}
 
-	public static Scheduler getScheduler(Player player) {
+	public static Scheduler getScheduler(PlayerEntity player) {
 
 		if (playerTaskSchedulers.get(player) != null) {
 			return playerTaskSchedulers.get(player);

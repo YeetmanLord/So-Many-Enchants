@@ -9,11 +9,11 @@ import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.network.NetworkHandler;
 import com.github.yeetmanlord.somanyenchants.core.util.Scheduler;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ConfigSyncPacket {
 
@@ -29,13 +29,13 @@ public class ConfigSyncPacket {
 
 	}
 
-	public static void encode(ConfigSyncPacket msg, FriendlyByteBuf buff) {
+	public static void encode(ConfigSyncPacket msg, PacketBuffer buff) {
 
 		buff.writeInt(msg.id);
 
 	}
 
-	public static ConfigSyncPacket decode(FriendlyByteBuf buff) {
+	public static ConfigSyncPacket decode(PacketBuffer buff) {
 
 		return new ConfigSyncPacket(buff.readInt());
 
@@ -46,7 +46,7 @@ public class ConfigSyncPacket {
 		NetworkEvent.Context context = contextSup.get();
 
 		context.enqueueWork(() -> {
-			ServerPlayer player = context.getSender();
+			ServerPlayerEntity player = context.getSender();
 			MinecraftServer server = player.getServer();
 
 			if (server.isDedicatedServer()) {

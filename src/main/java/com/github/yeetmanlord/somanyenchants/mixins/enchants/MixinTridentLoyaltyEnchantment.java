@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.item.enchantment.TridentLoyaltyEnchantment;
+import net.minecraft.enchantment.LoyaltyEnchantment;
 
-@Mixin(TridentLoyaltyEnchantment.class)
+@Mixin(LoyaltyEnchantment.class)
 public class MixinTridentLoyaltyEnchantment {
 
 	@Inject(at = @At("HEAD"), method = "getMaxLevel()I", cancellable = true)

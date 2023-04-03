@@ -15,25 +15,25 @@ import com.github.yeetmanlord.somanyenchants.core.util.PlayerUtilities;
 import com.github.yeetmanlord.somanyenchants.core.util.Scheduler;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangeGameModeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 @EventBusSubscriber(modid = SoManyEnchants.MOD_ID, bus = Bus.FORGE)
 public class ArmorEnchantments {
@@ -43,8 +43,11 @@ public class ArmorEnchantments {
 
 		LivingEntity living = event.getEntityLiving();
 
-		if (living instanceof Player player) {
-			boolean flag = event.getSlot().getType() == EquipmentSlot.Type.ARMOR;
+		if (living instanceof PlayerEntity ) {
+			PlayerEntity player = (PlayerEntity)living;
+			boolean flag = event.getSlot() != EquipmentSlotType.MAINHAND && event.getSlot() != EquipmentSlotType.OFFHAND;
+			ItemStack to = event.getTo();
+			ItemStack from = event.getFrom();
 
 			if (flag) {
 				AttributeHelper.apply(EnchantmentInit.HEALTH_BOOST.get(), Attributes.MAX_HEALTH, Config.healthBoost, event, 2d);
@@ -63,10 +66,10 @@ public class ArmorEnchantments {
 
 		LivingEntity living = event.getEntityLiving();
 
-		if (living instanceof Player && Config.flight.isEnabled.get() == true) {
-			Player player = (Player) living;
+		if (living instanceof PlayerEntity && Config.flight.isEnabled.get() == true) {
+			PlayerEntity player = (PlayerEntity) living;
 
-			if (event.getSlot() == EquipmentSlot.FEET && !player.isCreative() && !player.isSpectator()) {
+			if (event.getSlot() == EquipmentSlotType.FEET && !player.isCreative() && !player.isSpectator()) {
 				ItemStack newSlot = event.getTo();
 				ItemStack oldSlot = event.getFrom();
 
@@ -77,7 +80,7 @@ public class ArmorEnchantments {
 						player.abilities.mayfly = true;
 						player.onUpdateAbilities();
 						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {
-							return (ServerPlayer) player;
+							return (ServerPlayerEntity) player;
 						}), new FlyingPacket(true));
 
 					}
@@ -91,7 +94,7 @@ public class ArmorEnchantments {
 						player.abilities.flying = false;
 						player.onUpdateAbilities();
 						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {
-							return (ServerPlayer) player;
+							return (ServerPlayerEntity) player;
 						}), new FlyingPacket(false));
 					}
 
@@ -106,10 +109,10 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void catVision(final PlayerTickEvent event) {
 
-		Player player = event.player;
+		PlayerEntity player = event.player;
 
 		if (ModEnchantmentHelper.hasCatVision(player) && Config.catVision.isEnabled.get() == true) {
-			player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 220, 0, false, false, false));
+			player.addEffect(new EffectInstance(Effects.NIGHT_VISION, 220, 0, false, false, false));
 		}
 
 	}
@@ -119,13 +122,13 @@ public class ArmorEnchantments {
 
 		LivingEntity e = event.getEntityLiving();
 
-		if (e instanceof Player && Config.stepAssist.isEnabled.get() == true) {
-			Player player = (Player) e;
+		if (e instanceof PlayerEntity && Config.stepAssist.isEnabled.get() == true) {
+			PlayerEntity player = (PlayerEntity) e;
 			ItemStack a = event.getFrom();
 			ItemStack b = event.getTo();
 			PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
 
-			if (event.getSlot() == EquipmentSlot.FEET) {
+			if (event.getSlot() == EquipmentSlotType.FEET) {
 
 				if (ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) > 0 && ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) <= 3) {
 					player.maxUpStep = player.maxUpStep - ModEnchantmentHelper.getEnchantmentLevel(EnchantmentInit.STEP_ASSIST.get(), a) * 0.5f;
@@ -158,7 +161,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void updateStepAssist(final PlayerTickEvent event) {
 
-		Player player = event.player;
+		PlayerEntity player = event.player;
 		PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
 
 		if (ModEnchantmentHelper.getStepAssistLevel(player) > 0 && Config.stepAssist.isEnabled.get() == true) {
@@ -175,7 +178,7 @@ public class ArmorEnchantments {
 		public static void updatePlayerFlying(boolean flying) {
 
 			@SuppressWarnings("resource")
-			LocalPlayer player = Minecraft.getInstance().player;
+			ClientPlayerEntity player = Minecraft.getInstance().player;
 			player.abilities.mayfly = flying;
 			player.onUpdateAbilities();
 
@@ -186,7 +189,7 @@ public class ArmorEnchantments {
 	@SubscribeEvent
 	public static void switchGM(final PlayerChangeGameModeEvent event) {
 
-		Player player = event.getPlayer();
+		PlayerEntity player = event.getPlayer();
 		Scheduler sch = SoManyEnchants.getScheduler(player);
 		sch.schedule(() -> new Runnable() {
 
@@ -200,7 +203,7 @@ public class ArmorEnchantments {
 					player.abilities.mayfly = true;
 					player.onUpdateAbilities();
 					NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> {
-						return (ServerPlayer) player;
+						return (ServerPlayerEntity) player;
 					}), new FlyingPacket(true));
 				}
 
@@ -221,16 +224,19 @@ public class ArmorEnchantments {
 		}
 
 		wait = 0;
-		Player player = event.player;
+		PlayerEntity player = event.player;
 		HashMap<EffectEnchantment, Short> effectEnchs = new HashMap<>();
 
 		for (ItemStack stack : player.inventory.armor) {
 			stack.getEnchantmentTags().forEach(tag -> {
 
-				if (tag instanceof CompoundTag nbt) {
+				if (tag instanceof CompoundNBT ) {
+					CompoundNBT nbt = (CompoundNBT)tag;
 					String name = nbt.getString("id");
 
-					if (Registry.ENCHANTMENT.get(new ResourceLocation(name)) instanceof EffectEnchantment ench) {
+					if (Registry.ENCHANTMENT.get(new ResourceLocation(name)) instanceof EffectEnchantment ) {
+						EffectEnchantment ench = (EffectEnchantment) Registry.ENCHANTMENT
+								.get(new ResourceLocation(name));
 						short level = nbt.getShort("lvl");
 
 						if (effectEnchs.containsKey(ench)) {

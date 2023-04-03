@@ -3,50 +3,48 @@ package com.github.yeetmanlord.somanyenchants.common.blocks.smelters.blast_furna
 import java.util.Random;
 
 import com.github.yeetmanlord.somanyenchants.common.blocks.smelters.AbstractEnchantedSmelterBlock;
-import com.github.yeetmanlord.somanyenchants.core.init.BlockEntityTypeInit;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class EnchantedBlastFurnaceBlock extends AbstractEnchantedSmelterBlock
 {
 
-	public EnchantedBlastFurnaceBlock(BlockBehaviour.Properties properties)
+	public EnchantedBlastFurnaceBlock(AbstractBlock.Properties properties)
 	{
 		super(properties);
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockPos pos, BlockState state)
+	public TileEntity newBlockEntity(IBlockReader reader)
 	{
-		return new EnchantedBlastFurnaceTileEntity(pos, state);
+		return new EnchantedBlastFurnaceTileEntity();
 	}
 
 
 	@Override
-	protected void interactWith(Level worldIn, BlockPos pos, Player player)
+	protected void interactWith(World worldIn, BlockPos pos, PlayerEntity player)
 	{
-		BlockEntity tileentity = worldIn.getBlockEntity(pos);
+		TileEntity tileentity = worldIn.getBlockEntity(pos);
 
 		if (tileentity instanceof EnchantedBlastFurnaceTileEntity)
 		{
-			player.openMenu((MenuProvider) tileentity);
+			player.openMenu((INamedContainerProvider) tileentity);
 			player.awardStat(Stats.INTERACT_WITH_BLAST_FURNACE);
 		}
 
@@ -54,7 +52,7 @@ public class EnchantedBlastFurnaceBlock extends AbstractEnchantedSmelterBlock
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand)
+	public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand)
 	{
 
 		if (stateIn.getValue(LIT))
@@ -65,7 +63,7 @@ public class EnchantedBlastFurnaceBlock extends AbstractEnchantedSmelterBlock
 
 			if (rand.nextDouble() < 0.1D)
 			{
-				worldIn.playLocalSound(d0, d1, d2, SoundEvents.BLASTFURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F,
+				worldIn.playLocalSound(d0, d1, d2, SoundEvents.BLASTFURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS, 1.0F,
 						1.0F, false);
 			}
 
@@ -84,11 +82,5 @@ public class EnchantedBlastFurnaceBlock extends AbstractEnchantedSmelterBlock
 	@Override
 	public Block getUnenchantedBlock()
 	{ return Blocks.BLAST_FURNACE; }
-	
-	@Override
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state,
-			BlockEntityType<T> type) {
-		return createFurnaceTicker(world, type, BlockEntityTypeInit.ENCHANTED_BLAST_FURNACE.get());
-	}
 
 }

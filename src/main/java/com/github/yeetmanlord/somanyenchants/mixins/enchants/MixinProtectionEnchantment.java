@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.item.enchantment.ProtectionEnchantment;
+import net.minecraft.util.DamageSource;
+import net.minecraft.enchantment.ProtectionEnchantment;
 
 @Mixin(ProtectionEnchantment.class)
 public class MixinProtectionEnchantment {
@@ -26,7 +26,7 @@ public class MixinProtectionEnchantment {
 	@Shadow
 	private ProtectionEnchantment.Type type;
 
-	@Inject(at = @At("HEAD"), method = "getDamageProtection(ILnet/minecraft/world/damagesource/DamageSource;)I", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "getDamageProtection(ILnet/minecraft/util/DamageSource;)I", cancellable = true)
 	/**
 	 * Modifies the logic of each protection type to make less linear and to prevent
 	 * waste (Before this overwrite maxed protection levels would be the same as

@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.CombatRules;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.CombatRules;
 
 @Mixin(CombatRules.class)
 public class MixinCombatRules {
@@ -26,7 +26,7 @@ public class MixinCombatRules {
 
 		if (Config.protectionEnchantments.isEnabled.get()) {
 			float f = 2.0F + toughnessAttribute / 4.0F;
-			float f1 = Mth.clamp(totalArmor - damage / f, totalArmor * 0.2F, 1024F);
+			float f1 = MathHelper.clamp(totalArmor - damage / f, totalArmor * 0.2F, 1024F);
 			callback.setReturnValue(damage * (1.0F - f1 / 25F));
 		}
 
@@ -44,7 +44,7 @@ public class MixinCombatRules {
 	private static void getDamageAfterMagicAbsorb(float damage, float enchantModifiers, CallbackInfoReturnable<Float> callback) {
 
 		if (Config.protectionEnchantments.isEnabled.get()) {
-			float f = Mth.clamp(enchantModifiers, 0.0F, 24.5F);
+			float f = MathHelper.clamp(enchantModifiers, 0.0F, 24.5F);
 			callback.setReturnValue(damage * (1.0F - f / 25F));
 		}
 

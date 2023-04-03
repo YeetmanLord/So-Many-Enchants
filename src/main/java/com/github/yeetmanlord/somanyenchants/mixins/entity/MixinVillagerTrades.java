@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.entity.merchant.villager.VillagerTrades;
 
-@Mixin(VillagerTrades.EnchantBookForEmeralds.class)
+@Mixin(VillagerTrades.EnchantedBookForEmeraldsTrade.class)
 public class MixinVillagerTrades {
 	@Shadow
 	private int villagerXp;
