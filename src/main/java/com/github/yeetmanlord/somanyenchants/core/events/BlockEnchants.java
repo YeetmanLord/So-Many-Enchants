@@ -592,7 +592,7 @@ public class BlockEnchants {
                         if (entity instanceof LivingEntity living) {
 
                             if (!EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(living.getMainHandItem()).keySet(), enchant) || !enchant.category.canEnchant(living.getMainHandItem().getItem())) {
-                                return;
+                                continue;
                             }
 
                             if (EnchantmentTypesInit.STORAGE.canEnchant(living.getMainHandItem().getItem()) && enchant == EnchantmentInit.CAVERNOUS_STORAGE.get() && Config.cavernousStorage.isEnabled.get()) {
