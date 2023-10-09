@@ -32,6 +32,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(value = Dist.CLIENT, _interface = LidBlockEntity.class)
 public class EnchantedChestTileEntity extends RandomizableContainerBlockEntity implements LidBlockEntity {
@@ -120,7 +123,7 @@ public class EnchantedChestTileEntity extends RandomizableContainerBlockEntity i
 				d2 += (double) direction.getStepZ() * 0.5D;
 			}
 
-			p_155339_.playSound((Player) null, d0, d1, d2, p_155342_, SoundSource.BLOCKS, 0.5F,
+			p_155339_.playSound(null, d0, d1, d2, p_155342_, SoundSource.BLOCKS, 0.5F,
 					p_155339_.random.nextFloat() * 0.1F + 0.9F);
 		}
 	}
@@ -202,9 +205,9 @@ public class EnchantedChestTileEntity extends RandomizableContainerBlockEntity i
 	}
 
 	@Override
-	public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(
+	public <T> @NotNull LazyOptional<T> getCapability(
 			net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
-		if (!this.remove && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (!this.remove && cap == ForgeCapabilities.ITEM_HANDLER) {
 			if (this.chestHandler == null)
 				this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
 			return this.chestHandler.cast();

@@ -65,9 +65,9 @@ public class PlayerAttributeHandler {
 
 	public static void reset(Player player) {
 
-		Attribute[] attr = new Attribute[] { Attributes.ARMOR, Attributes.ARMOR_TOUGHNESS, Attributes.ATTACK_SPEED, Attributes.MAX_HEALTH, Attributes.KNOCKBACK_RESISTANCE, AttributeInit.ATTACK_DISTANCE.get(), ForgeMod.REACH_DISTANCE.get() };
+		Attribute[] attr = new Attribute[] { Attributes.ARMOR, Attributes.ARMOR_TOUGHNESS, Attributes.ATTACK_SPEED, Attributes.MAX_HEALTH, Attributes.KNOCKBACK_RESISTANCE, AttributeInit.ATTACK_DISTANCE.get(), ForgeMod.ENTITY_REACH.get() };
 
-		for (ItemStack armorPiece : player.inventory.armor) {
+		for (ItemStack armorPiece : player.getInventory().armor) {
 
 			for (Attribute x : attr) {
 				removeAttribute(player, x, armorPiece);
@@ -167,11 +167,11 @@ public class PlayerAttributeHandler {
 					if (x != null) {
 
 						if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.ATTACK_REACH.get(), stack)) {
-							event.getToolTip().add(x, (Component.literal(" " + String.valueOf(ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(playerIn.getAttributeBaseValue(AttributeInit.ATTACK_DISTANCE.get()))) + " ").append(Component.translatable(AttributeInit.ATTACK_DISTANCE.get().getDescriptionId())).withStyle(ChatFormatting.DARK_GREEN)));
+							event.getToolTip().add(x, (Component.literal(" " + ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(playerIn.getAttributeBaseValue(AttributeInit.ATTACK_DISTANCE.get())) + " ").append(Component.translatable(AttributeInit.ATTACK_DISTANCE.get().getDescriptionId())).withStyle(ChatFormatting.DARK_GREEN)));
 						}
 
 						if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.BLOCK_REACH.get(), stack)) {
-							event.getToolTip().add(x, (Component.literal(" " + String.valueOf(ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(playerIn.getAttributeBaseValue(ForgeMod.REACH_DISTANCE.get()))) + " Block reach distance")).withStyle(ChatFormatting.DARK_GREEN));
+							event.getToolTip().add(x, (Component.literal(" " + ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(playerIn.getAttributeBaseValue(ForgeMod.ENTITY_REACH.get())) + " Block reach distance")).withStyle(ChatFormatting.DARK_GREEN));
 						}
 
 					}

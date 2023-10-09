@@ -53,7 +53,7 @@ public class LightBladeEnchant extends ModEnchantment {
 	@Override
 	protected boolean checkCompatibility(Enchantment ench) {
 
-		return ench == EnchantmentInit.HEAVY_BLADE.get() || ench instanceof DamageEnchantment || ench == EnchantmentInit.ATTACK_REACH.get() || ench == EnchantmentInit.BLOCK_REACH.get() ? false : super.checkCompatibility(ench);
+		return ench != EnchantmentInit.HEAVY_BLADE.get() && !(ench instanceof DamageEnchantment) && ench != EnchantmentInit.ATTACK_REACH.get() && ench != EnchantmentInit.BLOCK_REACH.get() && super.checkCompatibility(ench);
 
 	}
 

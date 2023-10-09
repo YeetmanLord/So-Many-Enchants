@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -79,8 +80,7 @@ public class VillagerProfessionInit {
 
         @Override
         public MerchantOffer getOffer(Entity trader, RandomSource rand) {
-
-            List<Enchantment> list = Registry.ENCHANTMENT.stream().collect(Collectors.toList());
+            List<Enchantment> list = BuiltInRegistries.ENCHANTMENT.stream().collect(Collectors.toList());
             Enchantment enchantment = list.get(rand.nextInt(list.size()));
             int i = Mth.nextInt(rand, enchantment.getMaxLevel(), enchantment.getMaxLevel());
 

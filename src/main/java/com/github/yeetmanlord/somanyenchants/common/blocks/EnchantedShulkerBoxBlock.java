@@ -50,7 +50,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -90,9 +90,6 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 	 * The type of render function called. MODEL for mixed tesr and static model,
 	 * MODELBLOCK_ANIMATED for TESR-only, LIQUID for vanilla liquids, INVISIBLE to
 	 * skip all rendering
-	 * 
-	 * @deprecated call via {@link IBlockState#getRenderType()} whenever possible.
-	 *             Implementing/overriding is fine.
 	 */
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
@@ -108,8 +105,7 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 			return InteractionResult.CONSUME;
 		} else {
 			BlockEntity tileentity = worldIn.getBlockEntity(pos);
-			if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
-				EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) tileentity;
+			if (tileentity instanceof EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity) {
 				if (canOpen(state, worldIn, pos, EnchantedShulkerBoxTileEntity)) {
 					player.openMenu(EnchantedShulkerBoxTileEntity);
 					player.awardStat(Stats.OPEN_SHULKER_BOX);
@@ -151,8 +147,7 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 	@Override
 	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
 		BlockEntity tileentity = worldIn.getBlockEntity(pos);
-		if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
-			EnchantedShulkerBoxTileEntity enchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) tileentity;
+		if (tileentity instanceof EnchantedShulkerBoxTileEntity enchantedShulkerBoxTileEntity) {
 			if (!worldIn.isClientSide && player.isCreative() && !enchantedShulkerBoxTileEntity.isEmpty()) {
 				ItemStack itemstack = getColoredItemStack(this.getColor());
 				CompoundTag compoundnbt = enchantedShulkerBoxTileEntity.saveToNbt(new CompoundTag());
@@ -177,11 +172,10 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 	}
 
 	@Override
-	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+	public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
 		BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
-		if (tileentity instanceof EnchantedShulkerBoxTileEntity) {
-			EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity = (EnchantedShulkerBoxTileEntity) tileentity;
-			builder = builder.withDynamicDrop(CONTENTS, (context, stackConsumer) -> {
+		if (tileentity instanceof EnchantedShulkerBoxTileEntity EnchantedShulkerBoxTileEntity) {
+			builder = builder.withDynamicDrop(CONTENTS, (stackConsumer) -> {
 				for (int i = 0; i < EnchantedShulkerBoxTileEntity.getContainerSize(); ++i) {
 					stackConsumer.accept(EnchantedShulkerBoxTileEntity.getItem(i));
 				}
@@ -257,10 +251,6 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 
 	}
 
-	/**
-	 * @deprecated call via {@link IBlockState#getMobilityFlag()} whenever possible.
-	 *             Implementing/overriding is fine.
-	 */
 	@Override
 	public PushReaction getPistonPushReaction(BlockState state) {
 		return PushReaction.DESTROY;
@@ -274,20 +264,11 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 				: Shapes.block();
 	}
 
-	/**
-	 * @deprecated call via {@link IBlockState#hasComparatorInputOverride()}
-	 *             whenever possible. Implementing/overriding is fine.
-	 */
 	@Override
 	public boolean hasAnalogOutputSignal(BlockState state) {
 		return true;
 	}
 
-	/**
-	 * @deprecated call via
-	 *             {@link IBlockState#getComparatorInputOverride(World,BlockPos)}
-	 *             whenever possible. Implementing/overriding is fine.
-	 */
 	@Override
 	public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
 		return AbstractContainerMenu.getRedstoneSignalFromContainer((Container) worldIn.getBlockEntity(pos));
@@ -369,25 +350,11 @@ public class EnchantedShulkerBoxBlock extends BaseEntityBlock {
 		return new ItemStack(getBlockByColor(colorIn));
 	}
 
-	/**
-	 * Returns the blockstate with the given rotation from the passed blockstate. If
-	 * inapplicable, returns the passed blockstate.
-	 * 
-	 * @deprecated call via {@link IBlockState#withRotation(Rotation)} whenever
-	 *             possible. Implementing/overriding is fine.
-	 */
 	@Override
 	public BlockState rotate(BlockState state, Rotation rot) {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
-	/**
-	 * Returns the blockstate with the given mirror of the passed blockstate. If
-	 * inapplicable, returns the passed blockstate.
-	 * 
-	 * @deprecated call via {@link IBlockState#withMirror(Mirror)} whenever
-	 *             possible. Implementing/overriding is fine.
-	 */
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn) {
 		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));

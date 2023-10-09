@@ -84,7 +84,7 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	@Override public Optional<Container>acceptNone(){return Optional.empty();}};
 	private static final DoubleBlockCombiner.Combiner<EnchantedChestTileEntity, Optional<MenuProvider>> MENU_PROVIDER_COMBINER=new DoubleBlockCombiner.Combiner<EnchantedChestTileEntity,Optional<MenuProvider>>(){@Override public Optional<MenuProvider>acceptDouble(final EnchantedChestTileEntity p_51604_,final EnchantedChestTileEntity p_51605_){final Container container=new CompoundContainer(p_51604_,p_51605_);return Optional.of(new MenuProvider(){@Override @Nullable public AbstractContainerMenu createMenu(int p_51622_,Inventory p_51623_,Player p_51624_){if(p_51604_.canOpen(p_51624_)&&p_51605_.canOpen(p_51624_)){p_51604_.unpackLootTable(p_51623_.player);p_51605_.unpackLootTable(p_51623_.player);return EnchantedChestContainer.createGeneric9X8(p_51622_,p_51623_,container);}else{return null;}}
 
-	@Override public Component getDisplayName(){if(p_51604_.hasCustomName()){return p_51604_.getDisplayName();}else{return(Component)(p_51605_.hasCustomName()?p_51605_.getDisplayName():Component.translatable("container.enchantedChestDouble"));}}});}
+	@Override public Component getDisplayName(){if(p_51604_.hasCustomName()){return p_51604_.getDisplayName();}else{return p_51605_.hasCustomName()?p_51605_.getDisplayName():Component.translatable("container.enchantedChestDouble");}}});}
 
 	@Override public Optional<MenuProvider>acceptSingle(EnchantedChestTileEntity p_51602_){return Optional.of(p_51602_);}
 
@@ -253,8 +253,8 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	@Nullable
 	public static Container getContainer(EnchantedChestBlock p_51512_, BlockState p_51513_, Level p_51514_,
 			BlockPos p_51515_, boolean p_51516_) {
-		return p_51512_.combine(p_51513_, p_51514_, p_51515_, p_51516_).<Optional<Container>>apply(CHEST_COMBINER)
-				.orElse((Container) null);
+		return p_51512_.combine(p_51513_, p_51514_, p_51515_, p_51516_).apply(CHEST_COMBINER)
+				.orElse(null);
 	}
 
 	public DoubleBlockCombiner.NeighborCombineResult<? extends EnchantedChestTileEntity> combine(BlockState p_51544_,
@@ -275,8 +275,8 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 	@Override
 	@Nullable
 	public MenuProvider getMenuProvider(BlockState p_51574_, Level p_51575_, BlockPos p_51576_) {
-		return this.combine(p_51574_, p_51575_, p_51576_, false).<Optional<MenuProvider>>apply(MENU_PROVIDER_COMBINER)
-				.orElse((MenuProvider) null);
+		return this.combine(p_51574_, p_51575_, p_51576_, false).apply(MENU_PROVIDER_COMBINER)
+				.orElse(null);
 	}
 
 	public static DoubleBlockCombiner.Combiner<EnchantedChestTileEntity, Float2FloatFunction> opennessCombiner(
@@ -327,9 +327,9 @@ public class EnchantedChestBlock extends BaseEntityBlock implements SimpleWaterl
 
 	private static boolean isCatSittingOnChest(LevelAccessor p_51564_, BlockPos p_51565_) {
 		List<Cat> list = p_51564_.getEntitiesOfClass(Cat.class,
-				new AABB((double) p_51565_.getX(), (double) (p_51565_.getY() + 1), (double) p_51565_.getZ(),
-						(double) (p_51565_.getX() + 1), (double) (p_51565_.getY() + 2),
-						(double) (p_51565_.getZ() + 1)));
+				new AABB(p_51565_.getX(), p_51565_.getY() + 1, p_51565_.getZ(),
+                        p_51565_.getX() + 1, p_51565_.getY() + 2,
+                        p_51565_.getZ() + 1));
 		if (!list.isEmpty()) {
 			for (Cat cat : list) {
 				if (cat.isInSittingPose()) {

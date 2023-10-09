@@ -30,7 +30,7 @@ public class CriticalEnchant extends ModEnchantment {
 	@Override
 	public boolean canEnchant(ItemStack stack) {
 
-		boolean flag = stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem ? true : EnchantmentCategory.WEAPON.canEnchant(stack.getItem());
+		boolean flag = stack.getItem() instanceof TridentItem || stack.getItem() instanceof AxeItem || EnchantmentCategory.WEAPON.canEnchant(stack.getItem());
 		return flag && this.config.isEnabled.get();
 
 	}

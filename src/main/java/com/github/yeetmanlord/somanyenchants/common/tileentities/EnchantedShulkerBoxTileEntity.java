@@ -55,7 +55,7 @@ public class EnchantedShulkerBoxTileEntity extends RandomizableContainerBlockEnt
 	}
 
 	public EnchantedShulkerBoxTileEntity(BlockPos pos, BlockState state) {
-		this((DyeColor) null, pos, state);
+		this(null, pos, state);
 		this.needsColorFromWorld = true;
 	}
 
@@ -104,7 +104,7 @@ public class EnchantedShulkerBoxTileEntity extends RandomizableContainerBlockEnt
 		if (state.getBlock() instanceof EnchantedShulkerBoxBlock) {
 			Direction direction = state.getValue(EnchantedShulkerBoxBlock.FACING);
 			AABB aabb = Shulker.getProgressDeltaAabb(direction, this.progressOld, this.progress).move(pos);
-			List<Entity> list = world.getEntities((Entity) null, aabb);
+			List<Entity> list = world.getEntities(null, aabb);
 			if (!list.isEmpty()) {
 				for (int i = 0; i < list.size(); ++i) {
 					Entity entity = list.get(i);
@@ -166,7 +166,7 @@ public class EnchantedShulkerBoxTileEntity extends RandomizableContainerBlockEnt
 			++this.openCount;
 			this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, this.openCount);
 			if (this.openCount == 1) {
-				this.level.playSound((Player) null, this.worldPosition, SoundEvents.SHULKER_BOX_OPEN,
+				this.level.playSound(null, this.worldPosition, SoundEvents.SHULKER_BOX_OPEN,
 						SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
 			}
 		}
@@ -179,7 +179,7 @@ public class EnchantedShulkerBoxTileEntity extends RandomizableContainerBlockEnt
 			--this.openCount;
 			this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, this.openCount);
 			if (this.openCount <= 0) {
-				this.level.playSound((Player) null, this.worldPosition, SoundEvents.SHULKER_BOX_CLOSE,
+				this.level.playSound(null, this.worldPosition, SoundEvents.SHULKER_BOX_CLOSE,
 						SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
 			}
 		}

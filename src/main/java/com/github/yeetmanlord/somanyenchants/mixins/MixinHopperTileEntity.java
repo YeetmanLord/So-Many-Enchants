@@ -43,7 +43,7 @@ public class MixinHopperTileEntity {
 
 		if (Config.cavernousStorage.isEnabled.get()) {
 			Container container = null;
-			BlockPos blockpos = new BlockPos(p_59349_, p_59350_, p_59351_);
+			BlockPos blockpos = BlockPos.containing(p_59349_, p_59350_, p_59351_);
 			BlockState blockstate = p_59348_.getBlockState(blockpos);
 			Block block = blockstate.getBlock();
 

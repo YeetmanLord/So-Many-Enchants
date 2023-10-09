@@ -20,8 +20,7 @@ public class WeaponAttributes {
 	@SubscribeEvent
 	public static void mainhand(final LivingEquipmentChangeEvent event) {
 
-		if (event.getEntity() instanceof Player) {
-			Player player = (Player) event.getEntity();
+		if (event.getEntity() instanceof Player player) {
 			EquipmentSlot slot = event.getSlot();
 
 			if (slot == EquipmentSlot.MAINHAND) {

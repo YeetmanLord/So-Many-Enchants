@@ -1,5 +1,6 @@
 package com.github.yeetmanlord.somanyenchants.core.util;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -46,7 +47,7 @@ public class NBTHelper
 			CompoundTag tag = stack.getTag();
 			if (tag.contains("AttributeData")) {
 				CompoundTag data = tag.getCompound("AttributeData");
-				return data.getDouble(Registry.ATTRIBUTE.getKey(attr).toString());
+				return data.getDouble(BuiltInRegistries.ATTRIBUTE.getKey(attr).toString());
 			}
 		}
 		return 0d;
@@ -58,7 +59,7 @@ public class NBTHelper
 		if(nbt.contains("AttributeData")) {
 			tag = nbt.getCompound("AttributeData");
 		}
-		tag.putDouble(Registry.ATTRIBUTE.getKey(attr).toString(), value);
+		tag.putDouble(BuiltInRegistries.ATTRIBUTE.getKey(attr).toString(), value);
 		nbt.put("AttributeData", tag);
 	}
 

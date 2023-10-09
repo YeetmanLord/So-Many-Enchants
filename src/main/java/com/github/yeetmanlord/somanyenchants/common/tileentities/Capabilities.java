@@ -2,6 +2,7 @@ package com.github.yeetmanlord.somanyenchants.common.tileentities;
 
 import java.util.Optional;
 
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -14,7 +15,6 @@ import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -77,7 +77,7 @@ public class Capabilities {
             BlockEntity tileentity = worldIn.getBlockEntity(blockpos);
             if (tileentity != null)
             {
-                return tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)
+                return tileentity.getCapability(ForgeCapabilities.ITEM_HANDLER, side)
                     .map(capability -> ImmutablePair.<IItemHandler, Object>of(capability, tileentity));
             }
         }

@@ -8,6 +8,7 @@ import com.github.yeetmanlord.somanyenchants.common.container.EnchantedChestCont
 import com.github.yeetmanlord.somanyenchants.common.container.EnchantedHopperContainer;
 import com.github.yeetmanlord.somanyenchants.common.container.EnchantedShulkerBoxContainer;
 
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -20,34 +21,34 @@ public class ContainerTypeInit {
 
 	public static final RegistryObject<MenuType<EnchantedHopperContainer>> ENCHANTED_HOPPER = CONTAINER_TYPES
 			.register("enchanted_hopper",
-					() -> new MenuType<EnchantedHopperContainer>(EnchantedHopperContainer::new));
+					() -> new MenuType<EnchantedHopperContainer>(EnchantedHopperContainer::new, FeatureFlags.VANILLA_SET));
 
 	public static final RegistryObject<MenuType<EnchantedChestContainer>> GENERIC_9X8 = CONTAINER_TYPES.register(
-			"generic_9x8", () -> new MenuType<EnchantedChestContainer>(EnchantedChestContainer::createGeneric9X8));
+			"generic_9x8", () -> new MenuType<EnchantedChestContainer>(EnchantedChestContainer::createGeneric9X8, FeatureFlags.VANILLA_SET));
 
 	public static final RegistryObject<MenuType<EnchantedChestContainer>> GENERIC_9X4 = CONTAINER_TYPES.register(
-			"generic_9x4", () -> new MenuType<EnchantedChestContainer>(EnchantedChestContainer::createGeneric9X4));
+			"generic_9x4", () -> new MenuType<EnchantedChestContainer>(EnchantedChestContainer::createGeneric9X4, FeatureFlags.VANILLA_SET));
 
 	public static final RegistryObject<MenuType<EnchantedChestContainer>> GENERIC_9X3 = CONTAINER_TYPES.register(
-			"generic_9x3", () -> new MenuType<EnchantedChestContainer>(EnchantedChestContainer::createGeneric9X3));
+			"generic_9x3", () -> new MenuType<EnchantedChestContainer>(EnchantedChestContainer::createGeneric9X3, FeatureFlags.VANILLA_SET));
 
 	public static final RegistryObject<MenuType<EnchantedChestContainer>> GENERIC_9X6 = CONTAINER_TYPES.register(
-			"generic_9x6", () -> new MenuType<EnchantedChestContainer>(EnchantedChestContainer::createGeneric9X6));
+			"generic_9x6", () -> new MenuType<EnchantedChestContainer>(EnchantedChestContainer::createGeneric9X6, FeatureFlags.VANILLA_SET));
 
 	public static final RegistryObject<MenuType<EnchantedShulkerBoxContainer>> ENCHANTED_SHULKER_BOX = CONTAINER_TYPES
 			.register("enchanted_shulker_box_container",
-					() -> new MenuType<EnchantedShulkerBoxContainer>(EnchantedShulkerBoxContainer::new));
+					() -> new MenuType<EnchantedShulkerBoxContainer>(EnchantedShulkerBoxContainer::new, FeatureFlags.VANILLA_SET));
 
 	public static final RegistryObject<MenuType<EnchantedFurnaceContainer>> ENCHANTED_FURNACE = CONTAINER_TYPES
 			.register("enchanted_furnace",
-					() -> new MenuType<EnchantedFurnaceContainer>(EnchantedFurnaceContainer::new));
+					() -> new MenuType<EnchantedFurnaceContainer>(EnchantedFurnaceContainer::new, FeatureFlags.VANILLA_SET));
 	
 	public static final RegistryObject<MenuType<EnchantedBlastFurnaceContainer>> ENCHANTED_BLAST_FURNACE = CONTAINER_TYPES
 			.register("enchanted_blast_furnace",
-					() -> new MenuType<EnchantedBlastFurnaceContainer>(EnchantedBlastFurnaceContainer::new));
+					() -> new MenuType<EnchantedBlastFurnaceContainer>(EnchantedBlastFurnaceContainer::new, FeatureFlags.VANILLA_SET));
 	
 	public static final RegistryObject<MenuType<EnchantedSmokerContainer>> ENCHANTED_SMOKER = CONTAINER_TYPES
 			.register("enchanted_smoker",
-					() -> new MenuType<EnchantedSmokerContainer>(EnchantedSmokerContainer::new));
+					() -> new MenuType<EnchantedSmokerContainer>(EnchantedSmokerContainer::new, FeatureFlags.VANILLA_SET));
 
 }

@@ -17,11 +17,8 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.SharedConstants;
 import net.minecraft.Util;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
+import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -46,10 +43,13 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, IEnchantableBlock {
@@ -222,13 +222,10 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 	}
 
 	private static void add(Map<Item, Integer> p_204303_, TagKey<Item> p_204304_, int p_204305_) {
-
-		for (Holder<Item> holder : Registry.ITEM.getTagOrEmpty(p_204304_)) {
-
+		for (Holder<Item> holder : BuiltInRegistries.ITEM.getTagOrEmpty(p_204304_)) {
 			if (!isNeverAFurnaceFuel(holder.value())) {
 				p_204303_.put(holder.value(), p_204305_);
 			}
-
 		}
 
 	}
@@ -240,7 +237,7 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 		if (isNeverAFurnaceFuel(item)) {
 
 			if (SharedConstants.IS_RUNNING_IN_IDE) {
-				throw (IllegalStateException) Util.pauseInIde(new IllegalStateException("A developer tried to explicitly make fire resistant item " + item.getName((ItemStack) null).getString() + " a furnace fuel. That will not work!"));
+				throw Util.pauseInIde(new IllegalStateException("A developer tried to explicitly make fire resistant item " + item.getName(null).getString() + " a furnace fuel. That will not work!"));
 			}
 
 		}
@@ -308,7 +305,7 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 			Recipe<?> recipe = world.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) smelter.recipeType, smelter, world).orElse(null);
 			int i = smelter.getMaxStackSize();
 
-			if (!smelter.isLit() && smelter.canBurn(recipe, smelter.items, i)) {
+			if (!smelter.isLit() && smelter.canBurn(world.registryAccess(), recipe, smelter.items, i)) {
 				smelter.litTime = smelter.getBurnDuration(itemstack);
 				smelter.litDuration = smelter.litTime;
 
@@ -328,14 +325,14 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 
 			}
 
-			if (smelter.isLit() && smelter.canBurn(recipe, smelter.items, i)) {
+			if (smelter.isLit() && smelter.canBurn(world.registryAccess(), recipe, smelter.items, i)) {
 				++smelter.cookingProgress;
 
 				if (smelter.cookingProgress == smelter.cookingTotalTime) {
 					smelter.cookingProgress = 0;
 					smelter.cookingTotalTime = smelter.getTotalCookTime();
 
-					if (smelter.burn(recipe, smelter.items, i)) {
+					if (smelter.burn(world.registryAccess(), recipe, smelter.items, i)) {
 						smelter.setRecipeUsed(recipe);
 					}
 
@@ -363,10 +360,9 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 
 	}
 
-	private boolean canBurn(@Nullable Recipe<?> recipe, NonNullList<ItemStack> items, int maxStackSize) {
-
+	private boolean canBurn(RegistryAccess regAccess, @Nullable Recipe<?> recipe, NonNullList<ItemStack> items, int maxStackSize) {
 		if (!items.get(0).isEmpty() && recipe != null) {
-			ItemStack itemstack = ((Recipe<WorldlyContainer>) recipe).assemble(this);
+			ItemStack itemstack = ((Recipe<WorldlyContainer>) recipe).assemble(this, regAccess);
 
 			if (itemstack.isEmpty()) {
 				return false;
@@ -377,44 +373,27 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 				if (itemstack1.isEmpty()) {
 					return true;
 				}
-				else if (!itemstack1.sameItem(itemstack)) {
+				else if (!ItemStack.isSameItem(itemstack1, itemstack)) {
 					return false;
 				}
-				else if (itemstack1.getCount() + itemstack.getCount() <= maxStackSize && itemstack1.getCount() + itemstack.getCount() <= itemstack1.getMaxStackSize()) { // Forge
-																																											// fix:
-																																											// make
-																																											// furnace
-																																											// respect
-																																											// stack
-																																											// sizes
-																																											// in
-																																											// furnace
-																																											// recipes
+				else if (itemstack1.getCount() + itemstack.getCount() <= maxStackSize && itemstack1.getCount() + itemstack.getCount() <= itemstack1.getMaxStackSize()) { // Forge fix: make furnace respect stack sizes in furnace recipes
 					return true;
 				}
 				else {
-					return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize(); // Forge fix:
-																										// make furnace
-																										// respect stack
-																										// sizes in
-																										// furnace
-																										// recipes
+					return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize(); // Forge fix: make furnace respect stack sizes in furnace recipes
 				}
-
 			}
-
 		}
 		else {
 			return false;
 		}
-
 	}
 
-	private boolean burn(@Nullable Recipe<?> recipe, NonNullList<ItemStack> items, int stackSize) {
+	private boolean burn(RegistryAccess regAccess, @Nullable Recipe<?> recipe, NonNullList<ItemStack> items, int stackSize) {
 
-		if (recipe != null && this.canBurn(recipe, items, stackSize)) {
+		if (recipe != null && this.canBurn(regAccess, recipe, items, stackSize)) {
 			ItemStack itemstack = items.get(0);
-			ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble(this);
+			ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble(this, regAccess);
 			ItemStack itemstack2 = items.get(2);
 
 			if (itemstack2.isEmpty()) {
@@ -488,9 +467,7 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 		if (direction == Direction.DOWN && index == 1) {
 			Item item = stack.getItem();
 
-			if (item != Items.WATER_BUCKET && item != Items.BUCKET) {
-				return false;
-			}
+            return item == Items.WATER_BUCKET || item == Items.BUCKET;
 
 		}
 
@@ -559,7 +536,7 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 	public void setItem(int index, ItemStack stack) {
 
 		ItemStack itemstack = this.items.get(index);
-		boolean flag = !stack.isEmpty() && stack.sameItem(itemstack) && ItemStack.tagMatches(stack, itemstack);
+		boolean flag = !stack.isEmpty() && ItemStack.isSameItem(stack, itemstack) && ItemStack.isSameItemSameTags(stack, itemstack);
 		this.items.set(index, stack);
 
 		if (stack.getCount() > this.getMaxStackSize()) {
@@ -635,13 +612,12 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 	}
 
 	@Override
-	public void awardUsedRecipes(Player player) {
-
+	public void awardUsedRecipes(@NotNull Player player, @NotNull List<ItemStack> itemStackList) {
 	}
 
 	public void unlockRecipes(Player player) {
 
-		List<Recipe<?>> list = this.grantStoredRecipeExperience(player.level, player.position());
+		List<Recipe<?>> list = this.grantStoredRecipeExperience(player.level(), player.position());
 		player.awardRecipes(list);
 		this.recipes.clear();
 
@@ -694,7 +670,7 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 	@Override
 	public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
 
-		if (!this.remove && facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (!this.remove && facing != null && capability == ForgeCapabilities.ITEM_HANDLER) {
 			if (facing == Direction.UP) return handlers[0].cast();
 			else if (facing == Direction.DOWN) return handlers[1].cast();
 			else return handlers[2].cast();
@@ -717,7 +693,7 @@ public abstract class AbstractEnchantedSmelterTileEntity extends BaseContainerBl
 	public void addEnchantment(Enchantment ench, short lvl) {
 
 		CompoundTag nbt = new CompoundTag();
-		nbt.putString("id", Registry.ENCHANTMENT.getKey(ench).toString());
+		nbt.putString("id", BuiltInRegistries.ENCHANTMENT.getKey(ench).toString());
 		nbt.putShort("lvl", lvl);
 		this.enchantmentNBT.add(nbt);
 		CompoundTag writeNBT = new CompoundTag();

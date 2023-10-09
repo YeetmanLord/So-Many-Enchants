@@ -2,6 +2,9 @@ package com.github.yeetmanlord.somanyenchants;
 
 import java.util.HashMap;
 
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,8 +83,6 @@ public class SoManyEnchants {
 	}
 
 	private void setup(final FMLCommonSetupEvent event) {
-
-		CreativeModeTab.TAB_DECORATIONS.setEnchantmentCategories(new EnchantmentCategory[] { EnchantmentTypesInit.HOPPER, EnchantmentTypesInit.STORAGE, EnchantmentTypesInit.TRAPPED_CHEST, EnchantmentTypesInit.SMELTER });
 		VillagerProfessionInit.fillTradeData();
 		NetworkHandler.init();
 		LOGGER.info("PREINIT IS FUNCTIONING");
@@ -130,7 +131,5 @@ public class SoManyEnchants {
 			playerTaskSchedulers.put(player, scheduler);
 			return scheduler;
 		}
-
 	}
-
 }

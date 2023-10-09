@@ -18,7 +18,7 @@ public class HandlePlayerJoins
 	{
 		if(event.getEntity() instanceof Player)
 		{
-			Player player = (Player)event.getEntity();
+			Player player = event.getEntity();
 			PlayerUtilities util = SoManyEnchants.getPlayerUtil(player);
 			PlayerAttributeHandler.reset(player); 
 		}

@@ -56,7 +56,7 @@ public class EnchantedFurnaceBlock extends AbstractEnchantedSmelterBlock {
 	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
 		if (stateIn.getValue(LIT)) {
 			double d0 = (double) pos.getX() + 0.5D;
-			double d1 = (double) pos.getY();
+			double d1 = pos.getY();
 			double d2 = (double) pos.getZ() + 0.5D;
 			if (rand.nextDouble() < 0.1D) {
 				worldIn.playLocalSound(d0, d1, d2, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.0F,

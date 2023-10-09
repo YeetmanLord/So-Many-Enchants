@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class EnchantedBarrelTileEntity extends RandomizableContainerBlockEntity {
 	private NonNullList<ItemStack> barrelContents = NonNullList.withSize(36, ItemStack.EMPTY);
-	private ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+	private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
 		@Override
 		protected void onOpen(Level p_155062_, BlockPos p_155063_, BlockState p_155064_) {
 			EnchantedBarrelTileEntity.this.playSound(p_155064_, SoundEvents.BARREL_OPEN);
@@ -142,7 +142,7 @@ public class EnchantedBarrelTileEntity extends RandomizableContainerBlockEntity 
 		double d0 = (double) this.worldPosition.getX() + 0.5D + (double) vector3i.getX() / 2.0D;
 		double d1 = (double) this.worldPosition.getY() + 0.5D + (double) vector3i.getY() / 2.0D;
 		double d2 = (double) this.worldPosition.getZ() + 0.5D + (double) vector3i.getZ() / 2.0D;
-		this.level.playSound((Player) null, d0, d1, d2, sound, SoundSource.BLOCKS, 0.5F,
+		this.level.playSound(null, d0, d1, d2, sound, SoundSource.BLOCKS, 0.5F,
 				this.level.random.nextFloat() * 0.1F + 0.9F);
 	}
 }

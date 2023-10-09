@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.github.yeetmanlord.somanyenchants.common.tileentities.AbstractEnchantedSmelterTileEntity;
 import com.github.yeetmanlord.somanyenchants.core.init.EnchantmentInit;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.LivingEntity;
@@ -113,7 +114,7 @@ public class ModEnchantmentHelper
 	    	  {
 	    		  armorSlot = 3;
 	    	  }
-	    	  ItemStack stack = ((Player)entityIn).inventory.armor.get(armorSlot);
+	    	  ItemStack stack = ((Player)entityIn).getInventory().armor.get(armorSlot);
 	    	  if(stack.isEnchanted())
 	    	  {
 	    		  return getEnchantmentLevel(enchantmentIn, stack);
@@ -127,32 +128,29 @@ public class ModEnchantmentHelper
 	      if (stack.isEmpty()) {
 	         return 0;
 	      } else {
-	         ResourceLocation resourcelocation = Registry.ENCHANTMENT.getKey(enchID);
+	         ResourceLocation resourcelocation = BuiltInRegistries.ENCHANTMENT.getKey(enchID);
 	         ListTag listnbt = stack.getEnchantmentTags();
 
-	         for(int i = 0; i < listnbt.size(); ++i) {
-	            CompoundTag compoundnbt = listnbt.getCompound(i);
-	            ResourceLocation resourcelocation1 = ResourceLocation.tryParse(compoundnbt.getString("id"));
-	            if (resourcelocation1 != null && resourcelocation1.equals(resourcelocation)) {
-	               return Mth.clamp(compoundnbt.getInt("lvl"), 0, 255);
-	            }
-	         }
-
-	         return 0;
-	      }
+			  return processEnchLevels(resourcelocation, listnbt);
+		  }
 	}
-	
+
+	private static int processEnchLevels(ResourceLocation resourcelocation, ListTag listnbt) {
+		for(int i = 0; i < listnbt.size(); ++i) {
+		   CompoundTag compoundnbt = listnbt.getCompound(i);
+		   ResourceLocation resourcelocation1 = ResourceLocation.tryParse(compoundnbt.getString("id"));
+		   if (resourcelocation1 != null && resourcelocation1.equals(resourcelocation)) {
+			  return Mth.clamp(compoundnbt.getInt("lvl"), 0, 255);
+		   }
+		}
+
+		return 0;
+	}
+
 	public static int getEnchantmentLevel(ListTag nbt, Enchantment ench)
 	{
-		ResourceLocation resourcelocation = Registry.ENCHANTMENT.getKey(ench);
-		for(int i = 0; i < nbt.size(); ++i) {
-            CompoundTag compoundnbt = nbt.getCompound(i);
-            ResourceLocation resourcelocation1 = ResourceLocation.tryParse(compoundnbt.getString("id"));
-            if (resourcelocation1 != null && resourcelocation1.equals(resourcelocation)) {
-               return Mth.clamp(compoundnbt.getInt("lvl"), 0, 255);
-            }
-         }
-		return 0;
+		ResourceLocation resourcelocation = BuiltInRegistries.ENCHANTMENT.getKey(ench);
+		return processEnchLevels(resourcelocation, nbt);
 	}
 	
 	public static HashMap<Enchantment, Integer> currentSmelterEnchantments(AbstractEnchantedSmelterTileEntity smelter)

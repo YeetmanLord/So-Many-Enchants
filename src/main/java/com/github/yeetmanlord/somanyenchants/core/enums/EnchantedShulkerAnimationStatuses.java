@@ -4,6 +4,6 @@ public enum EnchantedShulkerAnimationStatuses {
 	CLOSED, 
 	OPENING, 
 	OPENED, 
-	CLOSING;
+	CLOSING
 
 }

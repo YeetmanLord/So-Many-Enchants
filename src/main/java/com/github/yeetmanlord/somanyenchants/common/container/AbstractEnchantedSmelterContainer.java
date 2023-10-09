@@ -45,7 +45,7 @@ public class AbstractEnchantedSmelterContainer extends RecipeBookMenu<Container>
 		checkContainerDataCount(furnaceData, 4);
 		this.container = furnaceInv;
 		this.data = furnaceData;
-		this.level = playerInv.player.level;
+		this.level = playerInv.player.level();
 		this.addSlot(new Slot(furnaceInv, 0, 56, 17));
 		this.addSlot(new EnchantedSmelterFuelSlot(this, furnaceInv, 1, 56, 53));
 		this.addSlot(new EnchantedSmelterResultSlot(playerInv.player, furnaceInv, 2, 116, 35));

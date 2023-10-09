@@ -6,10 +6,10 @@ import com.github.yeetmanlord.somanyenchants.SoManyEnchants;
 import com.github.yeetmanlord.somanyenchants.core.config.Config;
 import com.github.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -28,7 +28,7 @@ public class ApplyCriticalEnchant {
 		Player player = event.getEntity();
 		int criticalLevel = ModEnchantmentHelper.getCriticalLevel(player);
 
-		if (criticalLevel > 0 && Config.critical.isEnabled.get() == true) {
+		if (criticalLevel > 0 && Config.critical.isEnabled.get()) {
 
 			if (event.isVanillaCritical()) {
 				int chance = (int) (rand.nextFloat() * 100);
@@ -41,10 +41,10 @@ public class ApplyCriticalEnchant {
 					return;
 				}
 
-				SoManyEnchants.LOGGER.error("{} is an invalid chance somehow", (Object) String.valueOf(chance));
+				SoManyEnchants.LOGGER.error("{} is an invalid chance somehow", String.valueOf(chance));
 				throw (new IllegalStateException(chance + " is an invalid percentage"));
 			}
-			else if (event.isVanillaCritical() == false) {
+			else if (!event.isVanillaCritical()) {
 				int chance = (int) (rand.nextFloat() * 100);
 
 				if ((chance <= criticalLevel * 20 && chance <= 100)) {
@@ -56,11 +56,11 @@ public class ApplyCriticalEnchant {
 					return;
 				}
 
-				SoManyEnchants.LOGGER.error("{} is an invalid chance somehow", (Object) String.valueOf(chance));
+				SoManyEnchants.LOGGER.error("{} is an invalid chance somehow", String.valueOf(chance));
 				throw (new IllegalStateException(chance + " is an invalid percentage"));
 			}
 
-			SoManyEnchants.LOGGER.error("{} has invalid critical state", (Object) player.getName().getString());
+			SoManyEnchants.LOGGER.error("{} has invalid critical state", player.getName().getString());
 			throw (new IllegalStateException(player.getName().getString() + " has invalid critical state"));
 		}
 
@@ -72,7 +72,7 @@ public class ApplyCriticalEnchant {
 		Random rand = new Random();
 		LivingEntity target = event.getEntity();
 
-		if (event.getSource() instanceof EntityDamageSource && Config.critical.isEnabled.get() == true) {
+		if (event.getSource().getEntity() != null && Config.critical.isEnabled.get()) {
 			Entity attacker = event.getSource().getEntity();
 
 			if (attacker instanceof LivingEntity && !(attacker instanceof Player)) {

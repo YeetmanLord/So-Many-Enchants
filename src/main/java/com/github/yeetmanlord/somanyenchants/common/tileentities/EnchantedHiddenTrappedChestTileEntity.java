@@ -6,6 +6,7 @@ import com.github.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.player.Inventory;
@@ -55,7 +56,7 @@ public class EnchantedHiddenTrappedChestTileEntity extends EnchantedChestTileEnt
 
 	public void addEnchant(Enchantment ench, short lvl) {
 		CompoundTag nbt = new CompoundTag();
-		nbt.putString("id", Registry.ENCHANTMENT.getKey(ench).toString());
+		nbt.putString("id", BuiltInRegistries.ENCHANTMENT.getKey(ench).toString());
 		nbt.putShort("lvl", lvl);
 		this.enchants.add(nbt);
 	}

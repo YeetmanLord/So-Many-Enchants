@@ -47,8 +47,8 @@ public class EnchantedSmelterResultSlot extends Slot {
 
 	@Override
 	protected void checkTakeAchievements(ItemStack stack) {
-		stack.onCraftedBy(this.player.level, this.player, this.removeCount);
-		if (!this.player.level.isClientSide && this.container instanceof AbstractEnchantedSmelterTileEntity) {
+		stack.onCraftedBy(this.player.level(), this.player, this.removeCount);
+		if (!this.player.level().isClientSide && this.container instanceof AbstractEnchantedSmelterTileEntity) {
 			((AbstractEnchantedSmelterTileEntity) this.container).unlockRecipes(this.player);
 		}
 

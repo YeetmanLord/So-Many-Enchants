@@ -21,6 +21,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -68,11 +69,10 @@ public class BlockEnchants {
 
 		Entity e = event.getEntity();
 
-		if (e instanceof Player) {
-			Player player = (Player) e;
+		if (e instanceof Player player) {
 			ItemStack mainhand = player.getMainHandItem();
 			ItemStack offhand = player.getOffhandItem();
-			HitResult r = player.pick(player.getAttributeValue(ForgeMod.REACH_DISTANCE.get()), 0.5f, false);
+			HitResult r = player.pick(player.getAttributeValue(ForgeMod.ENTITY_REACH.get()), 0.5f, false);
 
 			if (r.getType() != HitResult.Type.BLOCK) {
 				return;
@@ -249,8 +249,7 @@ public class BlockEnchants {
 
 			}
 
-			else if (event.getPlacedBlock().getBlock() instanceof EnchantedShulkerBoxBlock) {
-				EnchantedShulkerBoxBlock shulker = (EnchantedShulkerBoxBlock) event.getPlacedBlock().getBlock();
+			else if (event.getPlacedBlock().getBlock() instanceof EnchantedShulkerBoxBlock shulker) {
 
 				if (!mainhand.isEnchanted()) {
 					event.getLevel().setBlock(event.getPos(), ShulkerBoxBlock.getBlockByColor(shulker.getColor()).defaultBlockState().setValue(ShulkerBoxBlock.FACING, event.getState().getValue(EnchantedShulkerBoxBlock.FACING)), 1);
@@ -346,8 +345,7 @@ public class BlockEnchants {
 
 						BlockEntity t = event.getLevel().getBlockEntity(event.getPos());
 
-						if (t != null && t instanceof EnchantedTrappedChestTileEntity) {
-							EnchantedTrappedChestTileEntity tile = (EnchantedTrappedChestTileEntity) t;
+						if (t != null && t instanceof EnchantedTrappedChestTileEntity tile) {
 							tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
 						}
 
@@ -360,8 +358,7 @@ public class BlockEnchants {
 
 						BlockEntity t = event.getLevel().getBlockEntity(event.getPos());
 
-						if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity) {
-							EnchantedHiddenTrappedChestTileEntity tile = (EnchantedHiddenTrappedChestTileEntity) t;
+						if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity tile) {
 							tile.addEnchant(EnchantmentInit.CAMOUFLAGE.get(), (short) 1);
 
 							if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), mainhand) && Config.cavernousStorage.isEnabled.get()) {
@@ -438,8 +435,7 @@ public class BlockEnchants {
 
 							BlockEntity t = event.getLevel().getBlockEntity(event.getPos());
 
-							if (t != null && t instanceof EnchantedTrappedChestTileEntity) {
-								EnchantedTrappedChestTileEntity tile = (EnchantedTrappedChestTileEntity) t;
+							if (t != null && t instanceof EnchantedTrappedChestTileEntity tile) {
 								tile.addEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), (short) 1);
 							}
 
@@ -452,8 +448,7 @@ public class BlockEnchants {
 
 							BlockEntity t = event.getLevel().getBlockEntity(event.getPos());
 
-							if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity) {
-								EnchantedHiddenTrappedChestTileEntity tile = (EnchantedHiddenTrappedChestTileEntity) t;
+							if (t != null && t instanceof EnchantedHiddenTrappedChestTileEntity tile) {
 								tile.addEnchant(EnchantmentInit.CAMOUFLAGE.get(), (short) 1);
 
 								if (ModEnchantmentHelper.hasEnchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), offhand) && Config.cavernousStorage.isEnabled.get()) {
@@ -543,10 +538,10 @@ public class BlockEnchants {
 
 	public static void breakEnchantedBlock(Block block, Block checkBlock, BlockState state, BlockPos pos, Item drop, Level world, Player player, Enchantment ench) {
 
-		if (block == checkBlock && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level, pos, player)) {
+		if (block == checkBlock && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level(), pos, player)) {
 			ItemStack stack = new ItemStack(drop);
 			stack.enchant(ench, 1);
-			ItemEntity item = new ItemEntity((Level) world, pos.getX(), pos.getY(), pos.getZ(), stack);
+			ItemEntity item = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
 			item.setPickUpDelay(10);
 
 			world.addFreshEntity(item);
@@ -556,12 +551,11 @@ public class BlockEnchants {
 
 	public static void breakTrappedEnchantedChest(Block block, BlockState state, BlockPos pos, Level world, Player player) {
 
-		if (block == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level, pos, player)) {
+		if (block == BlockInit.TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level(), pos, player)) {
 			ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
 			BlockEntity tile = world.getBlockEntity(pos);
 
-			if (tile instanceof EnchantedTrappedChestTileEntity) {
-				EnchantedTrappedChestTileEntity eTile = (EnchantedTrappedChestTileEntity) tile;
+			if (tile instanceof EnchantedTrappedChestTileEntity eTile) {
 				ListTag nbt = eTile.getEnchants();
 
 				if (ModEnchantmentHelper.hasCamouflage(nbt)) {
@@ -576,12 +570,11 @@ public class BlockEnchants {
 
 		}
 
-		if (block == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level, pos, player)) {
+		if (block == BlockInit.HIDDEN_TRAPPED_ENCHANTED_CHEST.get() && !player.isCreative() && !player.isSpectator() && block.canHarvestBlock(state, player.level(), pos, player)) {
 			ItemStack stack = new ItemStack(Items.TRAPPED_CHEST);
 			BlockEntity tile = world.getBlockEntity(pos);
 
-			if (tile instanceof EnchantedHiddenTrappedChestTileEntity) {
-				EnchantedHiddenTrappedChestTileEntity eTile = (EnchantedHiddenTrappedChestTileEntity) tile;
+			if (tile instanceof EnchantedHiddenTrappedChestTileEntity eTile) {
 				ListTag nbt = eTile.getEnchants();
 
 				if (ModEnchantmentHelper.hasCamouflage(nbt)) {
@@ -594,7 +587,7 @@ public class BlockEnchants {
 
 			}
 
-			ItemEntity item = new ItemEntity((Level) world, pos.getX(), pos.getY(), pos.getZ(), stack);
+			ItemEntity item = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
 
 			item.setPickUpDelay(10);
 
@@ -604,14 +597,13 @@ public class BlockEnchants {
 	}
 
 	@SubscribeEvent
-	public static void onEnchant(final CommandEvent event) {
+	public static void onEnchant(final CommandEvent event) throws CommandSyntaxException {
 
 		CommandContext<CommandSourceStack> command = event.getParseResults().getContext().build(null);
 
 		if (command.getCommand() != null) {
-
 			if (command.getCommand().toString().contains("net.minecraft.server.commands.EnchantCommand$$Lambda$")) {
-				Enchantment enchant = command.getArgument("enchantment", Enchantment.class);
+				Enchantment enchant = ResourceArgument.getEnchantment(command, "enchantment").get();
 				EntitySelector e = command.getArgument("targets", EntitySelector.class);
 				List<? extends Entity> entities;
 
@@ -621,8 +613,7 @@ public class BlockEnchants {
 					for (int x = 0; x < entities.size(); x++) {
 						Entity entity = entities.get(x);
 
-						if (entity instanceof LivingEntity) {
-							LivingEntity living = (LivingEntity) entity;
+						if (entity instanceof LivingEntity living) {
 
 							if (!EnchantmentHelper.isEnchantmentCompatible(EnchantmentHelper.getEnchantments(living.getMainHandItem()).keySet(), enchant) || !enchant.category.canEnchant(living.getMainHandItem().getItem())) {
 								continue;
@@ -632,8 +623,7 @@ public class BlockEnchants {
 								ItemStack stack = living.getMainHandItem();
 								Item item = stack.getItem();
 
-								if (item instanceof BlockItem) {
-									BlockItem blockItem = (BlockItem) item;
+								if (item instanceof BlockItem blockItem) {
 									Block block = blockItem.getBlock();
 
 									if (block instanceof ShulkerBoxBlock) {
@@ -641,22 +631,15 @@ public class BlockEnchants {
 										newStack.setTag(stack.getTag());
 										newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 
-										if (living instanceof Player) {
-											Player player = (Player) living;
-											player.inventory.setItem(getSlotFor(stack, player), newStack);
+										if (living instanceof Player player) {
+											player.getInventory().setItem(getSlotFor(stack, player), newStack);
 										}
 										else {
 											living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
 										}
 
 										CommandSourceStack source = command.getSource();
-
-										if (entities.size() == 1) {
-											source.sendSuccess(Component.translatable("commands.enchant.success.single", enchant.getFullname(1), entities.iterator().next().getDisplayName()), true);
-										}
-										else {
-											source.sendSuccess(Component.translatable("commands.enchant.success.multiple", enchant.getFullname(1), entities.size()), true);
-										}
+										sendSuccess(event, enchant, entities, source, 1);
 
 										event.setCanceled(true);
 									}
@@ -677,8 +660,7 @@ public class BlockEnchants {
 									level = 1;
 								}
 
-								if (item instanceof BlockItem) {
-									BlockItem blockItem = (BlockItem) item;
+								if (item instanceof BlockItem blockItem) {
 									Block block = blockItem.getBlock();
 
 									if (block instanceof AbstractFurnaceBlock) {
@@ -699,9 +681,8 @@ public class BlockEnchants {
 
 										if (newStack.isEnchanted()) {
 
-											if (living instanceof Player) {
-												Player player = (Player) living;
-												player.inventory.setItem(getSlotFor(stack, player), newStack);
+											if (living instanceof Player player) {
+												player.getInventory().setItem(getSlotFor(stack, player), newStack);
 											}
 											else {
 												living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
@@ -709,14 +690,7 @@ public class BlockEnchants {
 
 											CommandSourceStack source = command.getSource();
 
-											if (entities.size() == 1) {
-												source.sendSuccess(Component.translatable("commands.enchant.success.single", enchant.getFullname(level), entities.iterator().next().getDisplayName()), true);
-											}
-											else {
-												source.sendSuccess(Component.translatable("commands.enchant.success.multiple", enchant.getFullname(level), entities.size()), true);
-											}
-
-											event.setCanceled(true);
+                                            sendSuccess(event, enchant, entities, source, level);
 										}
 
 									}
@@ -740,9 +714,8 @@ public class BlockEnchants {
 
 										if (newStack.isEnchanted()) {
 
-											if (living instanceof Player) {
-												Player player = (Player) living;
-												player.inventory.setItem(getSlotFor(stack, player), newStack);
+											if (living instanceof Player player) {
+												player.getInventory().setItem(getSlotFor(stack, player), newStack);
 											}
 											else {
 												living.setItemSlot(EquipmentSlot.MAINHAND, newStack);
@@ -750,14 +723,7 @@ public class BlockEnchants {
 
 											CommandSourceStack source = command.getSource();
 
-											if (entities.size() == 1) {
-												source.sendSuccess(Component.translatable("commands.enchant.success.single", enchant.getFullname(level), entities.iterator().next().getDisplayName()), true);
-											}
-											else {
-												source.sendSuccess(Component.translatable("commands.enchant.success.multiple", enchant.getFullname(level), entities.size()), true);
-											}
-
-											event.setCanceled(true);
+											sendSuccess(event, enchant, entities, source, level);
 										}
 
 									}
@@ -781,19 +747,30 @@ public class BlockEnchants {
 
 	}
 
+	private static void sendSuccess(CommandEvent event, Enchantment enchant, List<? extends Entity> entities, CommandSourceStack source, int finalLevel) {
+		if (entities.size() == 1) {
+			source.sendSuccess(() -> Component.translatable("commands.enchant.success.single", enchant.getFullname(finalLevel), entities.iterator().next().getDisplayName()), true);
+		}
+		else {
+			source.sendSuccess(() -> Component.translatable("commands.enchant.success.multiple", enchant.getFullname(finalLevel), entities.size()), true);
+		}
+
+		event.setCanceled(true);
+	}
+
 	@SubscribeEvent
 	public static void onBookApply(final AnvilRepairEvent event) {
 
 		Player player = event.getEntity();
 		ItemStack initial = event.getLeft();
 		ItemStack ingredient = event.getRight();
-		ItemStack stack = event.getEntity().inventory.getSelected();
+		ItemStack stack = event.getEntity().getInventory().getSelected();
 
 		if (!ingredient.isEnchanted()) {
 			return;
 		}
 
-		if (ItemStack.isSame(initial, stack)) {
+		if (ItemStack.isSameItem(initial, stack)) {
 
 			if (ModEnchantmentHelper.isCavernousStorage(stack.getEnchantmentTags()) && stack.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get()) {
 				Block block = Block.byItem(stack.getItem());
@@ -802,7 +779,7 @@ public class BlockEnchants {
 					ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
 					newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 					newStack.setTag(stack.getTag());
-					player.inventory.setPickedItem(newStack);
+					player.getInventory().setPickedItem(newStack);
 				}
 
 			}
@@ -832,7 +809,7 @@ public class BlockEnchants {
 					}
 
 					if (newStack.isEnchanted()) {
-						player.inventory.setPickedItem(newStack);
+						player.getInventory().setPickedItem(newStack);
 					}
 
 				}
@@ -842,10 +819,10 @@ public class BlockEnchants {
 		}
 		else {
 
-			for (int x = 0; x < player.inventory.getContainerSize(); x++) {
+			for (int x = 0; x < player.getInventory().getContainerSize(); x++) {
 
-				if (ItemStack.isSame(initial, player.inventory.getItem(x))) {
-					ItemStack stack1 = player.inventory.getItem(x);
+				if (ItemStack.isSameItem(initial, player.getInventory().getItem(x))) {
+					ItemStack stack1 = player.getInventory().getItem(x);
 
 					if (ModEnchantmentHelper.isCavernousStorage(stack1.getEnchantmentTags()) && stack1.getItem() instanceof BlockItem && Config.cavernousStorage.isEnabled.get()) {
 						Block block = ((BlockItem) stack1.getItem()).getBlock();
@@ -854,7 +831,7 @@ public class BlockEnchants {
 							ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
 							newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
 							newStack.setTag(stack1.getTag());
-							player.inventory.setItem(x, newStack);
+							player.getInventory().setItem(x, newStack);
 						}
 
 					}
@@ -884,7 +861,7 @@ public class BlockEnchants {
 							}
 
 							if (newStack.isEnchanted()) {
-								player.inventory.setItem(x, newStack);
+								player.getInventory().setItem(x, newStack);
 							}
 
 						}
@@ -915,7 +892,7 @@ public class BlockEnchants {
 					ItemStack newStack = new ItemStack(EnchantedShulkerBoxBlock.getBlockByColor(((ShulkerBoxBlock) block).getColor()).asItem());
 					newStack.setTag(stack.getTag());
 					newStack.enchant(EnchantmentInit.CAVERNOUS_STORAGE.get(), 1);
-					player.inventory.setItem(x, newStack);
+					player.getInventory().setItem(x, newStack);
 				}
 
 			}
@@ -945,7 +922,7 @@ public class BlockEnchants {
 					}
 
 					if (newStack.isEnchanted()) {
-						player.inventory.setItem(x, newStack);
+						player.getInventory().setItem(x, newStack);
 					}
 
 				}
@@ -958,9 +935,9 @@ public class BlockEnchants {
 
 	public static int getSlotFor(ItemStack stack, Player player) {
 
-		for (int i = 0; i < player.inventory.getContainerSize(); ++i) {
+		for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
 
-			if (!player.inventory.getItem(i).isEmpty() && stackEqualExact(stack, player.inventory.getItem(i))) {
+			if (!player.getInventory().getItem(i).isEmpty() && stackEqualExact(stack, player.getInventory().getItem(i))) {
 				return i;
 			}
 
@@ -972,7 +949,7 @@ public class BlockEnchants {
 
 	private static boolean stackEqualExact(ItemStack stack1, ItemStack stack2) {
 
-		return stack1.getItem() == stack2.getItem() && ItemStack.tagMatches(stack1, stack2);
+		return stack1.getItem() == stack2.getItem() && ItemStack.isSameItemSameTags(stack1, stack2);
 
 	}
 

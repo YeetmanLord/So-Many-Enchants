@@ -1,7 +1,10 @@
 package com.github.yeetmanlord.somanyenchants.mixins.enchants;
 
+import net.minecraft.tags.DamageTypeTags;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -23,6 +26,7 @@ public class MixinProtectionEnchantment {
 
 	}
 
+	@Final
 	@Shadow
 	private ProtectionEnchantment.Type type;
 
@@ -41,8 +45,7 @@ public class MixinProtectionEnchantment {
 	private void getDamageProtection(int level, DamageSource source, CallbackInfoReturnable<Integer> callback) {
 
 		if (Config.protectionEnchantments.isEnabled.get()) {
-
-			if (source.isBypassInvul()) {
+			if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
 				callback.setReturnValue(0);
 			}
 			else if (this.type == ProtectionEnchantment.Type.ALL) {
@@ -54,63 +57,23 @@ public class MixinProtectionEnchantment {
 					callback.setReturnValue((int) ((level - 4) * 0.5) + 4);
 				}
 				else if (level <= 10) {
-					callback.setReturnValue((int) ((int) ((level - 6) * 0.1875) + 5));
+					callback.setReturnValue((int) ((level - 6) * 0.1875) + 5);
 				}
 				else {
 					callback.setReturnValue(7);
 				}
-
 			}
-			else if (this.type == ProtectionEnchantment.Type.FIRE && source.isFire()) {
-
-				if (level <= 4) {
-					callback.setReturnValue((int) (level * 1.5));
-				}
-				else if (level <= 8) {
-					callback.setReturnValue((int) ((level - 4) * .25) + 6);
-				}
-				else if (level <= 10) {
-					callback.setReturnValue((int) ((10 - 8) * .5) + 7);
-				}
-				else {
-					callback.setReturnValue(10);
-				}
-
+			else if (this.type == ProtectionEnchantment.Type.FIRE && source.is(DamageTypeTags.IS_FIRE)) {
+				soManyEnchants$getDamageReductionSpecial(level, callback);
 			}
-			else if (this.type == ProtectionEnchantment.Type.FALL && source == DamageSource.FALL) {
+			else if (this.type == ProtectionEnchantment.Type.FALL && source.is(DamageTypeTags.IS_FALL)) {
 				callback.setReturnValue(level * 2);
 			}
-			else if (this.type == ProtectionEnchantment.Type.EXPLOSION && source.isExplosion()) {
-
-				if (level <= 4) {
-					callback.setReturnValue((int) (level * 1.5));
-				}
-				else if (level <= 8) {
-					callback.setReturnValue((int) ((level - 4) * .25) + 6);
-				}
-				else if (level <= 10) {
-					callback.setReturnValue((int) ((10 - 8) * .5) + 7);
-				}
-				else {
-					callback.setReturnValue(10);
-				}
-
+			else if (this.type == ProtectionEnchantment.Type.EXPLOSION && source.is(DamageTypeTags.IS_EXPLOSION)) {
+				soManyEnchants$getDamageReductionSpecial(level, callback);
 			}
-			else if (this.type == ProtectionEnchantment.Type.PROJECTILE && source.isProjectile()) {
-
-				if (level <= 4) {
-					callback.setReturnValue((int) (level * 1.5));
-				}
-				else if (level <= 8) {
-					callback.setReturnValue((int) ((level - 4) * .25) + 6);
-				}
-				else if (level <= 10) {
-					callback.setReturnValue((int) ((10 - 8) * .5) + 7);
-				}
-				else {
-					callback.setReturnValue(10);
-				}
-
+			else if (this.type == ProtectionEnchantment.Type.PROJECTILE && source.is(DamageTypeTags.IS_PROJECTILE)) {
+				soManyEnchants$getDamageReductionSpecial(level, callback);
 			}
 			else {
 				callback.setReturnValue(0);
@@ -118,6 +81,22 @@ public class MixinProtectionEnchantment {
 
 		}
 
+	}
+
+	@Unique
+	private static void soManyEnchants$getDamageReductionSpecial(int level, CallbackInfoReturnable<Integer> callback) {
+		if (level <= 4) {
+			callback.setReturnValue((int) (level * 1.5));
+		}
+		else if (level <= 8) {
+			callback.setReturnValue((int) ((level - 4) * .25) + 6);
+		}
+		else if (level <= 10) {
+			callback.setReturnValue((int) ((10 - 8) * .5) + 7);
+		}
+		else {
+			callback.setReturnValue(10);
+		}
 	}
 
 }

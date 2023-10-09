@@ -7,7 +7,6 @@ import com.github.yeetmanlord.somanyenchants.core.util.ModEnchantmentHelper;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -25,16 +24,14 @@ public class Frostbite {
 	public static void frostBite(final LivingAttackEvent event) {
 		DamageSource source = event.getSource();
 		Entity e = event.getEntity();
-		if (e instanceof LivingEntity && Config.freezing.isEnabled.get() == true) {
-			LivingEntity attacked = (LivingEntity) e;
-			if (source instanceof EntityDamageSource) {
+		if (e instanceof LivingEntity attacked && Config.freezing.isEnabled.get()) {
+			if (source.getEntity() != null) {
 				Entity attackerEntity = source.getEntity();
-				if (attackerEntity instanceof LivingEntity) {
-					LivingEntity livingAttacker = (LivingEntity) attackerEntity;
+				if (attackerEntity instanceof LivingEntity livingAttacker) {
 					int frostBite = ModEnchantmentHelper.getFreezingEnchant(livingAttacker);
 					if (frostBite > 1) {
-						if (attacked.level instanceof ServerLevel) {
-							((ServerLevel) attacked.level).sendParticles(ParticleTypesInit.FREEZE_PARTICLE.get(),
+						if (attacked.level() instanceof ServerLevel) {
+							((ServerLevel) attacked.level()).sendParticles(ParticleTypesInit.FREEZE_PARTICLE.get(),
 									attacked.getX(), attacked.getY(0.5D), attacked.getZ(),
 									50 * frostBite, 0.1D, 0.0D, 0.1D, 0.2D);
 						}
@@ -55,8 +52,7 @@ public class Frostbite {
 				}
 			}
 		} else {
-			return;
-		}
+        }
 
 	}
 }

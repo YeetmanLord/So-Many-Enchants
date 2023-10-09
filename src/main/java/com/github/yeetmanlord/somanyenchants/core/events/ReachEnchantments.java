@@ -37,7 +37,7 @@ public class ReachEnchantments {
 			EquipmentSlot slot = event.getSlot();
 
 			if (slot == EquipmentSlot.MAINHAND) {
-				AttributeHelper.apply(EnchantmentInit.BLOCK_REACH.get(), ForgeMod.REACH_DISTANCE.get(), Config.blockReach, event, 1d);
+				AttributeHelper.apply(EnchantmentInit.BLOCK_REACH.get(), ForgeMod.ENTITY_REACH.get(), Config.blockReach, event, 1d);
 				AttributeHelper.apply(EnchantmentInit.ATTACK_REACH.get(), AttributeInit.ATTACK_DISTANCE.get(), Config.attackReach, event, 1.5d);
 			}
 
@@ -80,16 +80,14 @@ public class ReachEnchantments {
 					NetworkHandler.CHANNEL.sendToServer(new AttackPacket(tracedEntity.getId()));
 				}
 
-				return;
-			}
+            }
 			else if (entityRayTrace == null || player.isSpectator()) {
 
 			}
 			else {
 				SoManyEnchants.LOGGER.error("Ray trace failed. This is not a good thing!!");
 				SoManyEnchants.LOGGER.error(entityRayTrace);
-				return;
-			}
+            }
 
 		}
 

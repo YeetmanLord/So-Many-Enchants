@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import com.github.yeetmanlord.somanyenchants.core.config.EnchantmentConfig;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -44,7 +45,7 @@ public class AttributeHelper {
 					String s = nbt.getString("AttributeName");
 					String n = nbt.getString("Name");
 
-					if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(attribute))) && n.matches(name)) {
+					if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(attribute))) && n.matches(name)) {
 						nbt.putDouble("Amount", newAmount);
 						stack.getTag().remove("AttributeModifiers");
 						stack.getTag().put("AttributeModifiers", attributes);
@@ -57,9 +58,7 @@ public class AttributeHelper {
 
 		}
 
-		return;
-
-	}
+    }
 
 	public static void removeAttribute(ItemStack stack, Attribute attribute, String name) {
 
@@ -73,7 +72,7 @@ public class AttributeHelper {
 					String s = nbt.getString("AttributeName");
 					String n = nbt.getString("Name");
 
-					if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(attribute))) && n.matches(name)) {
+					if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(attribute))) && n.matches(name)) {
 						attributes.remove(x);
 					}
 
@@ -83,9 +82,7 @@ public class AttributeHelper {
 
 		}
 
-		return;
-
-	}
+    }
 
 	public static void newAttribute(ItemStack stack, Attribute attribute, String name, double amount, boolean isBaseAttribute, Player player, @Nullable EquipmentSlot slot, UUID uuid) {
 
@@ -100,29 +97,29 @@ public class AttributeHelper {
 					String n = nbt.getString("Name");
 					boolean flag = (isAttributePresent(Attributes.ARMOR, "Armor Modifier", stack) || isAttributePresent(Attributes.KNOCKBACK_RESISTANCE, "Armor Modifier", stack) || isAttributePresent(Attributes.ARMOR_TOUGHNESS, "Armor Modifier", stack) || isAttributePresent(Attributes.ATTACK_DAMAGE, "Mainhand Modifier", stack) || isAttributePresent(Attributes.ATTACK_SPEED, "Mainhand Modifier", stack));
 
-					if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(attribute))) && n.matches(name)) {
+					if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(attribute))) && n.matches(name)) {
 						changeAttribute(stack, attribute, amount, name, player, slot);
 						return;
 					}
 
 					if (flag) {
 
-						if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(Attributes.ARMOR))) && n.matches("Armor Modifier")) {
+						if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(Attributes.ARMOR))) && n.matches("Armor Modifier")) {
 							attributes.remove(x);
 						}
-						else if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(Attributes.ARMOR_TOUGHNESS))) && n.matches("Armor Modifier")) {
+						else if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(Attributes.ARMOR_TOUGHNESS))) && n.matches("Armor Modifier")) {
 							attributes.remove(x);
 						}
-						else if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(Attributes.ARMOR))) && n.matches("Armor Modifier")) {
+						else if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(Attributes.ARMOR))) && n.matches("Armor Modifier")) {
 							attributes.remove(x);
 						}
-						else if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(Attributes.KNOCKBACK_RESISTANCE))) && n.matches("Armor Modifier")) {
+						else if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(Attributes.KNOCKBACK_RESISTANCE))) && n.matches("Armor Modifier")) {
 							attributes.remove(x);
 						}
-						else if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(Attributes.ATTACK_DAMAGE))) && n.matches("Mainhand Modifier")) {
+						else if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(Attributes.ATTACK_DAMAGE))) && n.matches("Mainhand Modifier")) {
 							attributes.remove(x);
 						}
-						else if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(Attributes.ATTACK_SPEED))) && n.matches("Mainhand Modifier")) {
+						else if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(Attributes.ATTACK_SPEED))) && n.matches("Mainhand Modifier")) {
 							attributes.remove(x);
 						}
 
@@ -148,9 +145,8 @@ public class AttributeHelper {
 
 	public static void setBaseArmor(ItemStack stack, EquipmentSlot slotIn, UUID uuid) {
 
-		if (stack.getItem() instanceof ArmorItem) {
-			ArmorItem armor = (ArmorItem) stack.getItem();
-			float baseArmor = armor.getMaterial().getDefenseForSlot(slotIn);
+		if (stack.getItem() instanceof ArmorItem armor) {
+			float baseArmor = armor.getMaterial().getDefenseForType(armor.getType());
 			float kbresistance = armor.getMaterial().getKnockbackResistance();
 			float toughness = armor.getMaterial().getToughness();
 
@@ -253,7 +249,7 @@ public class AttributeHelper {
 					String s = nbt.getString("AttributeName");
 					String n = nbt.getString("Name");
 
-					if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(at))) && n.matches(name)) {
+					if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(at))) && n.matches(name)) {
 						return true;
 					}
 
@@ -280,7 +276,7 @@ public class AttributeHelper {
 					String n = nbt.getString("Name");
 					double value = nbt.getDouble("Amount");
 
-					if (s.matches(String.valueOf(Registry.ATTRIBUTE.getKey(at))) && n.matches(name) && MathUtils.roundNearestPlace(value, -1) == MathUtils.roundNearestPlace(amount, -1)) {
+					if (s.matches(String.valueOf(BuiltInRegistries.ATTRIBUTE.getKey(at))) && n.matches(name) && MathUtils.roundNearestPlace(value, -1) == MathUtils.roundNearestPlace(amount, -1)) {
 						return true;
 					}
 

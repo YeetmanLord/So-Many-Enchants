@@ -24,25 +24,19 @@ public class EnchantmentTypesInit {
 	public static final EnchantmentCategory SMELTER = EnchantmentCategory.create("smelting_blocks", item -> isSmelter(item));
 
 	public static boolean isStorage(Item item) {
-		if (item instanceof BlockItem) {
-			BlockItem blockItem = (BlockItem) item;
+		if (item instanceof BlockItem blockItem) {
 			Block block = blockItem.getBlock();
 			if (block instanceof ShulkerBoxBlock || block instanceof EnchantedShulkerBoxBlock) {
 				return true;
-			} else if (item == Items.CHEST || item == Items.TRAPPED_CHEST || item == Items.BARREL) {
-				return true;
-			}
+			} else return item == Items.CHEST || item == Items.TRAPPED_CHEST || item == Items.BARREL;
 		}
 		return false;
-	};
+	}
 
-	public static boolean isSmelter(Item item) {
-		if (item instanceof BlockItem) {
-			BlockItem blockItem = (BlockItem) item;
+    public static boolean isSmelter(Item item) {
+		if (item instanceof BlockItem blockItem) {
 			Block block = blockItem.getBlock();
-			if (block instanceof AbstractFurnaceBlock || block instanceof AbstractEnchantedSmelterBlock) {
-				return true;
-			}
+            return block instanceof AbstractFurnaceBlock || block instanceof AbstractEnchantedSmelterBlock;
 		}
 		return false;
 	}

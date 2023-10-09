@@ -8,7 +8,7 @@ import com.github.yeetmanlord.somanyenchants.common.tileentities.EnchantedTrappe
 import com.github.yeetmanlord.somanyenchants.core.init.BlockInit;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class EnchantedChestTileEntityRenderer<T extends BlockEntity & LidBlockEntity>
@@ -114,8 +115,8 @@ public class EnchantedChestTileEntityRenderer<T extends BlockEntity & LidBlockEn
 	}
 
 	@Override
-	public void render(T p_112363_, float p_112364_, PoseStack p_112365_, MultiBufferSource p_112366_, int p_112367_,
-			int p_112368_) {
+	public void render(T p_112363_, float p_112364_, @NotNull PoseStack p_112365_, @NotNull MultiBufferSource p_112366_, int p_112367_,
+					   int p_112368_) {
 		Level level = p_112363_.getLevel();
 		boolean flag = level != null;
 		BlockState blockstate = flag ? p_112363_.getBlockState()
@@ -123,26 +124,25 @@ public class EnchantedChestTileEntityRenderer<T extends BlockEntity & LidBlockEn
 		ChestType chesttype = blockstate.hasProperty(EnchantedChestBlock.TYPE) ? blockstate.getValue(EnchantedChestBlock.TYPE)
 				: ChestType.SINGLE;
 		Block block = blockstate.getBlock();
-		if (block instanceof EnchantedChestBlock) {
-			EnchantedChestBlock abstractchestblock = (EnchantedChestBlock) block;
+		if (block instanceof EnchantedChestBlock abstractChestBlock) {
 			boolean flag1 = chesttype != ChestType.SINGLE;
 			p_112365_.pushPose();
 			float f = blockstate.getValue(EnchantedChestBlock.FACING).toYRot();
 			p_112365_.translate(0.5D, 0.5D, 0.5D);
-			p_112365_.mulPose(Vector3f.YP.rotationDegrees(-f));
+			p_112365_.mulPose(Axis.YP.rotationDegrees(-f));
 			p_112365_.translate(-0.5D, -0.5D, -0.5D);
 			DoubleBlockCombiner.NeighborCombineResult<? extends EnchantedChestTileEntity> neighborcombineresult;
 			if (flag) {
-				neighborcombineresult = abstractchestblock.combine(blockstate, level, p_112363_.getBlockPos(), true);
+				neighborcombineresult = abstractChestBlock.combine(blockstate, level, p_112363_.getBlockPos(), true);
 			} else {
 				neighborcombineresult = DoubleBlockCombiner.Combiner::acceptNone;
 			}
 
-			float f1 = neighborcombineresult.<Float2FloatFunction>apply(EnchantedChestBlock.opennessCombiner(p_112363_))
+			float f1 = neighborcombineresult.apply(EnchantedChestBlock.opennessCombiner(p_112363_))
 					.get(p_112364_);
 			f1 = 1.0F - f1;
 			f1 = 1.0F - f1 * f1 * f1;
-			int i = neighborcombineresult.<Int2IntFunction>apply(new BrightnessCombiner<>()).applyAsInt(p_112367_);
+			int i = neighborcombineresult.apply(new BrightnessCombiner<>()).applyAsInt(p_112367_);
 			Material material = this.getMaterial(p_112363_, chesttype);
 			VertexConsumer vertexconsumer = material.buffer(p_112366_, RenderType::entityCutout);
 			if (flag1) {
